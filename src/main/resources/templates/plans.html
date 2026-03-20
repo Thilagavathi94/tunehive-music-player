@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Plans</title>
+
+<link rel="stylesheet" th:href="@{/css/plans.css}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">🎵 TUNE HIVE</div>
+    <input type="text" placeholder="Search">
+    <div class="nav-right">Music language ▾ | Login ▾</div>
+</div>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h4>BROWSE</h4>
+        <p>New Release</p>
+        <p>Top Charts</p>
+        <p>Top Playlists</p>
+        <p>Podcasts</p>
+        <p>Top Artists</p>
+
+        <h4>LIBRARY</h4>
+        <p>History</p>
+        <p>Liked Songs</p>
+        <p>Albums</p>
+        <p>Artists</p>
+
+        <button class="playlist">+ New Play List</button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+
+        <h2>Available Plans</h2>
+
+        <div class="plans">
+
+            <!-- PLAN 1 -->
+            <div class="plan-card">
+                <h3>Pro Individual</h3>
+                <ul>
+                    <li>✔ Ad-free Music</li>
+                    <li>✔ Unlimited Downloads</li>
+                    <li>✔ Unlimited Hires tunes</li>
+                    <li>✔ 2X Better sound Quality</li>
+                </ul>
+              <button class="price" onclick="goToPayment('individual')">₹9 for 2 months</button>
+                <p>Renews in 1 month</p>
+            </div>
+
+            <!-- PLAN 2 -->
+            <div class="plan-card">
+                <h3>Pro Student</h3>
+                <ul>
+                    <li>✔ Ad-free Music</li>
+                    <li>✔ Unlimited Downloads</li>
+                    <li>✔ Unlimited Hires tunes</li>
+                    <li>✔ 2X Better sound Quality</li>
+                </ul>
+               <button class="price" onclick="goToPayment('student')">₹49 / month</button>
+                <p>Save up to 67%</p>
+            </div>
+
+            <!-- PLAN 3 -->
+            <div class="plan-card">
+                <h3>Pro Lite</h3>
+                <ul>
+                    <li>✔ Ad-free Music</li>
+                    <li>✔ Unlimited Downloads</li>
+                </ul>
+               <button class="price" onclick="goToPayment('lite')">₹9 / day</button>
+                <button class="price">₹29 / week</button>
+                <p>Limited features</p>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+
+            <div class="footer-col">
+                <h4>Top Artists</h4>
+                <p>Arijit Singh</p>
+                <p>Neha Kakkar</p>
+                <p>Badshah</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Top Actors</h4>
+                <p>Rajini</p>
+                <p>Vijay</p>
+                <p>Surya</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Company</h4>
+                <p>About</p>
+                <p>Blogs</p>
+                <p>Help</p>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+<script>
+function goToPayment(plan){
+    window.location.href = "/payment?plan=" + plan;
+}
+</script>
+</body>
+</html>

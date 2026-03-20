@@ -1,0 +1,102 @@
+body{
+margin:0;
+font-family:Arial;
+background:url('/images/music-bg.jpg') center/cover no-repeat;
+color:white;
+
+min-height:100vh;
+}
+
+/* NAVBAR */
+.navbar{
+display:flex;
+justify-content:space-between;
+padding:15px;
+background:rgba(0,0,0,0.8);
+}
+
+/* LAYOUT */
+.layout{
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:220px;
+height:100vh;
+background:rgba(0,0,0,0.9);
+padding:20px;
+position:fixed;
+top:60px;
+left:0;   /* ✅ ADD THIS */
+}
+
+/* CONTENT */
+.content{
+margin-left:220px; /* match sidebar EXACT */
+
+width:calc(100% - 220px); /* ✅ ADD THIS */
+
+height:calc(100vh - 60px);
+
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+}
+
+/* PAYMENT BOX */
+.payment-box{
+width:420px;
+max-width:90%;
+background:rgba(0,0,0,0.65);
+backdrop-filter:blur(12px);
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+/* INPUT */
+.payment-box input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+}
+
+/* ROW */
+.row{
+display:flex;
+gap:10px;
+}
+
+/* BUTTONS */
+.upi-btn{
+width:100%;
+padding:12px;
+background:#e91e63;
+border:none;
+border-radius:20px;
+color:white;
+margin-bottom:15px;
+}
+
+.subscribe-btn{
+width:100%;
+padding:12px;
+background:#e91e63;
+border:none;
+border-radius:20px;
+color:white;
+margin-top:20px;
+}
+
+/* FOOTER */
+.footer{
+width:100%;
+max-width:800px;
+display:flex;
+justify-content:space-between;
+margin-top:40px;
+}

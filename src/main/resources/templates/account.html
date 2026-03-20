@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<title>Tune Hive - Account</title>
+
+<link rel="stylesheet" th:href="@{/css/account.css}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="app-container">
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+
+<div class="logo">
+🎧 <span>TUNE HIVE</span>
+</div>
+
+<nav class="menu">
+<a>Music</a>
+<a>Podcasts</a>
+<a>Pro</a>
+</nav>
+
+<div class="search">
+<input type="text" placeholder="Search">
+</div>
+
+<div class="right-menu">
+<a>Music language ▾</a>
+<a>Login ▾</a>
+</div>
+
+</header>
+
+
+<div class="main-layout">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<h4>BROWSE</h4>
+
+<ul>
+<li>New Release</li>
+<li>Top Charts</li>
+<li>Top Playlists</li>
+<li>Podcasts</li>
+<li>Top Artists</li>
+</ul>
+
+<h4>LIBRARY</h4>
+
+<ul>
+<li>History</li>
+<li>Liked Songs</li>
+<li>Albums</li>
+<li>Podcasts</li>
+<li>Artists</li>
+</ul>
+
+<button class="playlist-btn">+ New Play List</button>
+
+</aside>
+
+
+<!-- ACCOUNT CONTENT -->
+
+<main class="account-content">
+
+<h1>Profile</h1>
+
+<div class="profile-grid">
+
+<!-- PROFILE CARD -->
+
+<div class="profile-card">
+
+<div class="profile-info">
+
+<div class="avatar"></div>
+
+<div>
+
+<p>User Name</p>
+<h3>Yazhini</h3>
+
+<p>Email</p>
+<h4>yazh31@gmail.com</h4>
+
+</div>
+
+</div>
+
+<div class="profile-buttons">
+
+<button>Edit profile</button>
+<button>Change Password</button>
+
+</div>
+
+</div>
+
+
+<!-- DEVICES -->
+
+<div class="devices-card">
+
+<h3>Connected Devices & Integrations</h3>
+
+<p>📱 iphone 15 Pro</p>
+<p>💻 Macbook Pro</p>
+<p>🔊 Sonos Speaker</p>
+
+<button>Manage Details</button>
+<button>Connect New Device</button>
+
+</div>
+
+</div>
+
+
+<!-- SUBSCRIPTION -->
+
+<div class="subscription-card">
+
+<h2>Subscription</h2>
+
+<p>Plan: Premium</p>
+
+<p>Renewal: Jan 31, 2026</p>
+
+<button>Manage subscription</button>
+<button>View payment method</button>
+
+</div>
+
+
+<!-- SETTINGS -->
+
+<div class="settings-card">
+
+<h2>Settings</h2>
+
+<p>Dark mode <input type="checkbox" checked></p>
+
+<p>High Quality Audio <input type="checkbox" checked></p>
+
+<p>Download over Wi-fi only <input type="checkbox"></p>
+
+<button class="logout">Logout</button>
+
+</div>
+
+</main>
+
+</div>
+
+</div>
+
+</body>
+</html>

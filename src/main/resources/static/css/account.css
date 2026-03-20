@@ -1,0 +1,113 @@
+body{
+margin:0;
+font-family:Inter;
+color:white;
+background:url('/images/music-bg.jpg') center/cover no-repeat fixed;
+}
+
+.app-container{
+background:rgba(0,0,0,0.6);
+min-height:100vh;
+}
+
+/* navbar */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 30px;
+background:rgba(30,30,30,0.8);
+}
+
+.logo{
+color:#ff2f6d;
+font-weight:600;
+}
+
+.menu a{
+margin:0 10px;
+color:white;
+text-decoration:none;
+}
+
+/* layout */
+
+.main-layout{
+display:flex;
+}
+
+/* sidebar */
+
+.sidebar{
+width:220px;
+background:#2d2d35;
+padding:20px;
+}
+
+.sidebar ul{
+list-style:none;
+padding:0;
+}
+
+.sidebar li{
+padding:8px 0;
+}
+
+.playlist-btn{
+margin-top:15px;
+background:#ff2f6d;
+border:none;
+padding:10px;
+color:white;
+border-radius:5px;
+}
+
+/* account */
+
+.account-content{
+flex:1;
+padding:40px;
+}
+
+.profile-grid{
+display:flex;
+gap:20px;
+}
+
+.profile-card,
+.devices-card,
+.subscription-card,
+.settings-card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+padding:20px;
+border-radius:12px;
+margin-bottom:20px;
+}
+
+.avatar{
+width:80px;
+height:80px;
+border-radius:50%;
+border:3px solid white;
+}
+
+.profile-info{
+display:flex;
+gap:20px;
+}
+
+button{
+background:#e91e63;
+border:none;
+padding:10px 18px;
+color:white;
+border-radius:6px;
+margin:5px;
+cursor:pointer;
+}
+
+.logout{
+background:#888;
+}

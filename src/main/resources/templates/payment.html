@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Payment</title>
+
+<link rel="stylesheet" th:href="@{/css/payment.css}">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">🎵 TUNE HIVE</div>
+    <input type="text" placeholder="Search">
+    <div class="nav-right">Music language ▾ | Login ▾</div>
+</div>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h4>BROWSE</h4>
+        <p>New Release</p>
+        <p>Top Charts</p>
+        <p>Top Playlists</p>
+        <p>Podcasts</p>
+        <p>Top Artists</p>
+
+        <h4>LIBRARY</h4>
+        <p>History</p>
+        <p>Liked Songs</p>
+    </aside>
+
+    <!-- PAYMENT BOX -->
+    <main class="content">
+
+        <div class="payment-box">
+
+            <button class="upi-btn">Pay with UPI</button>
+
+            <p class="or">Or</p>
+
+            <input type="email" placeholder="Email">
+
+            <h2>Payment Method</h2>
+
+            <label>Card Information</label>
+            <input type="text" placeholder="1234 1234 1234 1234">
+
+            <label>Card Holder Name</label>
+            <input type="text" placeholder="Full name on card">
+
+            <div class="row">
+                <input type="text" placeholder="MM/YY">
+                <input type="text" placeholder="CVV">
+            </div>
+
+            <label>Country/Region</label>
+            <input type="text" placeholder="India">
+
+            <button class="subscribe-btn" onclick="completePayment()">Subscribe Now</button>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <div>
+                <p>Top Artists</p>
+                <p>Arijit Singh</p>
+                <p>Neha Kakkar</p>
+            </div>
+
+            <div>
+                <p>Company</p>
+                <p>About</p>
+                <p>Help</p>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+<script>
+function completePayment(){
+    window.location.href = "/payment-success";
+}
+</script>
+</body>
+</html>

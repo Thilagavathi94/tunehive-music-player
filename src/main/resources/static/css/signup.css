@@ -1,0 +1,127 @@
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+/* FULL SCREEN BODY */
+body{
+font-family:Arial;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#f5f5f5;
+}
+
+/* MAIN CONTAINER */
+.signup-container{
+width:90%;
+max-width:1100px;
+height:80vh;
+display:flex;
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+
+/* LEFT SIDE */
+.left{
+flex:1;
+padding:50px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+.left h1{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.left p{
+color:#555;
+margin-bottom:10px;
+}
+
+/* INPUT */
+.left input{
+width:100%;
+padding:12px;
+margin:15px 0;
+border-radius:25px;
+border:1px solid #ccc;
+}
+
+/* BUTTON */
+.continue-btn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:25px;
+background:#e91e63;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+/* TERMS */
+.terms{
+font-size:12px;
+margin-top:10px;
+}
+
+/* CHECKBOX */
+.checkbox{
+margin-top:10px;
+font-size:13px;
+}
+
+/* OR */
+.or{
+text-align:center;
+margin:20px 0;
+}
+
+/* SOCIAL */
+.social{
+display:flex;
+gap:10px;
+}
+
+.social button{
+flex:1;
+padding:10px;
+border:1px solid #e91e63;
+background:white;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* LOGIN TEXT */
+.login-text{
+margin-top:15px;
+}
+
+.login-text span{
+color:#e91e63;
+cursor:pointer;
+}
+
+/* RIGHT SIDE */
+.right{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+background:white;
+}
+
+.right img{
+width:80%;
+max-height:80%;
+object-fit:contain;
+
+}

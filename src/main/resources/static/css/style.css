@@ -1,0 +1,466 @@
+/* GLOBAL */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI', sans-serif;
+}
+
+body{
+background:url("/images/music-bg.jpg");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+color:white;
+overflow-x:hidden;
+}
+
+/* APP */
+.app{
+display:flex;
+flex-direction:column;
+min-height:100vh;
+}
+
+/* NAVBAR */
+.navbar{
+height:70px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 40px;
+
+background:rgba(0,0,0,0.7);
+backdrop-filter:blur(10px);
+
+box-shadow:0 4px 12px rgba(0,0,0,0.6);
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#ff2e74;
+letter-spacing:1px;
+}
+
+.menu a{
+margin-right:20px;
+font-size:18px;
+color:white;
+text-decoration:none;
+cursor:pointer;
+transition:0.3s;
+}
+
+.menu a:hover{
+color:#ff2e74;
+}
+
+/* SEARCH */
+.search input{
+width:320px;
+height:36px;
+border-radius:25px;
+border:none;
+padding:0 15px;
+background:#f2f2f2;
+outline:none;
+}
+
+/* NAV RIGHT */
+.nav-right a{
+margin-left:20px;
+font-size:15px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.nav-right a:hover{
+color:#ff2e74;
+}
+
+/* LAYOUT */
+.layout{
+display:flex;
+flex:1;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+padding:25px;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(10px);
+}
+
+.sidebar h4{
+margin:15px 0;
+font-size:13px;
+color:white;
+letter-spacing:1px;
+}
+
+.sidebar ul{
+list-style:none;
+padding-left:0;
+text-decoration: none;
+color: white;
+}
+
+.sidebar li{
+padding:10px 5px;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+border-radius:6px;
+text-decoration: none;
+color: white;
+}
+
+.sidebar li:hover{
+background:rgba(255,255,255,0.1);
+color:#ff2e74;
+transform:translateX(5px);
+}
+
+/* ACTIVE ITEM (optional future use) */
+.sidebar li.active{
+background:#ff2e74;
+color:white;
+}
+
+/* PLAYLIST BUTTON */
+.playlist{
+margin-top:20px;
+padding:10px;
+width:100%;
+background:#ff2e74;
+border:none;
+border-radius:20px;
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.playlist:hover{
+background:#ff4d88;
+}
+
+/* MAIN CONTENT */
+.content{
+flex:1;
+padding:30px;
+overflow-y:auto;
+}
+
+.content h3{
+margin-top:25px;
+margin-bottom:10px;
+font-size:20px;
+}
+
+/* ROW */
+.row{
+display:flex;
+gap:20px;
+overflow-x:auto;
+padding-bottom:15px;
+scroll-behavior:smooth;
+}
+
+/* IMAGE */
+.row img{
+width:160px;
+height:220px;
+object-fit:cover;
+border-radius:10px;
+cursor:pointer;
+transition:0.4s;
+}
+
+.row img:hover{
+transform:scale(1.1);
+box-shadow:0 10px 20px rgba(0,0,0,0.5);
+}
+
+/* SCROLLBAR */
+.row::-webkit-scrollbar{
+height:6px;
+}
+.row::-webkit-scrollbar-thumb{
+background:#888;
+border-radius:5px;
+}
+
+/* MOVIE CARD */
+.movie-card{
+position:relative;
+width:160px;
+height:220px;
+border-radius:10px;
+overflow:hidden;
+cursor:pointer;
+}
+
+.movie-card img{
+width:100%;
+height:100%;
+object-fit:cover;
+transition:0.3s;
+}
+
+.movie-card:hover img{
+transform:scale(1.1);
+}
+
+/* OVERLAY */
+.overlay{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:rgba(0,0,0,0.5);
+opacity:0;
+transition:0.3s;
+}
+
+.movie-card:hover .overlay{
+opacity:1;
+}
+
+/* PLAY BUTTON */
+.play-btn{
+width:50px;
+height:50px;
+border-radius:50%;
+border:none;
+background:#ff2e74;
+color:white;
+font-size:20px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.play-btn:hover{
+transform:scale(1.1);
+}
+
+/* WISHLIST */
+.wishlist{
+position:absolute;
+bottom:10px;
+right:10px;
+font-size:20px;
+color:white;
+cursor:pointer;
+}
+
+/* FOOTER */
+.site-footer{
+margin-top:40px;
+padding:40px;
+background:rgba(0,0,0,0.7);
+backdrop-filter:blur(10px);
+}
+
+/* FOOTER GRID */
+.footer-container{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:30px;
+}
+
+/* FOOTER TEXT */
+.footer-col h4{
+margin-bottom:10px;
+font-size:16px;
+}
+
+.footer-col p{
+font-size:14px;
+color:#ccc;
+margin:5px 0;
+cursor:pointer;
+transition:0.2s;
+}
+
+.footer-col p:hover{
+color:#ff2e74;
+}
+
+/* FOOTER BOTTOM */
+.footer-bottom{
+margin-top:30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:12px;
+color:#bbb;
+}
+
+/* SOCIAL */
+.social{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.social img{
+width:22px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.social img:hover{
+transform:scale(1.2);
+}
+
+/* POPUP */
+.language-popup{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+background:rgba(0,0,0,0.6);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.language-box{
+width:320px;
+background:#fff;
+color:#333;
+padding:25px;
+border-radius:8px;
+}
+
+.language-box h3{
+margin-bottom:5px;
+}
+
+.language-list{
+display:flex;
+flex-direction:column;
+gap:8px;
+margin-bottom:20px;
+}
+
+.update-btn{
+width:100%;
+background:#ff2e74;
+border:none;
+padding:10px;
+color:white;
+border-radius:20px;
+cursor:pointer;
+}
+
+/* LOGIN DROPDOWN */
+.login-menu{
+position:relative;
+display:inline-block;
+}
+
+.login-dropdown{
+position:absolute;
+top:35px;
+right:0;
+width:180px;
+background:#fff;
+color:#333;
+border-radius:6px;
+display:none;
+box-shadow:0 5px 20px rgba(0,0,0,0.3);
+z-index:9999;
+}
+
+.login-dropdown a{
+padding:10px 15px;
+text-decoration:none;
+color:#333;
+font-size:14px;
+display:block;
+}
+
+.login-dropdown a:hover{
+background:#f2f2f2;
+}
+/* SLIDER ROW */
+#latestSection .row{
+display:flex;
+gap:15px;
+overflow:hidden; /* hide scroll */
+scroll-behavior:smooth;
+}
+
+/* make images in one line */
+#latestSection .row img{
+min-width:140px;
+flex-shrink:0;
+}
+/* CARD */
+.card{
+position:relative;
+width:140px;
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+}
+
+/* BUTTONS */
+.card-actions{
+position:absolute;
+bottom:10px;
+left:0;
+right:0;
+display:flex;
+justify-content:space-between;
+padding:0 10px;
+}
+
+.card-actions button{
+background:rgba(0,0,0,0.7);
+border:none;
+color:white;
+padding:5px 8px;
+border-radius:50%;
+cursor:pointer;
+}
+
+.card-actions button:hover{
+background:#1db954;
+}
+.sidebar-menu{
+list-style:none;
+padding:0;
+}
+
+.sidebar-menu li{
+padding:15px;
+font-size:18px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.sidebar-menu li:hover{
+background:#282828;
+}
+
+.sidebar-menu li.active{
+background:#e91e63;
+border-radius:8px;
+}

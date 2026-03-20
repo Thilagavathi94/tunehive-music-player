@@ -1,0 +1,75 @@
+body{
+margin:0;
+font-family:Arial;
+background:url('/images/music-bg.jpg') center/cover no-repeat;
+color:white;
+}
+
+/* NAVBAR */
+.navbar{
+display:flex;
+justify-content:space-between;
+padding:15px;
+background:rgba(0,0,0,0.8);
+}
+
+/* LAYOUT */
+.layout{
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:220px;
+background:rgba(0,0,0,0.9);
+padding:20px;
+height:100vh;
+}
+
+/* CONTENT */
+.content{
+flex:1;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+/* IMAGE */
+.album-img{
+width:200px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+/* CONTROLS */
+.controls{
+margin-top:20px;
+}
+
+.controls button{
+margin:10px;
+padding:10px;
+border:none;
+border-radius:50%;
+background:#e91e63;
+color:white;
+cursor:pointer;
+}
+.song-list{
+margin-top:30px;
+width:300px;
+}
+
+.song-item{
+padding:10px;
+background:rgba(255,255,255,0.1);
+margin:8px 0;
+border-radius:8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.song-item:hover{
+background:#e91e63;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Success</title>
+
+<link rel="stylesheet" th:href="@{/css/success.css}">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="logo">🎵 TUNE HIVE</div>
+    <input type="text" placeholder="Search">
+    <div class="nav-right">
+        <a href="#">Music</a>
+        <a href="#">Podcasts</a>
+        <a href="#">Login</a>
+    </div>
+</header>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h4>BROWSE</h4>
+        <p>New Release</p>
+        <p>Top Charts</p>
+        <p>Top Playlists</p>
+        <p>Podcasts</p>
+        <p>Top Artists</p>
+
+        <h4>LIBRARY</h4>
+        <p>History</p>
+        <p>Liked Songs</p>
+        <p>Albums</p>
+    </aside>
+
+    <!-- CENTER CARD -->
+    <main class="content">
+
+        <div class="success-card">
+            <h1>Payment Successful! 🎉</h1>
+            <p>Your plan activated successfully</p>
+
+            <h3>Plan Details</h3>
+
+            <p><strong>Plan:</strong> <span th:text="${plan}"></span></p>
+            <p><strong>Amount:</strong> <span th:text="${amount}"></span></p>
+
+            <button onclick="goToPlayer()">Go to Player</button>
+        </div>
+
+    </main>
+</div>
+
+<script>
+function goToPlayer(){
+    window.location.href="/player";
+}
+</script>
+
+</body>
+</html>

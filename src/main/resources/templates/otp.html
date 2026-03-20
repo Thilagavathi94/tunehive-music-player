@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>OTP</title>
+<link rel="stylesheet" th:href="@{/css/signup.css}">
+</head>
+
+<body>
+
+<div class="signup-container">
+
+    <div class="left">
+
+        <h1>Enter your 6-Digit Code</h1>
+
+        <p>
+            Sent to: <b th:text="${mobile}"></b>
+        </p>
+
+        <!-- ERROR MESSAGE -->
+        <p style="color:red;" th:text="${error}"></p>
+
+        <form action="/verify-otp" method="post">
+            <input type="text" name="userOtp" placeholder="Enter OTP" required>
+
+            <button class="continue-btn">Log in</button>
+        </form>
+
+    </div>
+
+    <div class="right">
+        <img src="/images/music-banner.png">
+    </div>
+
+</div>
+
+</body>
+</html>

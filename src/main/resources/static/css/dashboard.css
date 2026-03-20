@@ -1,0 +1,155 @@
+body{
+margin:0;
+font-family:Arial;
+background:url('/images/music-bg.jpg') center/cover no-repeat;
+color:white;
+}
+
+/* NAVBAR */
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:rgba(0,0,0,0.85);
+position:sticky;
+top:0;
+}
+
+.navbar input{
+padding:8px;
+border-radius:20px;
+border:none;
+width:250px;
+}
+
+/* LAYOUT */
+.layout{
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:220px;
+background:rgba(0,0,0,0.9);
+padding:20px;
+position:fixed;
+top:60px;
+bottom:0;
+}
+
+.sidebar p{
+padding:10px;
+cursor:pointer;
+}
+
+.sidebar p:hover{
+background:#333;
+}
+
+/* CONTENT */
+.content{
+margin-left:240px;
+padding:20px;
+}
+
+/* ALBUM */
+.album-banner{
+display:flex;
+gap:40px;
+background:rgba(0,0,0,0.5);
+backdrop-filter:blur(12px);
+padding:30px;
+border-radius:20px;
+margin-bottom:30px;
+}
+
+.album-info img{
+width:150px;
+border-radius:10px;
+}
+
+.play-btn{
+background:#e91e63;
+padding:10px 20px;
+border:none;
+border-radius:20px;
+color:white;
+cursor:pointer;
+}
+
+/* SONG LIST */
+.album-songs{
+flex:1;
+}
+
+.song-row{
+display:flex;
+justify-content:space-between;
+padding:12px;
+border-bottom:1px solid #444;
+cursor:pointer;
+}
+
+.song-row:hover{
+background:rgba(255,255,255,0.1);
+}
+
+/* ROW */
+.row{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.row img{
+width:150px;
+height:150px;
+border-radius:10px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.row img:hover{
+transform:scale(1.1);
+}
+
+/* PLAYER */
+.player{
+position:fixed;
+bottom:0;
+width:100%;
+background:#111;
+padding:10px;
+text-align:center;
+}
+
+/* POPUP */
+.popup{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+justify-content:center;
+align-items:center;
+}
+
+.popup-box{
+background:#111;
+padding:30px;
+border-radius:15px;
+text-align:center;
+}
+
+.popup button{
+margin-top:15px;
+padding:10px 20px;
+background:#e91e63;
+border:none;
+border-radius:20px;
+color:white;
+cursor:pointer;
+}

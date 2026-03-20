@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:inline="javascript">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+
+<link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="logo">🎵 TUNE HIVE</div>
+
+    <input type="text" placeholder="Search">
+
+    <div class="nav-right">
+        <a href="#">Music language ▾</a>
+        <a href="/logout">Logout</a>
+    </div>
+</header>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h4>BROWSE</h4>
+        <p>New Release</p>
+        <p>Top Charts</p>
+        <p>Top Playlists</p>
+        <p>Podcasts</p>
+        <p>Top Artists</p>
+
+        <h4>LIBRARY</h4>
+        <p>History</p>
+        <p>Liked Songs</p>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+
+        <!-- ALBUM -->
+        <section class="album-banner">
+
+            <div class="album-info">
+                <img src="/images/majili.jpg">
+                <h1>MAJILI</h1>
+                <p>Various Artists • 7 songs</p>
+                <button class="play-btn" onclick="playSong()">Play</button>
+            </div>
+
+            <div class="album-songs">
+
+                <div class="song-row" onclick="playSong()">
+                    <span>1</span><span>Majili</span><span>♡</span><span>5:00</span>
+                </div>
+
+                <div class="song-row" onclick="playSong()">
+                    <span>2</span><span>Barbad</span><span>♡</span><span>5:00</span>
+                </div>
+
+                <div class="song-row" onclick="playSong()">
+                    <span>3</span><span>Tum Ho</span><span>♡</span><span>5:00</span>
+                </div>
+
+                <div class="song-row" onclick="playSong()">
+                    <span>4</span><span>Dhun</span><span>♡</span><span>5:00</span>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ROW -->
+        <h3>You Might Like</h3>
+        <div class="row">
+            <img src="/images/movie1.jpg">
+            <img src="/images/movie2.jpg">
+            <img src="/images/movie3.jpg">
+            <img src="/images/movie4.jpg">
+            <img src="/images/movie5.jpg">
+        </div>
+
+    </main>
+</div>
+
+<!-- PLAYER -->
+<div class="player">
+    <button onclick="playSong()">▶ Play</button>
+</div>
+
+<audio id="audioPlayer">
+    <source src="/songs/majili.mp3" type="audio/mpeg">
+</audio>
+
+<!-- LIMIT POPUP -->
+<div id="limitPopup" class="popup">
+    <div class="popup-box">
+        <h2>Limit Reached 🚫</h2>
+        <p>You need Premium to continue</p>
+        <button onclick="goToPlans()">Go to Plans</button>
+    </div>
+</div>
+
+<script>
+
+let playCount = 0;
+
+// 🔥 get from backend
+let isPremium = /*[[${session.premium}]]*/ false;
+
+function playSong(){
+
+    let audio = document.getElementById("audioPlayer");
+
+    if(isPremium){
+        audio.play();
+        return;
+    }
+
+    if(playCount === 0){
+        audio.currentTime = 0;
+        audio.play();
+        playCount++;
+    } else {
+        document.getElementById("limitPopup").style.display = "flex";
+    }
+}
+
+function goToPlans(){
+    window.location.href = "/plans";
+}
+
+</script>
+
+</body>
+</html>
