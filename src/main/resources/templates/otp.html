@@ -25,7 +25,11 @@
         <p style="color:green;" th:text="${otp}"></p>
 
         <form action="/verify-otp" method="post">
-            <input type="text" name="userOtp" placeholder="Enter OTP" required>
+           <input type="text" name="userOtp"
+       pattern="[0-9]{6}"
+       maxlength="6"
+       placeholder="Enter OTP"
+       required>
             <button class="continue-btn">Log in</button>
         </form>
 

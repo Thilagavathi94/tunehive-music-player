@@ -73,7 +73,13 @@ public String verifyOtp(@RequestParam("userOtp") String userOtp,
 }
 
     try {
-        int enteredOtp = Integer.parseInt(userOtp);
+        if(userOtp == null || !userOtp.matches("\\d{6}")){
+    model.addAttribute("error", "Enter valid 6-digit OTP");
+    model.addAttribute("mobile", mobile);
+    return "otp";
+}
+
+int enteredOtp = Integer.parseInt(userOtp);
 
         if (enteredOtp == sessionOtp) {
 
