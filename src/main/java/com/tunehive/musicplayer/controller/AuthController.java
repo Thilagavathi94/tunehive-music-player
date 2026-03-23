@@ -99,6 +99,7 @@ public String verifyOtp(@RequestParam("userOtp") String userOtp,
 
     } catch (Exception e) {
         model.addAttribute("error", "Invalid OTP format");
+         model.addAttribute("mobile", mobile); 
         return "otp";
     }
 
