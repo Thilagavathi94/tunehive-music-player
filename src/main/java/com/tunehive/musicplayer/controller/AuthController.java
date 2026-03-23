@@ -105,7 +105,7 @@ int enteredOtp = Integer.parseInt(userOtp);
 
     } catch (Exception e) {
         model.addAttribute("error", "Invalid OTP format");
-         model.addAttribute("mobile", mobile); 
+         
         return "otp";
     }
 
