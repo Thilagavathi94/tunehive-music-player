@@ -154,40 +154,79 @@ public String checkUser1(HttpSession session) {
     // ❌ not logged in → go signup
     return "redirect:/signup";
 }
-@GetMapping("/logout")
-public String logout(HttpSession session){
 
-    session.invalidate(); // 🔥 clear session
 
-    return "redirect:/"; // go to home page
-}
-@GetMapping("/account")
-public String accountPage(HttpSession session, Model model){
-
-    String mobile = (String) session.getAttribute("mobile");
-
-    if(mobile == null){
-        return "redirect:/signup";
-    }
-
-    // get user from DB
-    User user = userRepo.findAllByMobile(mobile).get(0);
-
-    model.addAttribute("user", user);
-
-    return "account";
-}
 @GetMapping("/podcasts")
 public String podcastsPage(){
     return "podcasts";
 }
 @GetMapping("/history")
-public String historyPage(HttpSession session){
-
-    if(session.getAttribute("mobile") == null){
-        return "redirect:/signup";
-    }
-
+public String historyPage(){
     return "history";
+}
+@GetMapping("/wishlist")
+public String wishlistPage(){
+    return "wishlist";
+}
+@GetMapping("/albums")
+public String albumsPage(){
+    return "albums";
+}
+@GetMapping("/artists")
+public String artistsPage(){
+    return "artists";
+}
+@GetMapping("/playlist")
+public String playlistPage(){
+    return "playlist";
+}
+
+@GetMapping("/playlist-details")
+public String playlistDetails(){
+    return "playlist-details";
+}
+// ACCOUNT PAGE
+@GetMapping("/account")
+public String accountPage(){
+
+   
+
+    return "account";
+}
+
+
+// SETTINGS PAGE
+@GetMapping("/settings")
+public String settingsPage(){
+
+   
+    return "settings";
+}
+
+
+// UPDATE PROFILE
+@PostMapping("/update-profile")
+public String updateProfile(@RequestParam String mobile, HttpSession session){
+
+    String oldMobile = (String) session.getAttribute("mobile");
+
+    User user = userRepo.findAllByMobile(oldMobile).get(0);
+
+    user.setMobile(mobile);
+    userRepo.save(user);
+
+    session.setAttribute("mobile", mobile);
+
+    return "redirect:/account";
+}
+
+
+// LOGOUT
+@GetMapping("/custom-logout")
+public String logout(HttpSession session){
+
+    session.invalidate(); // clear session
+
+    return "logout"; // 👈 show logout.html
 }
 }

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<title>Artists</title>
+
+<link rel="stylesheet" th:href="@{/css/style.css}">
+
+<style>
+
+/* TITLE */
+.page-title{
+font-size:24px;
+margin-bottom:20px;
+}
+
+/* GRID */
+.artist-grid{
+display:flex;
+flex-wrap:wrap;
+gap:25px;
+}
+
+/* CARD */
+.artist-card{
+width:160px;
+text-align:center;
+cursor:pointer;
+}
+
+.artist-card img{
+width:160px;
+height:160px;
+border-radius:50%; /* 🔥 circle */
+object-fit:cover;
+transition:0.3s;
+}
+
+.artist-card img:hover{
+transform:scale(1.08);
+box-shadow:0 0 15px rgba(255,46,99,0.6);
+}
+
+.artist-name{
+margin-top:10px;
+font-size:15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+
+<div class="logo">🎧 TUNE HIVE</div>
+
+<nav class="menu">
+<a href="/player">Music</a>
+<a href="/podcasts">Podcasts</a>
+<a href="/plans">Pro</a>
+</nav>
+
+<div class="search">
+<input type="text" placeholder="Search">
+</div>
+
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+<h4>BROWSE</h4>
+
+<ul class="sidebar-menu">
+<li onclick="location.href='/'">Home</li>
+<li onclick="location.href='/player'">Music</li>
+<li onclick="location.href='/albums'">Albums</li>
+<li onclick="location.href='/podcasts'">Podcasts</li>
+<li onclick="location.href='/artists'" class="active">Artists</li>
+</ul>
+
+<h4>LIBRARY</h4>
+<ul>
+<li onclick="location.href='/history'">History</li>
+<li onclick="location.href='/wishlist'">Wishlist</li>
+<li onclick="location.href='/albums'">Albums</li>
+</ul>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<h2 class="page-title">🎤 Top Artists</h2>
+
+<div class="artist-grid">
+
+<!-- ARTIST 1 -->
+<div class="artist-card" onclick="openArtist(0)">
+<img src="/images/movie31.jpg">
+<p class="artist-name">Arijit Singh</p>
+</div>
+
+<!-- ARTIST 2 -->
+<div class="artist-card" onclick="openArtist(1)">
+<img src="/images/movie32.jpg">
+<p class="artist-name">Shreya Ghoshal</p>
+</div>
+
+<!-- ARTIST 3 -->
+<div class="artist-card" onclick="openArtist(2)">
+<img src="/images/movie33.jpg">
+<p class="artist-name">Anirudh</p>
+</div>
+
+<!-- ARTIST 4 -->
+<div class="artist-card" onclick="openArtist(3)">
+<img src="/images/movie34.jpg">
+<p class="artist-name">Sid Sriram</p>
+</div>
+
+<!-- ARTIST 5 -->
+<div class="artist-card" onclick="openArtist(4)">
+<img src="/images/movie35.jpg">
+<p class="artist-name">Neha Kakkar</p>
+</div>
+
+<!-- ARTIST 6 -->
+<div class="artist-card" onclick="openArtist(5)">
+<img src="/images/movie36.jpg">
+<p class="artist-name">Yuvan Shankar Raja</p>
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+<script>
+
+// 👉 open artist → go to player
+function openArtist(index){
+    window.location.href="/player";
+}
+
+</script>
+
+</body>
+</html>

@@ -106,13 +106,27 @@ function goToPlayer(){
 // ❤️ WISHLIST BUTTON
 function addWishlist(btn){
 
-    if(btn.classList.contains("active")){
-        btn.classList.remove("active");
-        btn.innerText = "❤️";
-    }else{
-        btn.classList.add("active");
-        btn.innerText = "💚";
-    }
+let card = btn.closest(".card");
+let img = card.querySelector("img").src;
+
+// get existing wishlist
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+// check already exists
+if(wishlist.includes(img)){
+    // remove
+    wishlist = wishlist.filter(item => item !== img);
+    btn.innerText = "❤️";
+    btn.classList.remove("active");
+}else{
+    // add
+    wishlist.push(img);
+    btn.innerText = "💚";
+    btn.classList.add("active");
+}
+
+// save
+localStorage.setItem("wishlist", JSON.stringify(wishlist));
 }
 function showAllSections(){
 

@@ -1,58 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>History - Tune Hive</title>
-
-<link rel="stylesheet" th:href="@{/css/style.css}">
+<title>History</title>
 
 <style>
-
 body{
-margin:0;
-font-family:Arial;
-background:url('/images/music-bg.jpg') center/cover no-repeat;
+background:#111;
 color:white;
+font-family:Arial;
 }
 
-/* LAYOUT */
-.layout{
-display:flex;
+.container{
+padding:30px;
 }
 
-/* SIDEBAR */
-.sidebar{
-width:220px;
-background:rgba(0,0,0,0.9);
-height:100vh;
-padding:20px;
-position:fixed;
-top:60px;
-}
-
-.sidebar ul{
-list-style:none;
-padding:0;
-}
-
-.sidebar li{
-padding:12px;
-cursor:pointer;
-}
-
-.sidebar li:hover,
-.sidebar li.active{
-background:#e91e63;
-border-radius:8px;
-}
-
-/* CONTENT */
-.content{
-margin-left:240px;
-padding:20px;
-}
-
-/* HISTORY GRID */
 .row{
 display:flex;
 gap:20px;
@@ -61,15 +22,6 @@ flex-wrap:wrap;
 
 .card{
 width:180px;
-background:rgba(0,0,0,0.6);
-padding:10px;
-border-radius:10px;
-text-align:center;
-transition:0.3s;
-}
-
-.card:hover{
-transform:scale(1.05);
 }
 
 .card img{
@@ -77,140 +29,45 @@ width:100%;
 border-radius:10px;
 }
 
-.card h4{
-margin:10px 0;
+.song-name{
+margin-top:5px;
+font-size:14px;
 }
-
-/* BUTTONS */
-.card-actions{
-display:flex;
-justify-content:center;
-gap:10px;
-}
-
-.card-actions button{
-padding:6px 10px;
-border:none;
-border-radius:50%;
-cursor:pointer;
-background:#e91e63;
-color:white;
-}
-
 </style>
+
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<header class="navbar">
-<div class="logo">🎧 TUNE HIVE</div>
+<h2 style="padding:20px;">🎵 Recently Played</h2>
 
-<nav class="menu">
-<a href="/player">Music</a>
-<a href="/podcasts">Podcasts</a>
-<a href="/plans">Pro</a>
-</nav>
-
-<div class="search">
-<input type="text" placeholder="Search">
-</div>
-
-<div class="nav-right">
-<a href="/account">My Profile</a>
-<a href="/logout">Logout</a>
-</div>
-</header>
-
-<div class="layout">
-
-<!-- SIDEBAR -->
-<aside class="sidebar">
-
-<h4>BROWSE</h4>
-<ul>
-<li onclick="location.href='/'">Home</li>
-<li onclick="location.href='/player'">Music</li>
-<li onclick="location.href='/podcasts'">Podcasts</li>
-<li onclick="location.href='/plans'">Pro</li>
-</ul>
-
-<h4>LIBRARY</h4>
-<ul>
-<li class="active">History</li>
-<li onclick="location.href='/wishlist'">Liked Songs</li>
-<li>Albums</li>
-<li>Artists</li>
-</ul>
-
-</aside>
-
-<!-- CONTENT -->
-<main class="content">
-
-<h2>🕒 Recently Played</h2>
-
-<div class="row">
-
-<div class="card">
-<img src="/images/movie1.jpg">
-<h4>Majili</h4>
-<div class="card-actions">
-<button onclick="playSong()">▶</button>
-<button onclick="addWishlist(this)">❤️</button>
-</div>
-</div>
-
-<div class="card">
-<img src="/images/movie2.jpg">
-<h4>Barbad</h4>
-<div class="card-actions">
-<button onclick="playSong()">▶</button>
-<button onclick="addWishlist(this)">❤️</button>
-</div>
-</div>
-
-<div class="card">
-<img src="/images/movie3.jpg">
-<h4>Tum Ho Tum</h4>
-<div class="card-actions">
-<button onclick="playSong()">▶</button>
-<button onclick="addWishlist(this)">❤️</button>
-</div>
-</div>
-
-<div class="card">
-<img src="/images/movie4.jpg">
-<h4>Hali</h4>
-<div class="card-actions">
-<button onclick="playSong()">▶</button>
-<button onclick="addWishlist(this)">❤️</button>
-</div>
-</div>
-
-</div>
-
-</main>
-
+<div class="container">
+<div class="row" id="historyContainer"></div>
 </div>
 
 <script>
 
-// play
-function playSong(){
-alert("Playing from history 🎵");
-}
+let history = JSON.parse(localStorage.getItem("history")) || [];
 
-// wishlist
-function addWishlist(btn){
+let container = document.getElementById("historyContainer");
 
-if(btn.classList.contains("active")){
-btn.classList.remove("active");
-btn.innerText="❤️";
+if(history.length === 0){
+container.innerHTML = "<p>No songs played yet</p>";
 }else{
-btn.classList.add("active");
-btn.innerText="💚";
-}
+
+history.forEach(song=>{
+
+let div = document.createElement("div");
+div.className="card";
+
+div.innerHTML = `
+<img src="${song.img}">
+<p class="song-name">${song.title}</p>
+`;
+
+container.appendChild(div);
+
+});
 
 }
 

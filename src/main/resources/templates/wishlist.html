@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Wishlist</title>
+
+<style>
+body{
+background:#111;
+color:white;
+font-family:Arial;
+background:url("/images/music-bg.jpg");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+.container{
+padding:30px;
+}
+
+.row{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.card{
+width:160px;
+text-align:center;
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+}
+
+.remove-btn{
+margin-top:8px;
+padding:5px 10px;
+background:#ff2e63;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2 style="padding:20px;">❤️ My Wishlist</h2>
+
+<div class="container">
+<div class="row" id="wishlistContainer"></div>
+</div>
+
+<script>
+
+function loadWishlist(){
+
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+let container = document.getElementById("wishlistContainer");
+container.innerHTML = "";
+
+// empty
+if(wishlist.length === 0){
+container.innerHTML = "<p>No songs in wishlist</p>";
+return;
+}
+
+// show items
+wishlist.forEach((img,index)=>{
+
+let div = document.createElement("div");
+div.className="card";
+
+div.innerHTML = `
+<img src="${img}">
+<button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+`;
+
+container.appendChild(div);
+
+});
+
+}
+
+// ❌ REMOVE FUNCTION
+function removeItem(index){
+
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+// remove item
+wishlist.splice(index,1);
+
+// save again
+localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+// reload UI
+loadWishlist();
+}
+
+// load on page open
+loadWishlist();
+
+</script>
+
+</body>
+</html>

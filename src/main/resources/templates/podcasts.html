@@ -1,18 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 
 <meta charset="UTF-8">
-<title>Tune Hive</title>
+<title>Podcasts</title>
 
 <link rel="stylesheet" th:href="@{/css/style.css}">
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<style>
+
+/* TITLE */
+.page-title{
+font-size:24px;
+margin-bottom:20px;
+}
+
+/* GRID */
+.podcast-grid{
+display:flex;
+flex-wrap:wrap;
+gap:25px;
+}
+
+/* CARD */
+.podcast-card{
+width:200px;
+cursor:pointer;
+}
+
+.podcast-card img{
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:10px;
+transition:0.3s;
+}
+
+.podcast-card img:hover{
+transform:scale(1.05);
+box-shadow:0 0 15px rgba(255,46,99,0.6);
+}
+
+.podcast-title{
+margin-top:8px;
+font-size:15px;
+}
+
+.podcast-author{
+font-size:13px;
+color:#aaa;
+}
+
+</style>
 
 </head>
 
 <body>
-
-<div class="app">
 
 <!-- NAVBAR -->
 <header class="navbar">
@@ -21,7 +64,7 @@
 
 <nav class="menu">
 <a href="/player">Music</a>
-<a>Podcasts</a>
+<a href="/podcasts">Podcasts</a>
 <a href="/plans">Pro</a>
 </nav>
 
@@ -29,26 +72,6 @@
 <input type="text" placeholder="Search">
 </div>
 
-<div class="nav-right">
-
-<a href="javascript:void(0)" onclick="openLanguagePopup()"style="text-decoration:none; color:white;">Music language ▾</a>
-
-<div class="login-menu">
-<a href="javascript:void(0)" onclick="toggleLoginMenu()"style="text-decoration:none; color:white;">Login ▾</a>
-
-<div id="loginDropdown" class="login-dropdown">
-<a href="/player">Music</a>
-<a href="/account">My Profile</a>
-<a href="#">History</a>
-<a href="#">Account Setting</a>
-<a href="#">Help & Support</a>
-<a href="/logout">Log out</a>
-</div>
-</div>
-
-<a href="/signup" style="text-decoration:none; color:white;">Sign up▾</a>
-
-</div>
 </header>
 
 <div class="layout">
@@ -57,459 +80,86 @@
 <aside class="sidebar">
 
 <h4>BROWSE</h4>
-<ul>
+
 <ul class="sidebar-menu">
-
-<li onclick="showSection(event,'latestSection')">New Release ▾</li>
-<li onclick="showSection(event,'trendingSection')">Trending ▾</li>
-<li onclick="showSection(event,'topChartsSection')">Top Charts ▾</li>
-<li onclick="showSection(event,'topPlaylistsSection')">Top Playlists ▾</li>
-<li onclick="showSection(event,'podcastsSection')">Podcasts ▾</li>
-<li onclick="showSection(event,'topArtistsSection')">Top Artists ▾</li>
-<li onclick="showAllSections()">Home</li>
-
-</ul>
+<li onclick="location.href='/'">Home</li>
+<li onclick="location.href='/player'">Music</li>
+<li onclick="location.href='/albums'">Albums</li>
+<li onclick="location.href='/podcasts'" class="active">Podcasts</li>
 </ul>
 
 <h4>LIBRARY</h4>
 <ul>
-<li style="padding:15px;font-size:20px;">History▾</li>
-<li style="padding:15px;font-size:20px;">Liked Songs▾</li>
-<li style="padding:15px;font-size:20px;">Albums▾</li>
-<li style="padding:15px;font-size:20px;">Podcasts▾</li>
-<li style="padding:15px;font-size:20px;">Artists▾</li>
+<li onclick="location.href='/history'">History</li>
+<li onclick="location.href='/wishlist'">Wishlist</li>
+<li onclick="location.href='/albums'">Albums</li>
 </ul>
-
-<button class="playlist">+ New Play List</button>
 
 </aside>
 
 <!-- MAIN CONTENT -->
 <main class="content">
 
-<!-- Latest -->
-<div id="latestSection">
-<h3>Latest Songs</h3>
-<div class="row">
-<div class="card">
-    <img src="/images/movie1.jpg">
+<h2 class="page-title">🎙 Podcasts</h2>
 
-    <div class="card-actions">
-        
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie2.jpg" data-lang="tamil">
+<div class="podcast-grid">
 
-    <div class="card-actions">
-            <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie3.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie4.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie5.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie6.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie30.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie29.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie28.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
+<!-- PODCAST 1 -->
+<div class="podcast-card" onclick="openPodcast(0)">
+<img src="/images/movie25.jpg">
+<p class="podcast-title">Motivation Talks</p>
+<p class="podcast-author">By Sandeep Maheshwari</p>
 </div>
 
-<!-- Trending -->
-<div id="trendingSection">
-<h3>Trending Now</h3>
-<div class="row">
-<div class="card">
-    <img src="/images/movie1.jpg">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie8.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-         <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie9.jpg" data-lang="tamil">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie10.jpg" data-lang="hindi">
-
-    <div class="card-actions">
-        <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie11.jpg" data-lang="hindi">
-
-    <div class="card-actions">
-         <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie27.jpg" data-lang="hindi">
-
-    <div class="card-actions">
-         <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie26.jpg" data-lang="hindi">
-
-    <div class="card-actions">
-         <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie25.jpg" data-lang="hindi">
-
-    <div class="card-actions">
-         <button onclick="goToPlayer()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
+<!-- PODCAST 2 -->
+<div class="podcast-card" onclick="openPodcast(1)">
+<img src="/images/movie26.jpg">
+<p class="podcast-title">Tech Stories</p>
+<p class="podcast-author">By Tech Guru</p>
 </div>
 
-<!-- Top Charts -->
-<div id="topChartsSection">
-<h3>Top Charts</h3>
-<div class="row">
-<div class="card">
-    <img src="/images/movie13.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie14.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie15.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie16.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie17.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie18.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie24.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie23.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie22.jpg" data-lang="telugu">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
+<!-- PODCAST 3 -->
+<div class="podcast-card" onclick="openPodcast(2)">
+<img src="/images/movie27.jpg">
+<p class="podcast-title">Startup Journey</p>
+<p class="podcast-author">By Founders Club</p>
 </div>
 
-<!-- Top Playlists -->
-<div id="topPlaylistsSection">
-<h3>Top Playlists</h3>
-<div class="row">
-<div class="card">
-    <img src="/images/movie19.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie20.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie21.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie22.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie23.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie24.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie1.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie2.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
-<div class="card">
-    <img src="/images/movie3.jpg" data-lang="tamil">
-    <div class="card-actions">
-        <button onclick="playClick()">▶</button>
-        <button onclick="addWishlist(this)">❤️</button>
-    </div>
-</div>
+<!-- PODCAST 4 -->
+<div class="podcast-card" onclick="openPodcast(3)">
+<img src="/images/movie28.jpg">
+<p class="podcast-title">Life Lessons</p>
+<p class="podcast-author">By Life Coach</p>
 </div>
 
-<!-- Podcasts -->
-<div id="podcastsSection">
-<h3>Podcasts</h3>
-<div class="row">
-<img src="/images/movie25.jpg" data-lang="hindi">
-<img src="/images/movie26.jpg" data-lang="hindi">
-<img src="/images/movie27.jpg" data-lang="hindi">
-<img src="/images/movie28.jpg" data-lang="hindi">
-<img src="/images/movie29.jpg" data-lang="hindi">
-<img src="/images/movie30.jpg" data-lang="hindi">
-<img src="/images/movie6.jpg" data-lang="tamil">
-<img src="/images/movie5.jpg" data-lang="tamil">
-<img src="/images/movie4.jpg" data-lang="tamil">
-</div>
+<!-- PODCAST 5 -->
+<div class="podcast-card" onclick="openPodcast(4)">
+<img src="/images/movie29.jpg">
+<p class="podcast-title">Daily News</p>
+<p class="podcast-author">By News Channel</p>
 </div>
 
-<!-- Top Artists -->
-<div id="topArtistsSection">
-<h3>Top Artists</h3>
-<div class="row">
-<img src="/images/movie31.jpg" data-lang="tamil">
-<img src="/images/movie32.jpg" data-lang="tamil">
-<img src="/images/movie33.jpg" data-lang="tamil">
-<img src="/images/movie34.jpg" data-lang="tamil">
-<img src="/images/movie35.jpg" data-lang="tamil">
-<img src="/images/movie36.jpg" data-lang="tamil">
+<!-- PODCAST 6 -->
+<div class="podcast-card" onclick="openPodcast(5)">
+<img src="/images/movie30.jpg">
+<p class="podcast-title">Spiritual Talks</p>
+<p class="podcast-author">By Guruji</p>
 </div>
+
 </div>
 
 </main>
-</div>
-
-<!-- FULL FOOTER -->
-<footer class="site-footer">
-
-<div class="footer-container">
-
-<div class="footer-col">
-<h4>Top Artists</h4>
-<p>Neha Kakkar</p>
-<p>Arijit Singh</p>
-<p>Badshah</p>
-<p>Justin Bieber</p>
-<p>Ed Sheeran</p>
-<p>Shreya Ghoshal</p>
-<p>Sanam Puri</p>
-<p>Armaan Malik</p>
-</div>
-
-<div class="footer-col">
-<h4>Top Actors</h4>
-<p>Rajini</p>
-<p>Vijay</p>
-<p>Surya</p>
-<p>Prabhu</p>
-<p>Allu Arjun</p>
-<p>Ravi</p>
-</div>
-
-<div class="footer-col">
-<h4>Devotional Songs</h4>
-<p>Krishna</p>
-<p>Ganesh</p>
-<p>Hanuman</p>
-<p>Gayatri</p>
-<p>Durga</p>
-</div>
-
-<div class="footer-col">
-<h4>Language</h4>
-<p>Hindi songs</p>
-<p>Tamil songs</p>
-<p>Telugu songs</p>
-<p>Malayalam songs</p>
-<p>Odia songs</p>
-</div>
-
-<div class="footer-col">
-<h4>Artist Originals</h4>
-<p>Zaeden</p>
-<p>Doobey</p>
-<p>Badshah</p>
-<p>Indie Hits</p>
-<p>Lo-fi Beats</p>
-</div>
-
-<div class="footer-col">
-<h4>Company</h4>
-<p>About us</p>
-<p>Culture</p>
-<p>Blogs</p>
-<p>Jobs</p>
-<p>Press</p>
-<p>Advertise</p>
-<p>Terms & Privacy</p>
-<p>Help & Support</p>
-</div>
 
 </div>
 
-<div class="footer-bottom">
-<p>© 2025 Tune Hive Media Limited All rights Reserved</p>
+<script>
 
-<div class="social">
-<span>FOLLOW US</span>
-<img src="images/youtube.png">
-<img src="images/facebook.png">
-<img src="images/linkedin.png">
-<img src="images/twitter.png">
-</div>
+// 👉 open podcast (redirect to player)
+function openPodcast(index){
+    window.location.href="/player";
+}
 
-</div>
-
-</footer>
-
-</div>
-
-<!-- LANGUAGE POPUP -->
-<div id="languagePopup" class="language-popup">
-<div class="language-box">
-
-<h3>Select Language</h3>
-
-<div class="language-list">
-<label><input type="checkbox" value="tamil"> Tamil</label>
-<label><input type="checkbox" value="hindi"> Hindi</label>
-<label><input type="checkbox" value="telugu"> Telugu</label>
-<label><input type="checkbox" value="malayalam"> Malayalam</label>
-</div>
-
-<button onclick="applyFilters()" class="update-btn">Apply</button>
-
-</div>
-</div>
-
-<script src="js/script.js"></script>
+</script>
 
 </body>
 </html>

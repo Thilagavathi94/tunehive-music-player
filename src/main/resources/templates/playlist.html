@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<title>Playlists</title>
+
+<link rel="stylesheet" th:href="@{/css/style.css}">
+
+<style>
+
+/* TITLE */
+.page-title{
+font-size:24px;
+margin-bottom:20px;
+}
+
+/* CREATE BOX */
+.create-box{
+margin-bottom:20px;
+}
+
+.create-box input{
+padding:10px;
+width:250px;
+border-radius:20px;
+border:none;
+}
+
+.create-box button{
+padding:10px 20px;
+background:#ff2e63;
+border:none;
+color:white;
+border-radius:20px;
+margin-left:10px;
+cursor:pointer;
+}
+
+/* PLAYLIST GRID */
+.playlist-grid{
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+}
+
+/* CARD */
+.playlist-card{
+width:180px;
+padding:20px;
+background:#222;
+border-radius:10px;
+cursor:pointer;
+text-align:center;
+}
+
+.playlist-card:hover{
+background:#333;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+<div class="logo">🎧 TUNE HIVE</div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+<h4>BROWSE</h4>
+<ul class="sidebar-menu">
+<li onclick="location.href='/'">Home</li>
+<li onclick="location.href='/player'">Music</li>
+<li onclick="location.href='/playlist'" class="active">Playlists</li>
+</ul>
+
+<h4>LIBRARY</h4>
+<ul>
+<li onclick="location.href='/history'">History</li>
+<li onclick="location.href='/wishlist'">Wishlist</li>
+</ul>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<h2 class="page-title">🎶 My Playlists</h2>
+
+<!-- CREATE -->
+<div class="create-box">
+<input type="text" id="playlistName" placeholder="Enter playlist name">
+<button onclick="createPlaylist()">Create</button>
+</div>
+
+<!-- PLAYLIST LIST -->
+<div class="playlist-grid" id="playlistContainer"></div>
+
+</main>
+
+</div>
+
+<script>
+
+// CREATE PLAYLIST
+function createPlaylist(){
+
+let name = document.getElementById("playlistName").value;
+
+if(name === ""){
+    alert("Enter playlist name");
+    return;
+}
+
+let playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+
+playlists.push({
+    name:name,
+    songs:[]
+});
+
+localStorage.setItem("playlists", JSON.stringify(playlists));
+
+document.getElementById("playlistName").value="";
+
+loadPlaylists();
+}
+
+
+// LOAD PLAYLISTS
+function loadPlaylists(){
+
+let playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+
+let container = document.getElementById("playlistContainer");
+container.innerHTML="";
+
+playlists.forEach((pl,index)=>{
+
+let div = document.createElement("div");
+div.className="playlist-card";
+
+div.innerHTML = `
+<h3>${pl.name}</h3>
+<p>${pl.songs.length} songs</p>
+`;
+
+div.onclick = function(){
+    window.location.href = "/playlist-details?index="+index;
+};
+
+container.appendChild(div);
+
+});
+}
+
+loadPlaylists();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Playlist</title>
+
+<style>
+body{
+background:#111;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+.song{
+padding:10px;
+border-bottom:1px solid #444;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2 id="playlistTitle"></h2>
+
+<div id="songs"></div>
+
+<script>
+
+// get index
+let url = new URL(window.location.href);
+let index = url.searchParams.get("index");
+
+let playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+let playlist = playlists[index];
+
+document.getElementById("playlistTitle").innerText = playlist.name;
+
+let container = document.getElementById("songs");
+
+if(playlist.songs.length === 0){
+container.innerHTML = "<p>No songs</p>";
+}else{
+playlist.songs.forEach(song=>{
+    let div = document.createElement("div");
+    div.className="song";
+    div.innerText = song.title;
+    container.appendChild(div);
+});
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<title>Albums</title>
+
+<link rel="stylesheet" th:href="@{/css/style.css}">
+
+<style>
+
+/* PAGE TITLE */
+.page-title{
+font-size:24px;
+margin-bottom:20px;
+}
+
+/* ALBUM GRID */
+.album-grid{
+display:flex;
+flex-wrap:wrap;
+gap:25px;
+}
+
+/* ALBUM CARD */
+.album-card{
+width:180px;
+cursor:pointer;
+}
+
+.album-card img{
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:10px;
+transition:0.3s;
+}
+
+.album-card img:hover{
+transform:scale(1.05);
+box-shadow:0 0 15px rgba(255,46,99,0.6);
+}
+
+.album-name{
+margin-top:8px;
+font-size:15px;
+}
+
+.artist{
+font-size:13px;
+color:#aaa;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+
+<div class="logo">🎧 TUNE HIVE</div>
+
+<nav class="menu">
+<a href="/player">Music</a>
+<a href="/podcasts">Podcasts</a>
+<a href="/plans">Pro</a>
+</nav>
+
+<div class="search">
+<input type="text" placeholder="Search">
+</div>
+
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+<h4>BROWSE</h4>
+
+<ul class="sidebar-menu">
+<li onclick="location.href='/'">Home</li>
+<li onclick="location.href='/player'">Music</li>
+<li onclick="location.href='/albums'" class="active">Albums</li>
+<li onclick="location.href='/podcasts'">Podcasts</li>
+</ul>
+
+<h4>LIBRARY</h4>
+<ul>
+<li onclick="location.href='/history'">History</li>
+<li onclick="location.href='/wishlist'">Wishlist</li>
+<li onclick="location.href='/albums'">Albums</li>
+</ul>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<h2 class="page-title">🎶 Albums</h2>
+
+<div class="album-grid">
+
+<!-- ALBUM 1 -->
+<div class="album-card" onclick="openAlbum(0)">
+<img src="/images/movie1.jpg">
+<p class="album-name">Majili Album</p>
+<p class="artist">Various Artists</p>
+</div>
+
+<!-- ALBUM 2 -->
+<div class="album-card" onclick="openAlbum(1)">
+<img src="/images/movie2.jpg">
+<p class="album-name">Love Beats</p>
+<p class="artist">Arijit Singh</p>
+</div>
+
+<!-- ALBUM 3 -->
+<div class="album-card" onclick="openAlbum(2)">
+<img src="/images/movie3.jpg">
+<p class="album-name">Romantic Hits</p>
+<p class="artist">Shreya Ghoshal</p>
+</div>
+
+<!-- ALBUM 4 -->
+<div class="album-card" onclick="openAlbum(3)">
+<img src="/images/movie4.jpg">
+<p class="album-name">Top Tamil</p>
+<p class="artist">Anirudh</p>
+</div>
+
+<!-- ALBUM 5 -->
+<div class="album-card" onclick="openAlbum(4)">
+<img src="/images/movie5.jpg">
+<p class="album-name">Hindi Hits</p>
+<p class="artist">Neha Kakkar</p>
+</div>
+
+<!-- ALBUM 6 -->
+<div class="album-card" onclick="openAlbum(5)">
+<img src="/images/movie6.jpg">
+<p class="album-name">Chill Vibes</p>
+<p class="artist">Lo-Fi</p>
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+<script>
+
+function openAlbum(index){
+    // redirect to player (you can customize)
+    window.location.href = "/player";
+}
+
+</script>
+
+</body>
+</html>

@@ -132,10 +132,14 @@ function togglePlay(){
 
     if(audio.paused){
         audio.play();
-        playBtn.innerText = "⏸"; // pause icon
+        playBtn.innerText = "⏸";
+
+        // ✅ SAVE HISTORY HERE
+        saveToHistory(songs[currentSong]);
+
     }else{
         audio.pause();
-        playBtn.innerText = "▶"; // play icon
+        playBtn.innerText = "▶";
     }
 }
 
@@ -144,6 +148,7 @@ function nextSong(){
     currentSong = (currentSong + 1) % songs.length;
     loadSong(currentSong);
     audio.play();
+    saveToHistory(songs[currentSong]);
 }
 
 // ⏮ PREV
@@ -151,18 +156,39 @@ function prevSong(){
     currentSong = (currentSong - 1 + songs.length) % songs.length;
     loadSong(currentSong);
     audio.play();
+    saveToHistory(songs[currentSong]);
 }
 
 // 🎵 CLICK SELECT
 function selectSong(index){
     loadSong(index);
-    playSong();
+    audio.play();
+    playBtn.innerText = "⏸";
+
+    // ✅ SAVE
+    saveToHistory(songs[index]);
 }
 
 // load first song initially
 loadSong(0);
 
+function saveToHistory(song){
 
+let history = JSON.parse(localStorage.getItem("history")) || [];
+
+// avoid duplicate (optional)
+history = history.filter(item => item.src !== song.src);
+
+// add latest on top
+history.unshift(song);
+
+// limit to 10 songs (optional)
+if(history.length > 10){
+    history.pop();
+}
+
+localStorage.setItem("history", JSON.stringify(history));
+}
 </script>
 
 </body>

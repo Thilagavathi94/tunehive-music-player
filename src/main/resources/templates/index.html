@@ -21,7 +21,7 @@
 
 <nav class="menu">
 <a href="/player">Music</a>
-<a>Podcasts</a>
+<a href="/podcasts">Podcasts</a>
 <a href="/plans">Pro</a>
 </nav>
 
@@ -39,10 +39,10 @@
 <div id="loginDropdown" class="login-dropdown">
 <a href="/player">Music</a>
 <a href="/account">My Profile</a>
-<a href="#">History</a>
-<a href="#">Account Setting</a>
-<a href="#">Help & Support</a>
-<a href="/logout">Log out</a>
+<a href="/history">History</a>
+<a href="/settings">Account Setting</a>
+<a href="/help">Help & Support</a>
+<a href="/custom-logout">Logout</a>
 </div>
 </div>
 
@@ -74,13 +74,15 @@
 <h4>LIBRARY</h4>
 <ul>
 <li style="padding:15px;font-size:20px;" onclick="location.href='/history'">History▾</li>
-<li style="padding:15px;font-size:20px;" onclick="location.href='/liked-songs'">Liked Songs▾</li>
+<li style="padding:15px;font-size:20px;" onclick="location.href='/wishlist'">Wishlist▾</li>
 <li style="padding:15px;font-size:20px;" onclick="location.href='/albums'">Albums▾</li>
 <li style="padding:15px;font-size:20px;" onclick="location.href='/podcasts'">Podcasts▾</li>
 <li style="padding:15px;font-size:20px;" onclick="location.href='/artists'">Artists▾</li>
 </ul>
 
-<button class="/player">+ New Play List</button>
+<button class="playlist" onclick="location.href='/playlist'">
++ New Play List
+</button>
 
 </aside>
 
