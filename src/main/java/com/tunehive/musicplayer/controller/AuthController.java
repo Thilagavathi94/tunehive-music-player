@@ -61,39 +61,45 @@ public String sendOtp(@RequestParam("mobile") String mobile,
     return "otp";
 }
 @PostMapping("/verify-otp")
-public String verifyOtp(@RequestParam("userOtp") int userOtp,
+public String verifyOtp(@RequestParam("userOtp") String userOtp,
                         HttpSession session,
                         Model model) {
 
     Integer sessionOtp = (Integer) session.getAttribute("otp");
     String mobile = (String) session.getAttribute("mobile");
 
-    // 🔥 FIX: handle null session
-    if (sessionOtp == null || mobile == null) {
-        model.addAttribute("error", "Session expired. Try again.");
-        return "signup";
-    }
+   if (sessionOtp == null || mobile == null) {
+    return "redirect:/signup";   // ✅ NOT "signup"
+}
 
-    if (userOtp == sessionOtp) {
+    try {
+        int enteredOtp = Integer.parseInt(userOtp);
 
-        List<User> users = userRepo.findAllByMobile(mobile);
+        if (enteredOtp == sessionOtp) {
 
-        if (users.isEmpty()) {
-            User user = new User();
-            user.setMobile(mobile);
-            user.setPremium(false);
-            user.setPlan("FREE");
+            List<User> users = userRepo.findAllByMobile(mobile);
 
-            userRepo.save(user);
+            if (users.isEmpty()) {
+                User user = new User();
+                user.setMobile(mobile);
+                user.setPremium(false);
+                user.setPlan("FREE");
 
-            session.setAttribute("premium", false);
+                userRepo.save(user);
 
-            return "redirect:/dashboard"; // ✅ NEW USER
+                session.setAttribute("premium", false);
+
+                return "redirect:/dashboard";
+            }
+
+            session.setAttribute("premium", users.get(0).isPremium());
+
+            return "redirect:/player";
         }
 
-        session.setAttribute("premium", users.get(0).isPremium());
-
-        return "redirect:/player"; // ✅ EXISTING USER
+    } catch (Exception e) {
+        model.addAttribute("error", "Invalid OTP format");
+        return "otp";
     }
 
     model.addAttribute("error", "Invalid OTP");
