@@ -59,6 +59,7 @@ public String sendOtp(@RequestParam("mobile") String mobile,
     session.setAttribute("mobile", mobile);
 
     model.addAttribute("mobile", mobile);
+    model.addAttribute("otp", otp);   // ✅ ADD THIS LINE
 
     return "otp";
 }
@@ -70,18 +71,18 @@ public String verifyOtp(@RequestParam("userOtp") int userOtp,
     Integer sessionOtp = (Integer) session.getAttribute("otp");
     String mobile = (String) session.getAttribute("mobile");
 
-    // 🔥 FIX 1: NULL CHECK
+    // ✅ NULL CHECK
     if (sessionOtp == null || mobile == null) {
         model.addAttribute("error", "Session expired. Please try again.");
-        return "login"; // or your login page
+        return "login"; // this should map to login.html
     }
 
-    if(userOtp == sessionOtp){
+    if (userOtp == sessionOtp) {
 
-        // 🔥 CHECK AGAIN BEFORE SAVE
+        // ✅ CHECK USER
         List<User> users = userRepo.findAllByMobile(mobile);
 
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             User user = new User();
             user.setMobile(mobile);
             user.setPremium(false);
