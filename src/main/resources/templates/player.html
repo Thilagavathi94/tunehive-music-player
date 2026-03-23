@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Music Player</title>
-
 <link rel="stylesheet" th:href="@{/css/player.css}">
 </head>
 
@@ -31,164 +30,161 @@
     </aside>
 
     <!-- PLAYER CONTENT -->
-   <main class="content">
+    <main class="content">
 
-    <img id="albumImage" src="/images/majili.jpg" class="album-img">
+        <img id="albumImage" src="/images/majili.jpg" class="album-img">
 
-    <h2 id="songTitle">Majili</h2>
-    <p id="artistName">Tanishk Bagchi</p>
+        <h2 id="songTitle">Majili</h2>
+        <p id="artistName">Tanishk Bagchi</p>
 
-    <!-- PROGRESS -->
-    <input type="range" id="progress" value="0">
+        <!-- PROGRESS -->
+        <input type="range" id="progress" value="0">
 
-    <!-- CONTROLS -->
-    <div class="controls">
-        <button onclick="prevSong()">⏮</button>
-       <button id="playBtn" onclick="togglePlay()">▶</button>
-        <button onclick="nextSong()">⏭</button>
-    </div>
+        <!-- CONTROLS -->
+        <div class="controls">
+            <button onclick="prevSong()">⏮</button>
+            <button id="playBtn" onclick="togglePlay()">▶</button>
+            <button onclick="nextSong()">⏭</button>
+        </div>
 
-    <!-- SONG LIST -->
-    <div class="song-list">
+        <!-- SONG LIST -->
+        <div class="song-list">
+            <div class="song-item" onclick="selectSong(0)">🎵 Majili</div>
+            <div class="song-item" onclick="selectSong(1)">🎵 Barbad</div>
+            <div class="song-item" onclick="selectSong(2)">🎵 Tum Ho</div>
+            <div class="song-item" onclick="selectSong(3)">🎵 Dhun</div>
+        </div>
 
-        <div class="song-item" onclick="selectSong(0)">🎵 Majili</div>
-        <div class="song-item" onclick="selectSong(1)">🎵 Barbad</div>
-        <div class="song-item" onclick="selectSong(2)">🎵 Tum Ho</div>
-        <div class="song-item" onclick="selectSong(3)">🎵 Dhun</div>
-
-    </div>
-
-</main>
+    </main>
 </div>
 
 <audio id="audioPlayer">
     <source src="/songs/majili.mp3">
 </audio>
 
+<!-- LIMIT POPUP -->
+<div id="limitPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+    <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center;">
+        <h2>Free limit reached 🚫</h2>
+        <p>You've used your 1 free play. Upgrade to Premium for unlimited music.</p>
+        <button onclick="window.location.href='/plans'" style="margin-top:1rem; padding:10px 24px;">
+            See Plans
+        </button>
+    </div>
+</div>
+
 <script>
 
-
-
 let songs = [
-    {
-        title: "Majili",
-        artist: "Tanishk Bagchi",
-        src: "/songs/majili.mp3",
-        img: "/images/majili.jpg"
-    },
-    {
-        title: "Barbad",
-        artist: "Faheem Abdullah",
-        src: "/songs/song1.mp3",
-        img: "/images/movie1.jpg"
-    },
-    {
-        title: "Tum Ho",
-        artist: "Arslan Kamil",
-        src: "/songs/song2.mp3",
-        img: "/images/movie2.jpg"
-    },
-    {
-        title: "Dhun",
-        artist: "Various Artists",
-        src: "/songs/song3.mp3",
-        img: "/images/movie3.jpg"
-    }
+    { title: "Majili",  artist: "Tanishk Bagchi",   src: "/songs/majili.mp3", img: "/images/majili.jpg"  },
+    { title: "Barbad",  artist: "Faheem Abdullah",   src: "/songs/song1.mp3",  img: "/images/movie1.jpg"  },
+    { title: "Tum Ho",  artist: "Arslan Kamil",      src: "/songs/song2.mp3",  img: "/images/movie2.jpg"  },
+    { title: "Dhun",    artist: "Various Artists",   src: "/songs/song3.mp3",  img: "/images/movie3.jpg"  }
 ];
 
 let currentSong = 0;
-let playCount = 0;
-let isPremium = /*[[${session.premium}]]*/ false;
-
 let audio = document.getElementById("audioPlayer");
-
-// 🔥 load song
-function loadSong(index){
-    currentSong = index;
-
-    audio.src = songs[index].src;
-
-    document.getElementById("songTitle").innerText = songs[index].title;
-    document.getElementById("artistName").innerText = songs[index].artist;
-    document.getElementById("albumImage").src = songs[index].img;
-}
-
-// ▶ PLAY
 let playBtn = document.getElementById("playBtn");
 
-// ▶ / ⏸ toggle
-function togglePlay(){
+// FIX: isPremium is now read from the Model (loaded fresh from DB on page load),
+// not just from session. This ensures it's accurate immediately after payment.
+let isPremium = /*[[${isPremium}]]*/ false;
 
-    // 🔥 PREMIUM CHECK
-    if(!isPremium){
-        if(playCount === 0){
-            playCount++;
-        } else if(audio.paused){
-            alert("Limit reached! Upgrade to premium");
-            window.location.href="/plans";
-            return;
-        }
+function loadSong(index) {
+    currentSong = index;
+    audio.src = songs[index].src;
+    document.getElementById("songTitle").innerText  = songs[index].title;
+    document.getElementById("artistName").innerText = songs[index].artist;
+    document.getElementById("albumImage").src       = songs[index].img;
+}
+
+// FIX: Play is gated by a server-side call to /play-song.
+// The server checks + increments playCount in the DB.
+// JS alone can be bypassed (refresh resets the variable) — this cannot.
+async function requestPlay() {
+    if (isPremium) return true; // premium: skip check
+
+    const response = await fetch("/play-song", { method: "POST" });
+    const result   = await response.text();
+
+    if (result === "OK") return true;
+
+    if (result === "LIMIT_REACHED") {
+        document.getElementById("limitPopup").style.display = "flex";
+        return false;
     }
 
-    if(audio.paused){
+    if (result === "UNAUTHORIZED") {
+        window.location.href = "/signup";
+        return false;
+    }
+
+    return false;
+}
+
+async function togglePlay() {
+    if (audio.paused) {
+        const allowed = await requestPlay();
+        if (!allowed) return;
         audio.play();
         playBtn.innerText = "⏸";
-
-        // ✅ SAVE HISTORY HERE
         saveToHistory(songs[currentSong]);
-
-    }else{
+    } else {
         audio.pause();
         playBtn.innerText = "▶";
     }
 }
 
-// ⏭ NEXT
-function nextSong(){
+async function nextSong() {
     currentSong = (currentSong + 1) % songs.length;
     loadSong(currentSong);
+    const allowed = await requestPlay();
+    if (!allowed) return;
     audio.play();
     saveToHistory(songs[currentSong]);
 }
 
-// ⏮ PREV
-function prevSong(){
+async function prevSong() {
     currentSong = (currentSong - 1 + songs.length) % songs.length;
     loadSong(currentSong);
+    const allowed = await requestPlay();
+    if (!allowed) return;
     audio.play();
     saveToHistory(songs[currentSong]);
 }
 
-// 🎵 CLICK SELECT
-function selectSong(index){
+async function selectSong(index) {
     loadSong(index);
+    const allowed = await requestPlay();
+    if (!allowed) return;
     audio.play();
     playBtn.innerText = "⏸";
-
-    // ✅ SAVE
     saveToHistory(songs[index]);
 }
 
-// load first song initially
 loadSong(0);
 
-function saveToHistory(song){
+// Progress bar sync
+audio.addEventListener("timeupdate", () => {
+    let progress = document.getElementById("progress");
+    if (audio.duration) {
+        progress.value = (audio.currentTime / audio.duration) * 100;
+    }
+});
 
-let history = JSON.parse(localStorage.getItem("history")) || [];
+document.getElementById("progress").addEventListener("input", (e) => {
+    audio.currentTime = (e.target.value / 100) * audio.duration;
+});
 
-// avoid duplicate (optional)
-history = history.filter(item => item.src !== song.src);
-
-// add latest on top
-history.unshift(song);
-
-// limit to 10 songs (optional)
-if(history.length > 10){
-    history.pop();
+function saveToHistory(song) {
+    let history = JSON.parse(localStorage.getItem("history")) || [];
+    history = history.filter(item => item.src !== song.src);
+    history.unshift(song);
+    if (history.length > 10) history.pop();
+    localStorage.setItem("history", JSON.stringify(history));
 }
 
-localStorage.setItem("history", JSON.stringify(history));
-}
 </script>
 
 </body>

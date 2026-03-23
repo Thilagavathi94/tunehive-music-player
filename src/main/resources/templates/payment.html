@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Payment</title>
-
 <link rel="stylesheet" th:href="@{/css/payment.css}">
 </head>
 
@@ -38,41 +37,40 @@
         <div class="payment-box">
 
             <button class="upi-btn">Pay with UPI</button>
-
             <p class="or">Or</p>
-
             <input type="email" placeholder="Email">
-
             <h2>Payment Method</h2>
-
             <label>Card Information</label>
             <input type="text" placeholder="1234 1234 1234 1234">
-
             <label>Card Holder Name</label>
             <input type="text" placeholder="Full name on card">
-
             <div class="row">
                 <input type="text" placeholder="MM/YY">
                 <input type="text" placeholder="CVV">
             </div>
-
             <label>Country/Region</label>
             <input type="text" placeholder="India">
 
-          <form action="/payment-success" method="get">
-    <button class="subscribe-btn">Subscribe Now</button>
-</form>
+            <!--
+                FIX: Changed from GET to POST and added th:action with Thymeleaf
+                so Spring Security's CSRF token is included automatically.
+                A plain GET form means anyone can visit /payment-success in their
+                browser and get premium for free — POST + CSRF prevents this.
+            -->
+            <form th:action="@{/payment-success}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" name="plan" th:value="${plan}"/>
+                <button type="submit" class="subscribe-btn">Subscribe Now</button>
+            </form>
 
         </div>
 
-        <!-- FOOTER -->
         <div class="footer">
             <div>
                 <p>Top Artists</p>
                 <p>Arijit Singh</p>
                 <p>Neha Kakkar</p>
             </div>
-
             <div>
                 <p>Company</p>
                 <p>About</p>
@@ -83,10 +81,5 @@
     </main>
 
 </div>
-<script>
-function completePayment(){
-    window.location.href = "/payment-success";
-}
-</script>
 </body>
 </html>
