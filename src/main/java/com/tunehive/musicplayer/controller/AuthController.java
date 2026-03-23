@@ -20,11 +20,8 @@ public class AuthController {
 private UserRepository userRepo;
 @GetMapping("/")
 public String home(HttpSession session){
-    if(session.getAttribute("mobile") != null){
-        return "redirect:/player";
-    }
-    return "index";
-} // 👈 instead of signup
+    return "index";   // ✅ always allow home
+}// 👈 instead of signup
 
 
 @PostMapping("/send-otp")
