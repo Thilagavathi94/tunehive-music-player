@@ -26,15 +26,14 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <h4>BROWSE</h4>
-        <p>New Release</p>
-        <p>Top Charts</p>
-        <p>Top Playlists</p>
-        <p>Podcasts</p>
-        <p>Top Artists</p>
-
+        <p><a href="/dashboard">New Release</a></p>
+<p><a href="/dashboard">Top Charts</a></p>
+<p><a href="/dashboard">Top Playlists</a></p>
+<p><a href="/dashboard">Podcasts</a></p>
+<p><a href="/dashboard">Top Artists</a></p>
         <h4>LIBRARY</h4>
-        <p>History</p>
-        <p>Liked Songs</p>
+        <p><a href="/history">History</a></p>
+        <p><a href="/wishlist">Liked Songs</a></p>
     </aside>
 
     <!-- MAIN CONTENT -->
@@ -107,7 +106,7 @@
 let playCount = 0;
 
 // 🔥 get from backend
-let isPremium = /*[[${session.premium}]]*/ false;
+let isPremium = /*[[${session.premium != null ? session.premium : false}]]*/ false;
 
 function playSong(){
 

@@ -60,7 +60,7 @@ public String sendOtp(@RequestParam("mobile") String mobile,
 
     return "otp";
 }
- @PostMapping("/verify-otp")
+@PostMapping("/verify-otp")
 public String verifyOtp(@RequestParam("userOtp") int userOtp,
                         HttpSession session,
                         Model model) {
@@ -68,15 +68,14 @@ public String verifyOtp(@RequestParam("userOtp") int userOtp,
     Integer sessionOtp = (Integer) session.getAttribute("otp");
     String mobile = (String) session.getAttribute("mobile");
 
-    // ✅ NULL CHECK
+    // 🔥 SAFE CHECK
     if (sessionOtp == null || mobile == null) {
-        model.addAttribute("error", "Session expired. Please try again.");
-        return "login"; // this should map to login.html
+        model.addAttribute("error", "Session expired. Try again.");
+        return "signup";   // NOT login (you don’t have login)
     }
 
     if (userOtp == sessionOtp) {
 
-        // ✅ CHECK USER
         List<User> users = userRepo.findAllByMobile(mobile);
 
         if (users.isEmpty()) {
@@ -86,21 +85,33 @@ public String verifyOtp(@RequestParam("userOtp") int userOtp,
             user.setPlan("FREE");
 
             userRepo.save(user);
+
+            return "redirect:/dashboard"; // ✅ NEW USER
         }
 
-        session.setAttribute("premium", false);
+        session.setAttribute("premium", users.get(0).isPremium());
 
-        return "redirect:/player";
+        return "redirect:/player"; // ✅ EXISTING USER
     }
 
     model.addAttribute("error", "Invalid OTP");
+    model.addAttribute("mobile", mobile);
     return "otp";
 }
-  @GetMapping("/dashboard")
-public String dashboard(HttpSession session) {
+ @GetMapping("/dashboard")
+public String dashboard(HttpSession session, Model model) {
 
-    if(session.getAttribute("mobile") == null){
+    String mobile = (String) session.getAttribute("mobile");
+
+    if(mobile == null){
         return "redirect:/signup";
+    }
+
+    // 🔥 Get user from DB
+    List<User> users = userRepo.findAllByMobile(mobile);
+
+    if(!users.isEmpty()){
+        model.addAttribute("user", users.get(0));
     }
 
     return "dashboard";
@@ -124,16 +135,22 @@ public String paymentSuccess(HttpSession session, Model model) {
     }
 
     List<User> users = userRepo.findAllByMobile(mobile);
+
+    if(users.isEmpty()){
+        return "redirect:/signup";
+    }
+
     User user = users.get(0);
 
-    // update user
-    user.setPremium(true);
-    user.setPlan("PRO");
-    userRepo.save(user);
+    // 🔥 prevent duplicate update
+    if(!user.isPremium()){
+        user.setPremium(true);
+        user.setPlan("PRO");
+        userRepo.save(user);
+    }
 
     session.setAttribute("premium", true);
 
-    // ✅ send data to UI
     model.addAttribute("plan", user.getPlan());
     model.addAttribute("amount", "₹99");
 
