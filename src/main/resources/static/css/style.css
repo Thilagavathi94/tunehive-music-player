@@ -464,3 +464,97 @@ background:#282828;
 background:#e91e63;
 border-radius:8px;
 }
+
+/* ================= MOBILE (max-width: 768px) ================= */
+@media (max-width: 768px) {
+
+    /* Navbar */
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .menu {
+        display: none; /* hide menu in mobile */
+    }
+
+    .search input {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .nav-right {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    /* Layout */
+    .layout {
+        flex-direction: column;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        display: none; /* hide sidebar (optional) */
+    }
+
+    /* Content */
+    .content {
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* Cards */
+    .row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 cards */
+        gap: 10px;
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Footer */
+    .footer-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+
+/* ================= TABLET (max-width: 1024px) ================= */
+@media (max-width: 1024px) {
+
+    .row {
+        grid-template-columns: repeat(3, 1fr); /* 3 cards */
+    }
+
+    .sidebar {
+        width: 200px;
+    }
+}
+
+
+/* ================= SMALL MOBILE (max-width: 480px) ================= */
+@media (max-width: 480px) {
+
+    .row {
+        grid-template-columns: 1fr; /* 1 card */
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+}
