@@ -83,21 +83,15 @@ public String verifyOtp(@RequestParam("userOtp") int userOtp,
     model.addAttribute("error", "Invalid OTP");
     return "otp";
 }
- @GetMapping("/dashboard")
+@GetMapping("/dashboard")
 public String dashboard(HttpSession session, Model model) {
 
-    String mobile = (String) session.getAttribute("mobile");
-
-    if(mobile == null){
+    if(session.getAttribute("mobile") == null){
         return "redirect:/signup";
     }
 
-    // 🔥 Get user from DB
-    List<User> users = userRepo.findAllByMobile(mobile);
-
-    if(!users.isEmpty()){
-        model.addAttribute("user", users.get(0));
-    }
+    // 👇 ADD THIS LINE
+    model.addAttribute("premium", session.getAttribute("premium"));
 
     return "dashboard";
 }
