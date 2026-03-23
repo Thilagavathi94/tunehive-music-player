@@ -64,10 +64,17 @@ public String sendOtp(@RequestParam("mobile") String mobile,
 }
  @PostMapping("/verify-otp")
 public String verifyOtp(@RequestParam("userOtp") int userOtp,
-                        HttpSession session) {
+                        HttpSession session,
+                        Model model) {
 
-    int sessionOtp = (int) session.getAttribute("otp");
+    Integer sessionOtp = (Integer) session.getAttribute("otp");
     String mobile = (String) session.getAttribute("mobile");
+
+    // 🔥 FIX 1: NULL CHECK
+    if (sessionOtp == null || mobile == null) {
+        model.addAttribute("error", "Session expired. Please try again.");
+        return "login"; // or your login page
+    }
 
     if(userOtp == sessionOtp){
 
@@ -85,9 +92,10 @@ public String verifyOtp(@RequestParam("userOtp") int userOtp,
 
         session.setAttribute("premium", false);
 
-        return "redirect:/player"; // 🔥 change from dashboard
+        return "redirect:/player";
     }
 
+    model.addAttribute("error", "Invalid OTP");
     return "otp";
 }
   @GetMapping("/dashboard")
