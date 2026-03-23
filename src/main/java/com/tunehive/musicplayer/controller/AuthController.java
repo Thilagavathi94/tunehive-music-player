@@ -68,10 +68,10 @@ public String verifyOtp(@RequestParam("userOtp") int userOtp,
     Integer sessionOtp = (Integer) session.getAttribute("otp");
     String mobile = (String) session.getAttribute("mobile");
 
-    // 🔥 SAFE CHECK
+    // 🔥 FIX: handle null session
     if (sessionOtp == null || mobile == null) {
         model.addAttribute("error", "Session expired. Try again.");
-        return "signup";   // NOT login (you don’t have login)
+        return "signup";
     }
 
     if (userOtp == sessionOtp) {
@@ -85,6 +85,8 @@ public String verifyOtp(@RequestParam("userOtp") int userOtp,
             user.setPlan("FREE");
 
             userRepo.save(user);
+
+            session.setAttribute("premium", false);
 
             return "redirect:/dashboard"; // ✅ NEW USER
         }
@@ -131,18 +133,17 @@ public String paymentSuccess(HttpSession session, Model model) {
     String mobile = (String) session.getAttribute("mobile");
 
     if(mobile == null){
-        return "redirect:/signup";
+        return "redirect:/signup"; // 🔥 FIX
     }
 
     List<User> users = userRepo.findAllByMobile(mobile);
 
     if(users.isEmpty()){
-        return "redirect:/signup";
+        return "redirect:/signup"; // 🔥 FIX
     }
 
     User user = users.get(0);
 
-    // 🔥 prevent duplicate update
     if(!user.isPremium()){
         user.setPremium(true);
         user.setPlan("PRO");
