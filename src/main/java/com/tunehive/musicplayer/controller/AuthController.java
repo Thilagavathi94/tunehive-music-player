@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.tunehive.musicplayer.model.User;
 import com.tunehive.musicplayer.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -26,22 +27,27 @@ public String home(HttpSession session){
 } // 👈 instead of signup
 
 
- @PostMapping("/send-otp")
+@PostMapping("/send-otp")
 public String sendOtp(@RequestParam("mobile") String mobile,
                       HttpSession session,
                       Model model) {
 
-    // 🔥 CHECK DB FIRST
-    List<User> users = userRepo.findAllByMobile(mobile);
+    List<User> users = new ArrayList<>();
+
+    try {
+        users = userRepo.findAllByMobile(mobile);
+    } catch (Exception e) {
+        System.out.println("DB Error: " + e.getMessage());
+    }
 
     // ✅ USER EXISTS → DIRECT LOGIN
-    if(!users.isEmpty()){
+    if(users != null && !users.isEmpty()){
         User user = users.get(0);
 
         session.setAttribute("mobile", mobile);
         session.setAttribute("premium", user.isPremium());
 
-        return "redirect:/player"; // 🔥 IMPORTANT
+        return "redirect:/player";
     }
 
     // ❌ NEW USER → OTP
