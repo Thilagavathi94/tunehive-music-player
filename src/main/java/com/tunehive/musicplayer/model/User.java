@@ -7,13 +7,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     private String mobile;
     private String plan;
     private boolean premium;
 
-    public int getId() { return id; }
+    public long getId() { return id; }
 
     public String getMobile() { return mobile; }
     public void setMobile(String mobile) { this.mobile = mobile; }

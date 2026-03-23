@@ -68,45 +68,38 @@ public String verifyOtp(@RequestParam("userOtp") String userOtp,
     Integer sessionOtp = (Integer) session.getAttribute("otp");
     String mobile = (String) session.getAttribute("mobile");
 
-   if (sessionOtp == null || mobile == null) {
-    return "redirect:/signup";   // ✅ NOT "signup"
-}
+    if (sessionOtp == null || mobile == null) {
+        return "redirect:/signup";
+    }
 
-    try {
-        if(userOtp == null || !userOtp.matches("\\d{6}")){
-    model.addAttribute("error", "Enter valid 6-digit OTP");
-    model.addAttribute("mobile", mobile);
-    return "otp";
-}
+    if (!userOtp.matches("\\d{6}")) {
+        model.addAttribute("error", "Enter valid 6-digit OTP");
+        model.addAttribute("mobile", mobile);
+        return "otp";
+    }
 
-int enteredOtp = Integer.parseInt(userOtp);
+    int enteredOtp = Integer.parseInt(userOtp);
 
-        if (enteredOtp == sessionOtp) {
+    if (enteredOtp == sessionOtp) {
 
-            List<User> users = userRepo.findAllByMobile(mobile);
+        List<User> users = userRepo.findAllByMobile(mobile);
 
-            if (users.isEmpty()) {
-                User user = new User();
-                user.setMobile(mobile);
-                user.setPremium(false);
-                user.setPlan("FREE");
+        if (users.isEmpty()) {
+            User user = new User();
+            user.setMobile(mobile);
+            user.setPremium(false);
+            user.setPlan("FREE");
 
-                userRepo.save(user);
+            userRepo.save(user);
 
-                session.setAttribute("premium", false);
+            session.setAttribute("premium", false);
 
-                return "redirect:/dashboard";
-            }
-
-            session.setAttribute("premium", users.get(0).isPremium());
-
-            return "redirect:/player";
+            return "redirect:/dashboard";
         }
 
-    } catch (Exception e) {
-        model.addAttribute("error", "Invalid OTP format");
-         
-        return "otp";
+        session.setAttribute("premium", users.get(0).isPremium());
+
+        return "redirect:/player";
     }
 
     model.addAttribute("error", "Invalid OTP");
