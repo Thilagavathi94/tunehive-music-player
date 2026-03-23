@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Dashboard</title>
+
 <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 </head>
 
@@ -11,7 +12,9 @@
 <!-- NAVBAR -->
 <header class="navbar">
     <div class="logo">🎵 TUNE HIVE</div>
+
     <input type="text" placeholder="Search">
+
     <div class="nav-right">
         <a href="#">Music language ▾</a>
         <a href="/custom-logout">Logout</a>
@@ -24,10 +27,10 @@
     <aside class="sidebar">
         <h4>BROWSE</h4>
         <p><a href="/dashboard">New Release</a></p>
-        <p><a href="/dashboard">Top Charts</a></p>
-        <p><a href="/dashboard">Top Playlists</a></p>
-        <p><a href="/dashboard">Podcasts</a></p>
-        <p><a href="/dashboard">Top Artists</a></p>
+<p><a href="/dashboard">Top Charts</a></p>
+<p><a href="/dashboard">Top Playlists</a></p>
+<p><a href="/dashboard">Podcasts</a></p>
+<p><a href="/dashboard">Top Artists</a></p>
         <h4>LIBRARY</h4>
         <p><a href="/history">History</a></p>
         <p><a href="/wishlist">Liked Songs</a></p>
@@ -43,24 +46,27 @@
                 <img src="/images/majili.jpg">
                 <h1>MAJILI</h1>
                 <p>Various Artists • 7 songs</p>
-                <!-- FIX: dashboard play button now goes to /player instead of
-                     calling the old playSong() which had its own broken JS counter -->
-                <button class="play-btn" onclick="window.location.href='/player'">Play</button>
+                <button class="play-btn" onclick="playSong()">Play</button>
             </div>
 
             <div class="album-songs">
-                <div class="song-row" onclick="window.location.href='/player'">
+
+                <div class="song-row" onclick="playSong()">
                     <span>1</span><span>Majili</span><span>♡</span><span>5:00</span>
                 </div>
-                <div class="song-row" onclick="window.location.href='/player'">
+
+                <div class="song-row" onclick="playSong()">
                     <span>2</span><span>Barbad</span><span>♡</span><span>5:00</span>
                 </div>
-                <div class="song-row" onclick="window.location.href='/player'">
+
+                <div class="song-row" onclick="playSong()">
                     <span>3</span><span>Tum Ho</span><span>♡</span><span>5:00</span>
                 </div>
-                <div class="song-row" onclick="window.location.href='/player'">
+
+                <div class="song-row" onclick="playSong()">
                     <span>4</span><span>Dhun</span><span>♡</span><span>5:00</span>
                 </div>
+
             </div>
         </section>
 
@@ -77,10 +83,54 @@
     </main>
 </div>
 
-<!-- PLAYER BAR -->
+<!-- PLAYER -->
 <div class="player">
-    <button onclick="window.location.href='/player'">▶ Play</button>
+    <button onclick="playSong()">▶ Play</button>
 </div>
+
+<audio id="audioPlayer">
+    <source src="/songs/majili.mp3" type="audio/mpeg">
+</audio>
+
+<!-- LIMIT POPUP -->
+<div id="limitPopup" class="popup">
+    <div class="popup-box">
+        <h2>Limit Reached 🚫</h2>
+        <p>You need Premium to continue</p>
+        <button onclick="goToPlans()">Go to Plans</button>
+    </div>
+</div>
+
+<script>
+
+let playCount = 0;
+
+// 🔥 get from backend
+let isPremium = /*[[${session.premium != null ? session.premium : false}]]*/ false;
+
+function playSong(){
+
+    let audio = document.getElementById("audioPlayer");
+
+    if(isPremium){
+        audio.play();
+        return;
+    }
+
+    if(playCount === 0){
+        audio.currentTime = 0;
+        audio.play();
+        playCount++;
+    } else {
+        document.getElementById("limitPopup").style.display = "flex";
+    }
+}
+
+function goToPlans(){
+    window.location.href = "/plans";
+}
+
+</script>
 
 </body>
 </html>

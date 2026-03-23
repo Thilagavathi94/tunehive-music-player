@@ -13,12 +13,6 @@ public class User {
     private String plan;
     private boolean premium;
 
-    // FIX: Added playCount to track plays server-side.
-    // Previously this was only tracked in JS (localStorage / variable),
-    // which resets on every page refresh — making the limit useless.
-    @Column(columnDefinition = "integer default 0")
-    private int playCount;
-
     public long getId() { return id; }
 
     public String getMobile() { return mobile; }
@@ -29,7 +23,4 @@ public class User {
 
     public boolean isPremium() { return premium; }
     public void setPremium(boolean premium) { this.premium = premium; }
-
-    public int getPlayCount() { return playCount; }
-    public void setPlayCount(int playCount) { this.playCount = playCount; }
 }
