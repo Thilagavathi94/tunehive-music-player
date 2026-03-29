@@ -8,14 +8,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+   @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()   // allow all pages
+                .requestMatchers("/", "/signup", "/login", "/send-otp",
+                                 "/verify-otp", "/do-login", "/css/**",
+                                 "/js/**", "/images/**").permitAll()
+                .anyRequest().authenticated()
             )
-            .csrf(csrf -> csrf.disable()); // disable csrf for now
+            .formLogin(form -> form
+                .loginPage("/login")        // ← your custom login page
+                .permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")        // ← same custom login page
+                .defaultSuccessUrl("/dashboard", true)
+                .failureUrl("/login?error=true")
+            )
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
 }
+

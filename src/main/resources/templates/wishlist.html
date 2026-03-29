@@ -1,111 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+<meta charset="UTF-8">
 <title>Wishlist</title>
-
+<link rel="stylesheet" th:href="@{/css/style.css}">
 <style>
-body{
-background:#111;
-color:white;
-font-family:Arial;
-background:url("/images/music-bg.jpg");
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
-}
 
-.container{
-padding:30px;
+.wishlist-row { display: flex; gap: 20px; flex-wrap: wrap; padding: 10px 0; }
+.wishlist-card { width: 160px; text-align: center; }
+.wishlist-card img {
+    width: 100%; height: 200px; object-fit: cover;
+    border-radius: 10px; transition: 0.3s;
 }
+.wishlist-card img:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(255,46,99,0.5); }
+.remove-btn {
+    margin-top: 8px; padding: 6px 14px; background: #ff2e63;
+    border: none; color: white; border-radius: 6px;
+    cursor: pointer; font-size: 13px; transition: 0.3s;
+}
+.remove-btn:hover { background: #ff4081; }
 
-.row{
-display:flex;
-gap:20px;
-flex-wrap:wrap;
+/* ── Movie Cards ── */
+.section-divider { margin: 40px 0 20px; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
+.section-heading { font-size: 18px; margin-bottom: 14px; color: #fff; }
+.movie-cards-row { display: flex; flex-wrap: wrap; gap: 16px; padding-bottom: 10px; }
+.movie-card {
+    width: 140px; cursor: pointer; border-radius: 10px;
+    overflow: hidden; background: rgba(255,255,255,0.05); transition: 0.3s;
 }
+.movie-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(255,46,99,0.35); }
+.movie-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.movie-card .card-actions {
+    display: flex; justify-content: space-around;
+    padding: 8px 6px; background: rgba(0,0,0,0.45);
+}
+.movie-card .card-actions button {
+    background: rgba(255,46,99,0.8); border: none; color: white;
+    border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 13px; transition: 0.2s;
+}
+.movie-card .card-actions button:hover { background: #ff2e63; }
 
-.card{
-width:160px;
-text-align:center;
-}
-
-.card img{
-width:100%;
-border-radius:10px;
-}
-
-.remove-btn{
-margin-top:8px;
-padding:5px 10px;
-background:#ff2e63;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
-}
 </style>
-
 </head>
-
 <body>
+<div class="app">
 
-<h2 style="padding:20px;">❤️ My Wishlist</h2>
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="layout">
+<!-- SIDEBAR -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-<div class="container">
-<div class="row" id="wishlistContainer"></div>
+<!-- MAIN CONTENT -->
+<main class="content">
+
+    <h2>❤️ My Wishlist</h2>
+    <div class="wishlist-row" id="wishlistContainer"></div>
+
+    <!-- ── Movie Cards Section ── -->
+    <hr class="section-divider">
+   <div th:replace="fragments/card :: card"></div>
+
+</main>
+</div>
+<audio id="audioPlayer"></audio>
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
+</div>
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
 </div>
 
-<script>
-
-function loadWishlist(){
-
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-let container = document.getElementById("wishlistContainer");
-container.innerHTML = "";
-
-// empty
-if(wishlist.length === 0){
-container.innerHTML = "<p>No songs in wishlist</p>";
-return;
-}
-
-// show items
-wishlist.forEach((img,index)=>{
-
-let div = document.createElement("div");
-div.className="card";
-
-div.innerHTML = `
-<img src="${img}">
-<button class="remove-btn" onclick="removeItem(${index})">Remove</button>
-`;
-
-container.appendChild(div);
-
-});
-
-}
-
-// ❌ REMOVE FUNCTION
-function removeItem(index){
-
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-// remove item
-wishlist.splice(index,1);
-
-// save again
-localStorage.setItem("wishlist", JSON.stringify(wishlist));
-
-// reload UI
-loadWishlist();
-}
-
-// load on page open
-loadWishlist();
-
+<script th:inline="javascript">
+// Sync Spring server session → frontend sessionStorage so all pages work
+(function(){
+    var m = /*[[${session.mobile}]]*/ null;
+    var p = /*[[${session.premium}]]*/ false;
+    if (m) {
+        sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("mobile",   m);
+        sessionStorage.setItem("premium",  String(p));
+    }
+})();
 </script>
+<script src="/js/script.js"></script>
+<script>
+function loadWishlist() {
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    let container = document.getElementById("wishlistContainer");
+    container.innerHTML = "";
+    if (wishlist.length === 0) {
+        container.innerHTML = "<p style='color:#aaa;'>No songs in wishlist yet.</p>";
+        return;
+    }
+    wishlist.forEach((img, index) => {
+        let div = document.createElement("div");
+        div.className = "wishlist-card";
+        div.innerHTML = `
+            <img src="${img}">
+            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+        `;
+        container.appendChild(div);
+    });
+}
 
+function removeItem(index) {
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    wishlist.splice(index, 1);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    loadWishlist();
+}
+loadWishlist();
+</script>
 </body>
 </html>

@@ -14,219 +14,320 @@ import java.util.Random;
 
 @Controller
 public class AuthController {
-    
-@Autowired
-private UserRepository userRepo;
-@GetMapping("/")
-public String home(HttpSession session){
-    return "index";   // ✅ always allow home
-}// 👈 instead of signup
 
+    @Autowired
+    private UserRepository userRepo;
 
-@PostMapping("/send-otp")
-public String sendOtp(@RequestParam("mobile") String mobile,
-                      HttpSession session,
-                      Model model) {
-
-    // ✅ EXISTING USER
-    if(TempStorage.users.containsKey(mobile)){
-        User user = TempStorage.users.get(mobile);
-
-        session.setAttribute("mobile", mobile);
-        session.setAttribute("premium", user.isPremium());
-
-        return "redirect:/player";
+    // ─────────────────────────────────────────
+    // HOME
+    // ─────────────────────────────────────────
+    @GetMapping("/")
+    public String home(HttpSession session, Model model) {
+        model.addAttribute("isLoggedIn", session.getAttribute("mobile") != null);
+        return "index";
     }
 
-    // ❌ NEW USER → OTP
-    int otp = 100000 + new Random().nextInt(900000);
-
-    System.out.println("OTP: " + otp);
-
-    session.setAttribute("otp", otp);
-    session.setAttribute("mobile", mobile);
-
-    model.addAttribute("mobile", mobile);
-    model.addAttribute("otp", otp); // 👈 show OTP for demo
-
-    return "otp";
-}
-@PostMapping("/verify-otp")
-public String verifyOtp(@RequestParam("userOtp") int userOtp,
-                        HttpSession session,
-                        Model model) {
-
-    Integer sessionOtp = (Integer) session.getAttribute("otp");
-    String mobile = (String) session.getAttribute("mobile");
-
-    if (sessionOtp == null || mobile == null) {
-        model.addAttribute("error", "Session expired");
-        return "login";
+    // ─────────────────────────────────────────
+    // SIGNUP / OTP
+    // ─────────────────────────────────────────
+    @GetMapping("/signup")
+    public String signupPage() {
+        return "signup";
     }
 
-    if (userOtp == sessionOtp) {
+    @PostMapping("/send-otp")
+    public String sendOtp(@RequestParam("mobile") String mobile,
+                          @RequestParam(value = "name",  required = false) String name,
+                          @RequestParam(value = "email", required = false) String email,
+                          HttpSession session,
+                          Model model) {
 
+        if (!mobile.matches("^[6-9]\\d{9}$")) {
+            model.addAttribute("error", "Enter a valid 10-digit mobile number");
+            return "signup";
+        }
+
+        int otp = 100000 + new Random().nextInt(900000);
+
+        session.setAttribute("otp",     otp);
+        session.setAttribute("mobile",  mobile);
+        session.setAttribute("name",    name);
+        session.setAttribute("email",   email);
+        session.setAttribute("otpTime", System.currentTimeMillis());
+
+        // FOR TESTING — remove in production
+        System.out.println("OTP for " + mobile + ": " + otp);
+
+        model.addAttribute("otp",    otp);   // show OTP on page during dev
+        model.addAttribute("mobile", mobile);
+
+        return "otp";
+    }
+
+    @PostMapping("/verify-otp")
+    public String verifyOtp(@RequestParam("userOtp") int userOtp,
+                            HttpSession session,
+                            Model model) {
+
+        Integer sessionOtp = (Integer) session.getAttribute("otp");
+        String  mobile     = (String)  session.getAttribute("mobile");
+        String  name       = (String)  session.getAttribute("name");
+        String  email      = (String)  session.getAttribute("email");
+        Long    otpTime    = (Long)    session.getAttribute("otpTime");
+
+        if (sessionOtp == null || mobile == null || otpTime == null) {
+            model.addAttribute("error", "Session expired. Try again.");
+            return "signup";
+        }
+
+        if (System.currentTimeMillis() - otpTime > 300000) { // 5 min
+            model.addAttribute("error", "OTP expired. Request again.");
+            return "otp";
+        }
+
+        if (userOtp != sessionOtp) {
+            model.addAttribute("error", "Invalid OTP. Try again.");
+            return "otp";
+        }
+
+        // OTP correct — register user and set session
+        session.removeAttribute("otp");
+        session.removeAttribute("otpTime");
+
+        // Save to TempStorage
         if (!TempStorage.users.containsKey(mobile)) {
             User user = new User();
             user.setMobile(mobile);
+            user.setEmail(email);
             user.setPremium(false);
             user.setPlan("FREE");
-
             TempStorage.users.put(mobile, user);
         }
 
+        session.setAttribute("mobile",  mobile);
         session.setAttribute("premium", false);
+        session.setAttribute("plan",    "FREE");
+        session.setAttribute("email",   email);
 
-        return "redirect:/dashboard"; // 👈 IMPORTANT CHANGE
+        return "redirect:/dashboard";
     }
 
-    model.addAttribute("error", "Invalid OTP");
-    return "otp";
-}
-@GetMapping("/dashboard")
-public String dashboard(HttpSession session, Model model) {
-
-    if(session.getAttribute("mobile") == null){
-        return "redirect:/signup";
+    // ─────────────────────────────────────────
+    // LOGIN  ← KEY FIX: accepts any registered mobile
+    // ─────────────────────────────────────────
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
     }
 
-    // 👇 ADD THIS LINE
-    model.addAttribute("premium", session.getAttribute("premium"));
+   @PostMapping("/do-login")
+public String doLogin(@RequestParam String mobile,
+                      HttpSession session,
+                      Model model) {
 
-    return "dashboard";
-}
-    @GetMapping("/plans")
-public String plansPage() {
-    return "plans";
-}
-@GetMapping("/payment")
-public String paymentPage(@RequestParam("plan") String plan, Model model) {
-    model.addAttribute("plan", plan);
-    return "payment";
-}
-@GetMapping("/payment-success")
-public String paymentSuccess(HttpSession session, Model model) {
-
-    String mobile = (String) session.getAttribute("mobile");
-
-    if(mobile == null){
-        return "redirect:/signup";
+    if (mobile == null || mobile.isEmpty()) {
+        model.addAttribute("error", "Enter mobile number");
+        return "login";
     }
-
-    User user = TempStorage.users.get(mobile);
-
-    if(user != null){
-        user.setPremium(true);
-        user.setPlan("PRO");
-    }
-
-    session.setAttribute("premium", true);
-
-    model.addAttribute("plan", "PRO");
-    model.addAttribute("amount", "₹99");
-
-    return "success";
-}
-  @GetMapping("/signup")
-    public String signupPage(){
-        return "signup"; // 👉 loads signup.html
-    }
-    @GetMapping("/player")
-public String playerPage(HttpSession session) {
-
-    // ✅ check login
-    if(session.getAttribute("mobile") == null){
-        return "redirect:/signup";
-    }
-
-    return "player"; // opens player.html
-}
-@GetMapping("/check-user")
-public String checkUser1(HttpSession session) {
-
-    String mobile = (String) session.getAttribute("mobile");
-
-    // ✅ already logged in
-    if(mobile != null){
-        return "redirect:/player";
-    }
-
-    // ❌ not logged in → go signup
-    return "redirect:/signup";
-}
-
-
-@GetMapping("/podcasts")
-public String podcastsPage(){
-    return "podcasts";
-}
-@GetMapping("/history")
-public String historyPage(){
-    return "history";
-}
-@GetMapping("/wishlist")
-public String wishlistPage(){
-    return "wishlist";
-}
-@GetMapping("/albums")
-public String albumsPage(){
-    return "albums";
-}
-@GetMapping("/artists")
-public String artistsPage(){
-    return "artists";
-}
-@GetMapping("/playlist")
-public String playlistPage(){
-    return "playlist";
-}
-
-@GetMapping("/playlist-details")
-public String playlistDetails(){
-    return "playlist-details";
-}
-// ACCOUNT PAGE
-@GetMapping("/account")
-public String accountPage(){
-
-   
-
-    return "account";
-}
-
-
-// SETTINGS PAGE
-@GetMapping("/settings")
-public String settingsPage(){
-
-   
-    return "settings";
-}
-
-
-// UPDATE PROFILE
-@PostMapping("/update-profile")
-public String updateProfile(@RequestParam String mobile, HttpSession session){
-
-    String oldMobile = (String) session.getAttribute("mobile");
-
-    User user = userRepo.findAllByMobile(oldMobile).get(0);
-
-    user.setMobile(mobile);
-    userRepo.save(user);
 
     session.setAttribute("mobile", mobile);
 
-    return "redirect:/account";
+    return "redirect:/dashboard";  // ✅ VERY IMPORTANT
 }
+    // ─────────────────────────────────────────
+    // DASHBOARD
+    // ─────────────────────────────────────────
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+        String mobile = (String) session.getAttribute("mobile");
+        if (mobile == null) return "redirect:/login";
+        model.addAttribute("mobile",  mobile);
+        model.addAttribute("premium", session.getAttribute("premium"));
+        model.addAttribute("plan",    session.getAttribute("plan"));
+        return "dashboard";
+    }
 
+    // ─────────────────────────────────────────
+    // PLANS & PAYMENT
+    // ─────────────────────────────────────────
+    @GetMapping("/plans")
+    public String plansPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "plans";
+    }
 
-// LOGOUT
-@GetMapping("/custom-logout")
-public String logout(HttpSession session){
+    @GetMapping("/payment")
+    public String paymentPage(@RequestParam("plan") String plan,
+                              HttpSession session, Model model) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        model.addAttribute("plan", plan);
+        return "payment";
+    }
 
-    session.invalidate(); // clear session
+    @GetMapping("/payment-success")
+    public String paymentSuccess(HttpSession session, Model model) {
+        String mobile = (String) session.getAttribute("mobile");
+        if (mobile == null) return "redirect:/login";
 
-    return "logout"; // 👈 show logout.html
-}
+        User user = TempStorage.users.get(mobile);
+        if (user != null) {
+            user.setPremium(true);
+            user.setPlan("PRO");
+        }
+
+        session.setAttribute("premium", true);
+        session.setAttribute("plan",    "PRO");
+
+        model.addAttribute("plan",   "PRO");
+        model.addAttribute("amount", "₹99");
+
+        return "success";
+    }
+
+    // ─────────────────────────────────────────
+    // PLAYER
+    // ─────────────────────────────────────────
+    @GetMapping("/player")
+    public String playerPage(HttpSession session, Model model) {
+        String mobile = (String) session.getAttribute("mobile");
+        if (mobile == null) return "redirect:/login";
+        model.addAttribute("mobile",  mobile);
+        model.addAttribute("premium", session.getAttribute("premium"));
+        return "player";
+    }
+
+    // ─────────────────────────────────────────
+    // CHECK USER
+    // ─────────────────────────────────────────
+    @GetMapping("/check-user")
+    public String checkUser(HttpSession session) {
+        if (session.getAttribute("mobile") != null) return "redirect:/dashboard";
+        return "redirect:/login";
+    }
+
+    // ─────────────────────────────────────────
+    // LIBRARY PAGES — all require login
+    // ─────────────────────────────────────────
+    @GetMapping("/podcasts")
+    public String podcastsPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "podcasts";
+    }
+
+    @GetMapping("/history")
+    public String historyPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "history";
+    }
+
+    @GetMapping("/wishlist")
+    public String wishlistPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "wishlist";
+    }
+
+    @GetMapping("/albums")
+    public String albumsPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "albums";
+    }
+
+    @GetMapping("/artists")
+    public String artistsPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "artists";
+    }
+
+    @GetMapping("/playlist")
+    public String playlistPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "playlist";
+    }
+
+    @GetMapping("/playlist-details")
+    public String playlistDetails(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "playlist-details";
+    }
+
+    // ─────────────────────────────────────────
+    // ACCOUNT PAGE
+    // ─────────────────────────────────────────
+    @GetMapping("/account")
+    public String accountPage(HttpSession session, Model model) {
+        String mobile = (String) session.getAttribute("mobile");
+        if (mobile == null) return "redirect:/login";
+
+        User user = TempStorage.users.get(mobile);
+        String email = null;
+        String plan  = "FREE";
+
+        if (user != null) {
+            email = user.getEmail();
+            plan  = user.getPlan() != null ? user.getPlan() : (user.isPremium() ? "PRO" : "FREE");
+        }
+
+        if ("FREE".equals(plan) && Boolean.TRUE.equals(session.getAttribute("premium"))) {
+            plan = "PRO";
+        }
+
+        model.addAttribute("mobile", mobile);
+        model.addAttribute("email",  email);
+        model.addAttribute("plan",   plan);
+
+        return "account";
+    }
+
+    // ─────────────────────────────────────────
+    // SETTINGS
+    // ─────────────────────────────────────────
+    @GetMapping("/settings")
+    public String settingsPage(HttpSession session) {
+        if (session.getAttribute("mobile") == null) return "redirect:/login";
+        return "settings";
+    }
+
+    @PostMapping("/update-profile")
+    public String updateProfile(@RequestParam String mobile,
+                                @RequestParam(required = false) String email,
+                                HttpSession session) {
+
+        String oldMobile = (String) session.getAttribute("mobile");
+
+        List<User> users = userRepo.findAllByMobile(oldMobile);
+        if (!users.isEmpty()) {
+            User user = users.get(0);
+            user.setMobile(mobile);
+            if (email != null && !email.isBlank()) {
+                user.setEmail(email);
+                session.setAttribute("email", email);
+            }
+            userRepo.save(user);
+        }
+
+        if (TempStorage.users.containsKey(oldMobile)) {
+            User tempUser = TempStorage.users.remove(oldMobile);
+            tempUser.setMobile(mobile);
+            if (email != null && !email.isBlank()) tempUser.setEmail(email);
+            TempStorage.users.put(mobile, tempUser);
+        }
+
+        session.setAttribute("mobile", mobile);
+        return "redirect:/account";
+    }
+
+    // ─────────────────────────────────────────
+    // HELP
+    // ─────────────────────────────────────────
+    @GetMapping("/help")
+    public String helpPage() { return "help"; }
+
+    // ─────────────────────────────────────────
+    // LOGOUT
+    // ─────────────────────────────────────────
+    @GetMapping("/custom-logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
+    }
 }

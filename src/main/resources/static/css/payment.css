@@ -1,102 +1,372 @@
-body{
-margin:0;
-font-family:Arial;
-background:url('/images/music-bg.jpg') center/cover no-repeat;
-color:white;
+/* ══════════════════════════════════════════
+   payment.css — page-specific styles only
+   body / sidebar / footer / navbar → style.css
+   ══════════════════════════════════════════ */
 
-min-height:100vh;
+/* ── CONTENT ── */
+.content {
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-/* NAVBAR */
-.navbar{
-display:flex;
-justify-content:space-between;
-padding:15px;
-background:rgba(0,0,0,0.8);
+/* ── PAYMENT WRAPPER — centres the box ── */
+.payment-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
-/* LAYOUT */
-.layout{
-display:flex;
+/* ── PAYMENT BOX ── */
+.payment-box {
+  width: 460px;
+  max-width: 100%;
+  background: rgba(15, 15, 15, 0.78);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 36px 36px 28px;
+  border-radius: 22px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55);
 }
 
-/* SIDEBAR */
-.sidebar{
-width:220px;
-height:100vh;
-background:rgba(0,0,0,0.9);
-padding:20px;
-position:fixed;
-top:60px;
-left:0;   /* ✅ ADD THIS */
+/* ── HEADER ── */
+.payment-header {
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-/* CONTENT */
-.content{
-margin-left:220px; /* match sidebar EXACT */
-
-width:calc(100% - 220px); /* ✅ ADD THIS */
-
-height:calc(100vh - 60px);
-
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
+.payment-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: white;
 }
 
-/* PAYMENT BOX */
-.payment-box{
-width:420px;
-max-width:90%;
-background:rgba(0,0,0,0.65);
-backdrop-filter:blur(12px);
-padding:30px;
-border-radius:15px;
-box-shadow:0 0 20px rgba(0,0,0,0.5);
+.payment-sub {
+  font-size: 13px;
+  color: #888;
 }
 
-/* INPUT */
-.payment-box input{
-width:100%;
-padding:10px;
-margin:10px 0;
-border:none;
-border-radius:8px;
+/* ── UPI BUTTON ── */
+.upi-btn {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  border: 2px solid #ff2e74;
+  border-radius: 25px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-/* ROW */
-.row{
-display:flex;
-gap:10px;
+.upi-btn:hover {
+  background: #ff2e74;
+  color: white;
 }
 
-/* BUTTONS */
-.upi-btn{
-width:100%;
-padding:12px;
-background:#e91e63;
-border:none;
-border-radius:20px;
-color:white;
-margin-bottom:15px;
+/* ── OR DIVIDER ── */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: #666;
+  font-size: 13px;
 }
 
-.subscribe-btn{
-width:100%;
-padding:12px;
-background:#e91e63;
-border:none;
-border-radius:20px;
-color:white;
-margin-top:20px;
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* FOOTER */
-.footer{
-width:100%;
-max-width:800px;
-display:flex;
-justify-content:space-between;
-margin-top:40px;
+/* ── FIELD GROUP ── */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.field-group label {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.field-group input,
+.field-group select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  box-sizing: border-box;
+}
+
+.field-group input::placeholder {
+  color: #555;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+  border-color: #ff2e74;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* valid state */
+.field-group input:not(.invalid):not(:placeholder-shown):not(:focus) {
+  border-color: rgba(80, 200, 120, 0.5);
+}
+
+/* invalid state (set by JS) */
+.field-group input.invalid {
+  border-color: #ff4d4d;
+  background: rgba(255, 50, 50, 0.07);
+}
+
+.field-group select {
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.field-group select option {
+  background: #1a1a1a;
+  color: white;
+}
+
+/* ── FIELD ERROR MESSAGE ── */
+.field-error {
+  font-size: 11.5px;
+  color: #ff6b6b;
+  min-height: 16px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ── CARD INPUT WRAP (icon inside) ── */
+.card-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.card-input-wrap input {
+  padding-right: 70px;
+}
+
+.card-icon {
+  position: absolute;
+  right: 12px;
+  font-size: 12px;
+  color: #aaa;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ── ROW (expiry + cvv) ── */
+.row-fields {
+  display: flex;
+  gap: 14px;
+}
+
+.row-fields .field-group {
+  flex: 1;
+}
+
+/* ── PLAN SUMMARY ── */
+.payment-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 0;
+  background: rgba(255, 46, 116, 0.08);
+  border: 1px solid rgba(255, 46, 116, 0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 18px 0 4px;
+}
+
+.summary-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.summary-value {
+  font-size: 13px;
+  color: white;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ── SUBSCRIBE BUTTON ── */
+.subscribe-btn {
+  width: 100%;
+  padding: 14px;
+  background: #ff2e74;
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background 0.25s, transform 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.subscribe-btn:hover {
+  background: #ff4d88;
+  transform: scale(1.02);
+}
+
+.subscribe-btn:disabled {
+  background: #888;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── PAYMENT NOTE ── */
+.payment-note {
+  font-size: 11.5px;
+  color: #666;
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+.payment-note a {
+  color: #ff2e74;
+  text-decoration: none;
+}
+
+.payment-note a:hover {
+  text-decoration: underline;
+}
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 42px 0 8px;
+  color: #bbb;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── SECTION HEADINGS ── */
+.content h3 {
+  font-size: 20px;
+  margin-top: 28px;
+  margin-bottom: 12px;
+  color: white;
+}
+
+/* ── CARD ROW ── */
+.row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 14px;
+  scroll-behavior: smooth;
+}
+
+.row::-webkit-scrollbar { height: 6px; }
+.row::-webkit-scrollbar-thumb { background: #555; border-radius: 5px; }
+
+/* ── CARD ── */
+.card {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.card img {
+  width: 140px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  transition: transform 0.3s;
+}
+
+.card:hover img {
+  transform: scale(1.06);
+}
+
+.card-actions {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.card:hover .card-actions {
+  opacity: 1;
+}
+
+.card-actions button {
+  background: rgba(0, 0, 0, 0.75);
+  border: none;
+  color: white;
+  padding: 6px 9px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.card-actions button:hover {
+  background: #ff2e74;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .content { padding: 20px 12px; }
+  .payment-box { padding: 24px 18px; }
+  .row-fields { flex-direction: column; gap: 0; }
+  .card { width: 120px; }
+  .card img { width: 120px; height: 170px; }
+}
+
+@media (max-width: 480px) {
+  .payment-header h2 { font-size: 20px; }
+  .subscribe-btn { font-size: 14px; }
 }

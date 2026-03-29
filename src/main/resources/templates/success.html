@@ -1,61 +1,398 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+
 <meta charset="UTF-8">
-<title>Success</title>
+<title>Tune Hive - Account</title>
 
-<link rel="stylesheet" th:href="@{/css/success.css}">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" th:href="@{/css/account.css}">
+
+<style>
+
+/* ── Profile Page Layout ── */
+.page-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+}
+
+.profile-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+/* ── Profile Card ── */
+.profile-card {
+    flex: 1;
+    min-width: 280px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 28px;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff2e63, #ff4081);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    flex-shrink: 0;
+}
+
+.profile-info .info-text p {
+    font-size: 12px;
+    color: #aaa;
+    margin: 0 0 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-info .info-text h3 {
+    font-size: 20px;
+    margin: 0 0 12px;
+    color: #fff;
+}
+
+.profile-info .info-text h4 {
+    font-size: 14px;
+    margin: 0 0 4px;
+    color: #eee;
+    font-weight: 400;
+}
+
+.profile-info .info-text .mobile-badge {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #aaa;
+}
+
+.profile-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.profile-buttons button {
+    padding: 9px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.profile-buttons button:hover {
+    background: rgba(255,46,99,0.3);
+    border-color: #ff2e63;
+}
+
+/* ── Devices Card ── */
+.devices-card {
+    width: 220px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.devices-card h3 {
+    font-size: 15px;
+    margin-bottom: 14px;
+    color: #fff;
+}
+
+.devices-card p {
+    font-size: 14px;
+    color: #ccc;
+    margin: 8px 0;
+}
+
+/* ── Subscription Card ── */
+.subscription-card {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.subscription-card h2 {
+    font-size: 17px;
+    margin: 0 0 6px;
+}
+
+.plan-badge {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.plan-badge.premium {
+    background: linear-gradient(135deg, #ff2e63, #ff8c00);
+    color: #fff;
+}
+
+.plan-badge.free {
+    background: rgba(255,255,255,0.12);
+    color: #ccc;
+}
+
+.subscription-card .upgrade-btn {
+    padding: 9px 22px;
+    background: #ff2e63;
+    border: none;
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.subscription-card .upgrade-btn:hover {
+    background: #ff4081;
+}
+
+/* ── Settings Card ── */
+.settings-card {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.settings-card h2 {
+    font-size: 17px;
+    margin: 0;
+}
+
+.settings-card .logout {
+    padding: 9px 22px;
+    background: rgba(255,50,50,0.6);
+    border: none;
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.settings-card .logout:hover {
+    background: rgba(255,50,50,0.9);
+}
+
+/* ── Movie Cards Section ── */
+.section-divider {
+    margin: 10px 0 20px;
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.section-heading {
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: #fff;
+}
+
+.movie-cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 10px;
+}
+
+.movie-card {
+    width: 140px;
+    cursor: pointer;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.05);
+    transition: 0.3s;
+}
+
+.movie-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(255,46,99,0.35);
+}
+
+.movie-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.movie-card .card-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 6px;
+    background: rgba(0,0,0,0.45);
+}
+
+.movie-card .card-actions button {
+    background: rgba(255,46,99,0.8);
+    border: none;
+    color: white;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.movie-card .card-actions button:hover {
+    background: #ff2e63;
+}
+
+</style>
+
 </head>
-
 <body>
 
+<div class="app">
+
 <!-- NAVBAR -->
-<header class="navbar">
-    <div class="logo">🎵 TUNE HIVE</div>
-    <input type="text" placeholder="Search">
-    <div class="nav-right">
-        <a href="#">Music</a>
-        <a href="#">Podcasts</a>
-        <a href="#">Login</a>
-    </div>
-</header>
+<div th:replace="fragments/navbar :: navbar"></div>
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-         <h4>LIBRARY</h4>
-        <p><a href="/history" style="text-decoration: none; color: white;">History</a></p>
-        <p><a href="/wishlist" style="text-decoration: none; color: white;">Liked Songs</a></p>
-        <p><a href="/albums" style="text-decoration: none; color: white;">Albums</a></p>
-        <p><a href="/artists" style="text-decoration: none; color: white;">Artists</a></p>
-        <p><a href="/podcasts" style="text-decoration: none; color: white;">Podcasts</a></p>
-        <p><a href="/" style="text-decoration: none; color: white;">Home</a></p>
-    </aside>
+<!-- SIDEBAR -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <!-- CENTER CARD -->
-    <main class="content">
+<!-- ACCOUNT CONTENT -->
+<main class="content">
 
-        <div class="success-card">
-            <h1>Payment Successful! 🎉</h1>
-            <p>Your plan activated successfully</p>
+    <h2 class="page-title">👤 My Profile</h2>
 
-            <h3>Plan Details</h3>
+    <div class="profile-grid">
 
-            <p><strong>Plan:</strong> <span th:text="${plan}"></span></p>
-            <p><strong>Amount:</strong> <span th:text="${amount}"></span></p>
+        <!-- ── Profile Info Card ── -->
+        <div class="profile-card">
+            <div class="profile-info">
 
-            <button onclick="goToPlayer()">Go to Player</button>
+                <!-- Avatar: shows first letter of email or phone icon -->
+                <div class="avatar">
+                    <span th:if="${email != null}" th:text="${#strings.toUpperCase(#strings.substring(email, 0, 1))}"></span>
+                    <span th:if="${email == null}">📱</span>
+                </div>
+
+                <div class="info-text">
+                    <p>Mobile Number</p>
+                    <h3 th:text="${mobile != null ? mobile : 'Not available'}">9876543210</h3>
+
+                    <p>Email Address</p>
+                    <h4 th:text="${email != null ? email : 'Not set'}"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4b1b7a1b684a1bca5a9b4a8a1eaa7aba9">[email&#160;protected]</a></h4>
+
+                    <span class="mobile-badge">
+                        📍 Registered via OTP
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="profile-buttons">
+                <button onclick="location.href='/settings'">✏️ Edit Profile</button>
+                <button>🔒 Change Password</button>
+            </div>
         </div>
 
-    </main>
+        <!-- ── Connected Devices ── -->
+        <div class="devices-card">
+            <h3>📲 Connected Devices</h3>
+            <p>📱 iPhone 15 Pro</p>
+            <p>💻 MacBook Pro</p>
+        </div>
+
+    </div>
+
+    <!-- ── Subscription Card ── -->
+    <div class="subscription-card">
+        <div>
+            <h2>🎵 Subscription</h2>
+            <!-- Show plan dynamically: PRO or FREE -->
+            <span th:if="${plan == 'PRO'}" class="plan-badge premium">⭐ PRO Plan — Active</span>
+            <span th:if="${plan != 'PRO'}" class="plan-badge free">Free Plan</span>
+        </div>
+
+        <!-- Show Upgrade button only if not PRO -->
+        <button th:if="${plan != 'PRO'}" class="upgrade-btn"
+                onclick="location.href='/plans'">
+            ⚡ Upgrade to PRO
+        </button>
+
+        <!-- If already PRO, show validity info -->
+        <span th:if="${plan == 'PRO'}" style="color:#aaa; font-size:13px;">
+            ✅ Unlimited access active
+        </span>
+    </div>
+
+    <!-- ── Settings / Logout Card ── -->
+    <div class="settings-card">
+        <h2>⚙️ Account Settings</h2>
+        <button class="logout" onclick="location.href='/custom-logout'">
+            🚪 Logout
+        </button>
+    </div>
+
+    <!-- ── Movie Cards Section ── -->
+    <hr class="section-divider">
+   <div th:replace="fragments/card :: card"></div>
+</main>
+</div>
+<audio id="audioPlayer"></audio>
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Appl
+    </button>
+    >/div>
+</div> 
+
+
+
+</div>
+
+
 </div>
 
 <script>
-function goToPlayer(){
-    window.location.href="/player";
-}
+  sessionStorage.setItem("premium", "true");
 </script>
 
-</body>
-</html>

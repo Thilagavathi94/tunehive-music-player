@@ -32,10 +32,13 @@ display:flex;
 .sidebar{
 width:220px;
 background:rgba(0,0,0,0.9);
-padding:20px;
+padding:20px 20px 30px;
 position:fixed;
-top:60px;
-bottom:0;
+top:70px;
+bottom:60px;          /* clear the fixed player bar */
+overflow-y:auto;
+scrollbar-width:thin;
+scrollbar-color:#555 transparent;
 }
 
 .sidebar p{
@@ -45,6 +48,28 @@ cursor:pointer;
 
 .sidebar p:hover{
 background:#333;
+}
+
+/* PLAYLIST BUTTON */
+.playlist{
+display:block;
+width:100%;
+margin-top:20px;
+padding:11px 0;
+background:#ff2e74;
+border:none;
+border-radius:20px;
+color:white;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+transition:background 0.3s, transform 0.2s;
+text-align:center;
+}
+
+.playlist:hover{
+background:#ff4d88;
+transform:scale(1.03);
 }
 
 /* CONTENT */
@@ -64,18 +89,51 @@ border-radius:20px;
 margin-bottom:30px;
 }
 
+.album-info{
+display:flex;
+flex-direction:column;
+align-items:flex-start;
+gap:8px;
+min-width:160px;
+}
+
 .album-info img{
 width:150px;
 border-radius:10px;
 }
 
-.play-btn{
-background:#e91e63;
-padding:10px 20px;
+.album-info h1{
+font-size:22px;
+margin:0;
+}
+
+.album-info p{
+font-size:13px;
+color:#ccc;
+margin:0;
+}
+
+.play-btn,
+.album-info button{
+display:inline-flex;
+align-items:center;
+gap:8px;
+margin-top:6px;
+padding:10px 24px;
+background:#ff2e74;
 border:none;
-border-radius:20px;
+border-radius:25px;
 color:white;
+font-size:15px;
+font-weight:600;
 cursor:pointer;
+transition:background 0.3s, transform 0.2s;
+}
+
+.play-btn:hover,
+.album-info button:hover{
+background:#ff4d88;
+transform:scale(1.05);
 }
 
 /* SONG LIST */
@@ -152,4 +210,96 @@ border:none;
 border-radius:20px;
 color:white;
 cursor:pointer;
+}
+.playing {
+    border: 2px solid #ff2e74;
+}
+/* MOBILE VIEW */
+@media (max-width: 768px){
+
+/* NAVBAR */
+.navbar{
+flex-direction: column;
+align-items: flex-start;
+gap:10px;
+padding:10px;
+}
+
+.menu{
+display:none; /* hide menu */
+}
+
+.search{
+width:100%;
+}
+
+.search input{
+width:100%;
+}
+
+/* SIDEBAR */
+.sidebar{
+display:none; /* hide sidebar */
+}
+
+/* LAYOUT */
+.layout{
+flex-direction: column;
+}
+
+/* CONTENT */
+.content{
+padding:10px;
+}
+
+/* CARDS */
+.row{
+flex-wrap:wrap;
+gap:10px;
+}
+
+.card{
+width:45%; /* 2 cards per row */
+}
+
+/* ALBUM BANNER */
+.album-banner{
+flex-direction: column;
+text-align:center;
+}
+
+.album-info img{
+width:120px;
+}
+
+/* FOOTER 
+/* TABLET VIEW */
+@media (min-width: 769px) and (max-width: 1024px){
+
+/* SIDEBAR SMALL */
+.sidebar{
+width:180px;
+}
+
+/* CONTENT */
+.content{
+padding:15px;
+}
+
+/* CARDS */
+.card{
+width:30%; /* 3 cards per row */
+}
+
+/* ALBUM */
+.album-banner{
+flex-direction: column;
+text-align:center;
+}
+
+}*/
+.footer-container{
+flex-direction: column;
+gap:20px;
+}
 }

@@ -2,133 +2,800 @@
 <html xmlns:th="http://www.thymeleaf.org" th:inline="javascript">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard</title>
-
+<title>Dashboard - Tune Hive</title>
 <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
-
 <body>
+
+<div class="app">
 
 <!-- NAVBAR -->
 <header class="navbar">
-    <div class="logo">🎵 TUNE HIVE</div>
 
-    <input type="text" placeholder="Search">
+  <!-- LOGO -->
+  <div class="logo">🎵 TUNE HIVE</div>
 
-    <div class="nav-right">
-        <a href="#"style="text-decoration:none" color="white">Music language ▾</a>
-        <a href="/custom-logout" style="text-decoration: none; color: white;">Logout</a>
+  <!-- CENTER LINKS -->
+  <nav class="menu">
+    <a href="/dashboard">Music</a>
+    <a href="/podcasts">Podcasts</a>
+    <a href="/plans">Pro</a>
+  </nav>
+
+  <!-- SEARCH -->
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Search songs, artists..." onkeyup="searchSongs()">
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="nav-right">
+
+    <!-- BEFORE LOGIN (hidden if logged in) -->
+    <div id="guestMenu" style="display:flex; align-items:center; gap:16px;">
+      <a href="#" onclick="openLanguagePopup(); return false;">Music language ▾</a>
+      <a href="/login">Login</a>
+      <a href="/signup">Sign up</a>
     </div>
+
+    <!-- AFTER LOGIN (hidden by default, shown by JS) -->
+    <div id="userMenu" style="display:none; align-items:center; gap:16px;">
+      <a href="#" onclick="openLanguagePopup(); return false;">Music language ▾</a>
+
+      <!-- CLICK-BASED DROPDOWN -->
+      <div class="dropdown" id="menuDropdown">
+        <span class="dropdown-trigger" onclick="toggleDropdown()">Menu ▾</span>
+
+        <div class="dropdown-content" id="dropdownContent">
+          <a href="/account">👤 Profile</a>
+          <a href="/settings">⚙️ Settings</a>
+          <a href="/history">🎵 History</a>
+          <a href="/wishlist">❤️ Wishlist</a>
+          <a href="/help">❓ Help</a>
+          <a href="#" class="logout-link" onclick="logout(); return false;">🚪 Logout</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </header>
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        
-        <h4>LIBRARY</h4>
-        <p><a href="/history" style="text-decoration: none; color: white;">History</a></p>
-        <p><a href="/wishlist" style="text-decoration: none; color: white;">Liked Songs</a></p>
-        <p><a href="/albums" style="text-decoration: none; color: white;">Albums</a></p>
-        <p><a href="/artists" style="text-decoration: none; color: white;">Artists</a></p>
-        <p><a href="/podcasts" style="text-decoration: none; color: white;">Podcasts</a></p>
-        <p><a href="/" style="text-decoration: none; color: white;">Home</a></p>
-    </aside>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
 
-    <!-- MAIN CONTENT -->
-    <main class="content">
+    <h4>BROWSE</h4>
+    <ul class="sidebar-menu">
+      <li onclick="showSection(event,'latestSection')">New Release ▾</li>
+      <li onclick="showSection(event,'trendingSection')">Trending ▾</li>
+      <li onclick="showSection(event,'topChartsSection')">Top Charts ▾</li>
+      <li onclick="showSection(event,'topPlaylistsSection')">Top Playlists ▾</li>
+      <li onclick="showSection(event,'podcastsSection')">Podcasts ▾</li>
+      <li onclick="showSection(event,'topArtistsSection')">Top Artists ▾</li>
+      <li onclick="showAllSections()">Home</li>
+    </ul>
 
-        <!-- ALBUM -->
-        <section class="album-banner">
+    <h4>LIBRARY</h4>
+    <ul>
+      <li style="padding:15px;font-size:18px;" onclick="location.href='/history'">History ▾</li>
+      <li style="padding:15px;font-size:18px;" onclick="location.href='/wishlist'">Liked Songs ▾</li>
+      <li style="padding:15px;font-size:18px;" onclick="location.href='/albums'">Albums ▾</li>
+      <li style="padding:15px;font-size:18px;" onclick="location.href='/artists'">Artists ▾</li>
+      <li style="padding:15px;font-size:18px;" onclick="location.href='/podcasts'">Podcasts ▾</li>
+    </ul>
 
-            <div class="album-info">
-                <img src="/images/majili.jpg">
-                <h1>MAJILI</h1>
-                <p>Various Artists • 7 songs</p>
-                <button class="play-btn" onclick="playSong()">Play</button>
-            </div>
+    <button class="playlist" onclick="location.href='/playlist'">+ New Play List</button>
 
-            <div class="album-songs">
+  </aside>
 
-                <div class="song-row" onclick="playSong()">
-                    <span>1</span><span>Majili</span><span>♡</span><span>5:00</span>
-                </div>
+  <!-- MAIN CONTENT -->
+  <main class="content">
 
-                <div class="song-row" onclick="playSong()">
-                    <span>2</span><span>Barbad</span><span>♡</span><span>5:00</span>
-                </div>
+    <!-- ALBUM BANNER -->
+    <section class="album-banner">
 
-                <div class="song-row" onclick="playSong()">
-                    <span>3</span><span>Tum Ho</span><span>♡</span><span>5:00</span>
-                </div>
+  <div class="album-info">
+    <img src="/images/majili.jpg" alt="Majili">
+    <h1>MAJILI</h1>
+    <p>Various Artists • 7 songs</p>
 
-                <div class="song-row" onclick="playSong()">
-                    <span>4</span><span>Dhun</span><span>♡</span><span>5:00</span>
-                </div>
+    <!-- ✅ FIXED -->
+    <button onclick="playAnySong(this.closest('.card'))">▶</button>
+  </div>
 
-            </div>
-        </section>
+  <div class="album-songs">
 
-        <!-- ROW -->
-        <h3>You Might Like</h3>
-        <div class="row">
-            <img src="/images/movie1.jpg">
-            <img src="/images/movie2.jpg">
-            <img src="/images/movie3.jpg">
-            <img src="/images/movie4.jpg">
-            <img src="/images/movie5.jpg">
-        </div>
+    <div class="song-row" data-song="/songs/majili.mp3" onclick="playAnySong(this)">
+      <span>1</span><span>Majili</span><span>♡</span><span>5:00</span>
+    </div>
 
-    </main>
+    <div class="song-row" data-song="/songs/barbad.mp3" onclick="playAnySong(this)">
+      <span>2</span><span>Barbad</span><span>♡</span><span>5:00</span>
+    </div>
+
+    <div class="song-row" data-song="/songs/tumho.mp3" onclick="playAnySong(this)">
+      <span>3</span><span>Tum Ho</span><span>♡</span><span>5:00</span>
+    </div>
+
+    <div class="song-row" data-song="/songs/dhun.mp3" onclick="playAnySong(this)">
+      <span>4</span><span>Dhun</span><span>♡</span><span>5:00</span>
+    </div>
+
+  </div>
+</section>
+
+    <!-- You Might Like -->
+    <h3>You Might Like</h3>
+    <div class="row you-might-like">
+      <div class="card" data-song="/songs/song1.mp3">
+    <img src="/images/movie1.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
 </div>
+      <div class="card" data-song="/songs/song2.mp3">
+    <img src="/images/movie2.jpg">
+    <div class="card-actions">
+      <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      <div class="card" data-song="/songs/song3.mp3">
+    <img src="/images/movie3.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      <div class="card" data-song="/songs/song4.mp3">
+    <img src="/images/movie4.jpg">
+    <div class="card-actions">
+      <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      <div class="card" data-song="/songs/song5.mp3">
+    <img src="/images/movie5.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+    </div>
+
+    <!-- Latest Songs -->
+    <div id="latestSection">
+      <h3>Latest Songs</h3>
+      <div class="row">
+        <div class="card" data-song="/songs/song1.mp3" data-title="vicram">
+    <img src="/images/movie1.jpg">
+    <div class="card-actions">
+      <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song2.mp3" data-title="lubber pandhu">
+    <img src="/images/movie2.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song3.mp3" data-title="darbhar">
+    <img src="/images/movie3.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song4.mp3" data-title="kabali">
+    <img src="/images/movie4.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song5.mp3">
+    <img src="/images/movie5.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      </div>
+    </div>
+
+    <!-- Trending -->
+    <div id="trendingSection">
+      <h3>Trending Now</h3>
+      <div class="row">
+        <div class="card" data-song="/songs/song1.mp3">
+    <img src="/images/movie1.jpg">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song2.mp3">
+    <img src="/images/movie8.jpg" data-lang="tamil">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song3.mp3">
+    <img src="/images/movie9.jpg" data-lang="tamil">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song4.mp3">
+    <img src="/images/movie10.jpg" data-lang="hindi">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song5.mp3">
+    <img src="/images/movie11.jpg" data-lang="hindi">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song6.mp3">
+    <img src="/images/movie27.jpg" data-lang="hindi">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song7.mp3">
+    <img src="/images/movie26.jpg" data-lang="hindi">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song8.mp3">
+    <img src="/images/movie25.jpg" data-lang="hindi">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      </div>
+    </div>
+
+    <!-- Top Charts -->
+    <div id="topChartsSection">
+      <h3>Top Charts</h3>
+      <div class="row">
+        <div class="card" data-song="/songs/song9.mp3">
+    <img src="/images/movie13.jpg" data-lang="telugu">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song10.mp3">
+    <img src="/images/movie14.jpg" data-lang="telugu">
+    <div class="card-actions"> <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song11.mp3">
+    <img src="/images/movie15.jpg" data-lang="telugu">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song12.mp3">
+    <img src="/images/movie16.jpg" data-lang="telugu">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song13.mp3">
+    <img src="/images/movie17.jpg" data-lang="telugu">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song14.mp3">
+    <img src="/images/movie18.jpg" data-lang="telugu">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song15.mp3">
+    <img src="/images/movie24.jpg" data-lang="telugu">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song16.mp3">
+    <img src="/images/movie23.jpg" data-lang="telugu">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song17.mp3">
+    <img src="/images/movie22.jpg" data-lang="telugu">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      </div>
+    </div>
+
+    <!-- Top Playlists -->
+    <div id="topPlaylistsSection">
+      <h3>Top Playlists</h3>
+      <div class="row">
+        <div class="card" data-song="/songs/song18.mp3">
+    <img src="/images/movie19.jpg" data-lang="tamil">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song19.mp3">
+    <img src="/images/movie20.jpg" data-lang="tamil">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song20.mp3">
+    <img src="/images/movie21.jpg" data-lang="tamil">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song21.mp3">
+    <img src="/images/movie22.jpg" data-lang="tamil">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song22.mp3">
+    <img src="/images/movie23.jpg" data-lang="tamil">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song23.mp3">
+    <img src="/images/movie24.jpg" data-lang="tamil">
+    <div class="card-actions">
+                     <button onclick="playAnySong(this.closest('.card'))">▶</button>
+                    <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song24.mp3">
+    <img src="/images/movie1.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song25.mp3">
+    <img src="/images/movie2.jpg" data-lang="tamil">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song26.mp3">
+    <img src="/images/movie3.jpg" data-lang="tamil">
+    <div class="card-actions">
+         <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      </div>
+    </div>
+
+    <!-- Podcasts -->
+    <div id="podcastsSection">
+      <h3>Podcasts</h3>
+      <div class="row">
+        <div class="card" data-song="/songs/song27.mp3">
+    <img src="/images/movie25.jpg" data-lang="hindi">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song28.mp3">
+    <img src="/images/movie26.jpg" data-lang="hindi">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song29.mp3">
+    <img src="/images/movie27.jpg" data-lang="hindi">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song30.mp3">
+    <img src="/images/movie28.jpg" data-lang="hindi">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song31.mp3">
+    <img src="/images/movie29.jpg" data-lang="hindi">
+    <div class="card-actions">
+      <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song32.mp3">
+    <img src="/images/movie30.jpg" data-lang="hindi">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song33.mp3">
+    <img src="/images/movie6.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song34.mp3">
+    <img src="/images/movie5.jpg" data-lang="tamil">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song35.mp3">
+    <img src="/images/movie4.jpg" data-lang="tamil">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      </div>
+    </div>
+
+    <!-- Top Artists -->
+    <div id="topArtistsSection">
+      <h3>Top Artists</h3>
+      <div class="row">
+        <div class="card" data-song="/songs/song36.mp3">
+    <img src="/images/movie31.jpg" data-lang="tamil">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song37.mp3">
+    <img src="/images/movie32.jpg" data-lang="tamil">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song38.mp3">
+    <img src="/images/movie33.jpg" data-lang="tamil">
+    <div class="card-actions">
+        <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song39.mp3">
+    <img src="/images/movie34.jpg" data-lang="tamil">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song40.mp3">
+    <img src="/images/movie35.jpg" data-lang="tamil">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+        <div class="card" data-song="/songs/song41.mp3">
+    <img src="/images/movie36.jpg" data-lang="tamil">
+    <div class="card-actions">
+       <button onclick="playAnySong(this.closest('.card'))">▶</button>
+        <button onclick="addWishlist(this)">❤️</button>
+    </div>
+</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-col">
+      <h4>Top Artists</h4>
+      <p>Neha Kakkar</p><p>Arijit Singh</p><p>Badshah</p>
+      <p>Justin Bieber</p><p>Ed Sheeran</p><p>Shreya Ghoshal</p>
+    </div>
+    <div class="footer-col">
+      <h4>Top Actors</h4>
+      <p>Rajini</p><p>Vijay</p><p>Surya</p>
+      <p>Prabhu</p><p>Allu Arjun</p><p>Ravi</p>
+    </div>
+    <div class="footer-col">
+      <h4>Devotional Songs</h4>
+      <p>Krishna</p><p>Ganesh</p><p>Hanuman</p>
+      <p>Gayatri</p><p>Durga</p>
+    </div>
+    <div class="footer-col">
+      <h4>Language</h4>
+      <p>Hindi songs</p><p>Tamil songs</p><p>Telugu songs</p>
+      <p>Malayalam songs</p><p>Odia songs</p>
+    </div>
+    <div class="footer-col">
+      <h4>Artist Originals</h4>
+      <p>Zaeden</p><p>Doobey</p><p>Badshah</p>
+      <p>Indie Hits</p><p>Lo-fi Beats</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <p>About us</p><p>Culture</p><p>Blogs</p>
+      <p>Jobs</p><p>Press</p><p>Advertise</p>
+      <p>Terms & Privacy</p><p>Help & Support</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Tune Hive Media Limited All rights Reserved</p>
+    <div class="social">
+      <span>FOLLOW US</span>
+      <img src="images/youtube.png">
+      <img src="images/facebook.png">
+      <img src="images/linkedin.png">
+      <img src="images/twitter.png">
+    </div>
+  </div>
+</footer>
+
+</div><!-- end .app -->
 
 <!-- PLAYER -->
-<div class="player">
-    <button onclick="playSong()">▶ Play</button>
-</div>
 
-<audio id="audioPlayer">
-    <source src="/songs/majili.mp3" type="audio/mpeg">
-</audio>
+<audio id="audioPlayer"></audio>
+<div class="player">
+    <button onclick="togglePlay()">⏯ Pause / Play</button>
+</div>
 
 <!-- LIMIT POPUP -->
 <div id="limitPopup" class="popup">
-    <div class="popup-box">
-        <h2>Limit Reached 🚫</h2>
-        <p>You need Premium to continue</p>
-        <button onclick="goToPlans()">Go to Plans</button>
+  <div class="popup-box">
+    <h2>Limit Reached 🚫</h2>
+    <p>You need Premium to continue listening</p>
+    <button onclick="goToPlans()">Go to Plans</button>
+    <button class="close-btn" onclick="document.getElementById('limitPopup').style.display='none'">✕ Close</button>
+  </div>
+</div>
+
+<!-- LANGUAGE POPUP -->
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
     </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
 </div>
 
 <script>
 
-let playCount = 0;
+// ─── PLAYER LOGIC ───────────────────────────────────────────
+let playCount = parseInt(localStorage.getItem("playCount")) || 0;
+let isPremium = sessionStorage.getItem("premium") === "true"
+    || /*[[${premium}]]*/ false;
 
-// 🔥 get from backend
-let isPremium = /*[[${session.premium != null ? session.premium : false}]]*/ false;
+let audio = document.getElementById("audioPlayer");
+let isPlaying = false;
 
-function playSong(){
+function playAnySong(element) {
 
     let audio = document.getElementById("audioPlayer");
+    let song = element?.getAttribute("data-song");
 
-    if(isPremium){
-        audio.play();
+    if (!song) {
+        alert("No song found!");
         return;
     }
 
-    if(playCount === 0){
-        audio.currentTime = 0;
-        audio.play();
+    let isPremium = sessionStorage.getItem("premium") === "true";
+    let playCount = parseInt(localStorage.getItem("playCount")) || 0;
+
+    // 🚫 FREE USER LIMIT
+    if (!isPremium && playCount >= 1) {
+
+        let confirmPlan = confirm("Free limit reached! Upgrade to Premium?");
+
+        if (confirmPlan) {
+            window.location.href = "/plans";
+        }
+
+        return;
+    }
+
+    // 🎵 PLAY SONG
+    audio.src = song;
+    audio.load();
+    audio.play();
+
+    // 🔥 INCREASE COUNT (only for free user)
+    if (!isPremium) {
         playCount++;
-    } else {
-        document.getElementById("limitPopup").style.display = "flex";
+        localStorage.setItem("playCount", playCount);
     }
 }
+// ─── SIDEBAR SECTION TOGGLE ──────────────────────────────────
+function showSection(event, id) {
+  const sections = ["latestSection","trendingSection","topChartsSection","topPlaylistsSection","podcastsSection","topArtistsSection"];
+  sections.forEach(sec => {
+    let el = document.getElementById(sec);
+    if (el) el.style.display = "none";
+  });
+  let active = document.getElementById(id);
+  if (active) active.style.display = "block";
 
-function goToPlans(){
+  document.querySelectorAll(".sidebar-menu li").forEach(li => li.classList.remove("active"));
+  event.target.classList.add("active");
+  applyFilters();
+}
+
+function showAllSections() {
+  const sections = ["latestSection","trendingSection","topChartsSection","topPlaylistsSection","podcastsSection","topArtistsSection"];
+  sections.forEach(sec => {
+    let el = document.getElementById(sec);
+    if (el) el.style.display = "block";
+  });
+  document.querySelectorAll(".sidebar-menu li").forEach(li => li.classList.remove("active"));
+  applyFilters();
+}
+
+
+// ─── LANGUAGE FILTER ─────────────────────────────────────────
+function applyFilters() {
+  let selectedLangs = [];
+  document.querySelectorAll('.language-list input:checked').forEach(cb => selectedLangs.push(cb.value));
+  document.querySelectorAll('.row .card').forEach(card => {
+    let img = card.querySelector('img');
+    let lang = img ? img.getAttribute("data-lang") : null;
+    if (selectedLangs.length === 0 || selectedLangs.includes(lang)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+  closeLanguagePopup();
+}
+
+function openLanguagePopup() { document.getElementById("languagePopup").style.display = "flex"; }
+function closeLanguagePopup() { document.getElementById("languagePopup").style.display = "none"; }
+
+// ─── DROPDOWN: click to open, click outside to close ─────────
+function toggleDropdown() {
+    const content = document.getElementById("dropdownContent");
+    content.classList.toggle("open");
+}
+
+document.addEventListener("click", function(e) {
+    const dropdown = document.getElementById("menuDropdown");
+    if (dropdown && !dropdown.contains(e.target)) {
+        const content = document.getElementById("dropdownContent");
+        if (content) content.classList.remove("open");
+    }
+});
+
+// ─── LOGOUT ───────────────────────────────────────────────────
+function logout() {
+    sessionStorage.clear();
+    window.location.href = "/custom-logout";
+}
+
+// ─── WISHLIST ─────────────────────────────────────────────────
+function addWishlist(btn) {
+  let card = btn.closest(".card");
+  let img = card.querySelector("img").src;
+  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  if (wishlist.includes(img)) {
+    wishlist = wishlist.filter(item => item !== img);
+    btn.innerText = "❤️";
+    btn.classList.remove("active");
+  } else {
+    wishlist.push(img);
+    btn.innerText = "💚";
+    btn.classList.add("active");
+  }
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+}
+
+// ─── AUTO ROTATE LATEST ROW ───────────────────────────────────
+function rotateTrending() {
+  const row = document.querySelector("#latestSection .row");
+  if (!row || row.children.length === 0) return;
+  row.appendChild(row.children[0]);
+}
+
+let rotateInterval = setInterval(rotateTrending, 2000);
+
+const latestRow = document.querySelector("#latestSection .row");
+if (latestRow) {
+  latestRow.addEventListener("mouseenter", () => clearInterval(rotateInterval));
+  latestRow.addEventListener("mouseleave", () => { rotateInterval = setInterval(rotateTrending, 2000); });
+}
+
+// ─── DEFAULT LOAD ─────────────────────────────────────────────
+window.onload = function(){
+
+    // Set sessionStorage from Thymeleaf server-side session
+    var mobile  = /*[[${session.mobile}]]*/ null;
+    var premium = /*[[${session.premium}]]*/ false;
+
+    if (mobile) {
+        sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("mobile",   mobile);
+        sessionStorage.setItem("premium",  String(premium));
+    }
+
+    // Update navbar
+    var loggedIn = sessionStorage.getItem("loggedIn") === "true";
+    var g = document.getElementById("guestMenu");
+    var u = document.getElementById("userMenu");
+    if (g) g.style.display = loggedIn ? "none" : "flex";
+    if (u) u.style.display  = loggedIn ? "flex"  : "none";
+
+    showAllSections();
+};
+
+function goToPlans() {
     window.location.href = "/plans";
 }
 
+function togglePlay() {
+    let audio = document.getElementById("audioPlayer");
+    if (audio.paused) {
+        audio.play();
+        isPlaying = true;
+    } else {
+        audio.pause();
+        isPlaying = false;
+    }
+}
+  sessionStorage.setItem("loggedIn", "true");
+    if (!sessionStorage.getItem("loggedIn")) {
+    window.location.href = "/login";
+  }
 </script>
 
 </body>

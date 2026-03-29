@@ -1,129 +1,298 @@
-body{
-margin:0;
-font-family:Arial;
-background:url('/images/music-bg.jpg') center/cover no-repeat;
-color:white;
+/* ══════════════════════════════════════════
+   plans.css — page-specific styles only
+   body / sidebar / footer / navbar → style.css
+   ══════════════════════════════════════════ */
+
+/* ── CONTENT WRAPPER ── */
+.content {
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
-/* NAVBAR */
-.navbar{
-display:flex;
-justify-content:space-between;
-padding:15px;
-background:rgba(0,0,0,0.8);
+/* ── PLANS WRAPPER ── */
+.plans-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
-/* LAYOUT */
-.layout{
-display:flex;
+/* ── PLANS HEADER ── */
+.plans-header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-/* SIDEBAR */
-.sidebar{
-width:220px;
-height:100vh;
-overflow-y:auto;
-background:rgba(0,0,0,0.9);
-padding:20px;
-position:fixed;
-top:60px;
-left:0;
+.plans-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
-.sidebar p{
-padding:10px;
-cursor:pointer;
+.plans-sub {
+    font-size: 14px;
+    color: #bbb;
 }
 
-.sidebar p:hover{
-background:#282828;
+/* ── PLAN CARDS ROW ── */
+.plans {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
-.playlist{
-margin-top:20px;
-padding:10px;
-background:#e91e63;
-border:none;
-border-radius:20px;
-color:white;
+/* ── PLAN CARD ── */
+.plan-card {
+    position: relative;
+    width: 300px;
+    background: rgba(20, 20, 20, 0.75);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 34px 28px 28px;
+    border-radius: 22px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    flex-shrink: 0;
 }
 
-/* CONTENT */
-.content{
-margin-left:240px;
-padding:40px;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-align-items:center;   /* CENTER EVERYTHING */
-}
-/* PLAN CARDS */
-.plans{
-display:flex;
-gap:80px;
-margin-top:30px;
-justify-content:center;   /* CENTER */
-flex-wrap:wrap;
-width:100%;
- /* control width */
+.plan-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 28px rgba(255, 46, 116, 0.25);
 }
 
-.plan-card{
-width:270px;  /* BIG SIZE */
-background:rgba(0,0,0,0.65);
-backdrop-filter:blur(15px);
-padding:30px;
-border-radius:20px;
-text-align:center;
-transition:0.3s;
+/* Featured card highlight */
+.plan-card.featured {
+    border: 1px solid rgba(255, 46, 116, 0.5);
+    background: rgba(30, 10, 20, 0.8);
 }
 
-/* HOVER EFFECT */
-.plan-card:hover{
-transform:translateY(-10px);
-box-shadow:0 0 20px rgba(255,255,255,0.2);
+/* ── BADGE ── */
+.plan-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff2e74;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
 }
 
-.plan-card h3{
-margin-bottom:15px;
+/* ── PLAN TITLE ── */
+.plan-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: white;
 }
 
-.plan-card ul{
-list-style:none;
-padding:0;
+/* ── PRICE BLOCK ── */
+.plan-price-block {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 20px;
 }
 
-.plan-card li{
-margin:8px 0;
+.plan-amount {
+    font-size: 38px;
+    font-weight: 800;
+    color: #ff2e74;
 }
 
-/* BUTTON */
-.price{
-margin-top:15px;
-padding:12px 18px;
-background:white;
-color:black;
-border:none;
-border-radius:25px;
-cursor:pointer;
-font-weight:bold;
+.plan-period {
+    font-size: 14px;
+    color: #aaa;
 }
 
-/* FOOTER */
-.footer{
-width:100%;
-max-width:1100px;
-display:flex;
-justify-content:space-between;
-margin-top:60px;
-padding-top:30px;
-border-top:1px solid rgba(255,255,255,0.2);
+/* ── FEATURE LIST ── */
+.plan-card ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin-bottom: 22px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 16px;
 }
 
-.footer-col{
-flex:1;
+.plan-card li {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #ddd;
 }
 
-.footer-col p{
-margin:5px 0;
+.plan-card li.plan-note {
+    color: #888;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.plan-card p {
+    font-size: 12px;
+    color: #888;
+    margin-top: 10px;
+}
+
+/* ── PRICE BUTTON ── */
+.price {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px 18px;
+    background: white;
+    color: #111;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+
+.price:hover {
+    background: #ff2e74;
+    color: white;
+    transform: scale(1.03);
+}
+
+/* secondary price button (Pro Lite weekly) */
+.price-alt {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.price-alt:hover {
+    background: #ff2e74;
+    color: white;
+    border-color: transparent;
+}
+
+/* Featured card CTA */
+.plan-card.featured .price {
+    background: #ff2e74;
+    color: white;
+}
+
+.plan-card.featured .price:hover {
+    background: #ff4d88;
+}
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 40px 0 10px;
+    color: #bbb;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.section-divider::before,
+.section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── SECTION HEADINGS ── */
+.content h3 {
+    font-size: 20px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    color: white;
+}
+
+/* ── CARD ROW (matches style.css) ── */
+.row {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 14px;
+    scroll-behavior: smooth;
+}
+
+.row::-webkit-scrollbar { height: 6px; }
+.row::-webkit-scrollbar-thumb { background: #555; border-radius: 5px; }
+
+/* ── CARD (matches style.css exactly) ── */
+.card {
+    position: relative;
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.card img {
+    width: 140px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.card:hover img {
+    transform: scale(1.06);
+}
+
+.card-actions {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.card:hover .card-actions {
+    opacity: 1;
+}
+
+.card-actions button {
+    background: rgba(0, 0, 0, 0.75);
+    border: none;
+    color: white;
+    padding: 6px 9px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.card-actions button:hover {
+    background: #ff2e74;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .content { padding: 20px 12px; }
+
+    .plans { flex-direction: column; align-items: center; }
+
+    .plan-card { width: 100%; max-width: 340px; }
+
+    .section-divider { font-size: 13px; }
+
+    .card { width: 120px; }
+    .card img { width: 120px; height: 170px; }
+}
+
+@media (max-width: 480px) {
+    .plans-header h2 { font-size: 22px; }
+    .plan-amount { font-size: 30px; }
 }

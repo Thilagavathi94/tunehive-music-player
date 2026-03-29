@@ -2,56 +2,196 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Signup</title>
-
+<title>Signup – Tune Hive</title>
 <link rel="stylesheet" th:href="@{/css/signup.css}">
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Poppins',Arial,sans-serif; height:100vh;
+    display:flex; justify-content:center; align-items:center;
+    background:linear-gradient(135deg,#fce4ec 0%,#f3e5f5 100%);
+  }
+  .signup-container {
+    width:90%; max-width:1050px; min-height:600px; display:flex;
+    background:white; border-radius:20px; overflow:hidden;
+    box-shadow:0 8px 40px rgba(233,30,99,0.15);
+  }
+  .left {
+    flex:1; padding:40px 45px; display:flex;
+    flex-direction:column; justify-content:center;
+  }
+  .left h1 { font-size:26px; font-weight:700; color:#222; margin-bottom:4px; }
+  .left > p { color:#777; font-size:13.5px; margin-bottom:20px; }
+  .err { background:#ffeaea; color:#c0392b; border:1px solid #f5c6cb;
+         border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:12px; }
+  .input-group { position:relative; margin-bottom:14px; }
+  .input-group i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#e91e63; font-size:18px; }
+  .input-group input {
+    width:100%; padding:11px 14px 11px 42px; border-radius:25px;
+    border:1.5px solid #eee; font-size:14px; font-family:inherit;
+    background:#fafafa; transition:border 0.2s; outline:none;
+  }
+  .input-group input:focus { border-color:#e91e63; background:#fff; }
+  .eye-btn { position:absolute; right:14px; top:50%; transform:translateY(-50%);
+             background:none; border:none; cursor:pointer; color:#aaa; font-size:18px; padding:0; }
+  .checkbox { display:flex; align-items:center; gap:8px; font-size:12.5px; color:#555; margin-bottom:14px; }
+  .checkbox input[type="checkbox"] { accent-color:#e91e63; width:15px; height:15px; cursor:pointer; }
+  .continue-btn {
+    width:100%; padding:12px; border:none; border-radius:25px;
+    background:linear-gradient(90deg,#e91e63,#c2185b); color:white;
+    font-size:15px; font-weight:600; font-family:inherit; cursor:pointer;
+    letter-spacing:0.3px; transition:opacity 0.2s,transform 0.1s; margin-bottom:10px;
+  }
+  .continue-btn:hover { opacity:0.92; transform:translateY(-1px); }
+  .terms { font-size:11px; color:#999; margin-bottom:14px; line-height:1.5; }
+  .or { display:flex; align-items:center; gap:10px; color:#bbb; font-size:13px; margin-bottom:14px; }
+  .or::before,.or::after { content:''; flex:1; height:1px; background:#eee; }
+  .social { display:flex; gap:12px; margin-bottom:16px; }
+  .social-btn {
+    flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:10px 12px; border-radius:25px; border:1.5px solid #eee; background:#fff;
+    font-size:13.5px; font-family:inherit; font-weight:500; cursor:pointer;
+    transition:border-color 0.2s,box-shadow 0.2s; text-decoration:none; color:#333;
+  }
+  .social-btn:hover { border-color:#e91e63; box-shadow:0 2px 8px rgba(233,30,99,0.1); }
+  .social-btn i { font-size:18px; }
+  .google-btn i { color:#EA4335; }
+  .facebook-btn i { color:#1877F2; }
+  .login-text { font-size:13px; color:#666; text-align:center; }
+  .login-text span { color:#e91e63; font-weight:600; cursor:pointer; text-decoration:underline; }
+  .right {
+    flex:1; display:flex; flex-direction:column; justify-content:center;
+    align-items:center; background:linear-gradient(160deg,#fce4ec 0%,#f8bbd0 100%); padding:40px;
+  }
+  .right img { width:85%; max-height:75%; object-fit:contain; border-radius:12px; }
+  .right-tagline { margin-top:20px; font-size:18px; font-weight:700; color:#c2185b; text-align:center; }
+  .right-sub { font-size:13px; color:#e57399; text-align:center; margin-top:6px; }
+</style>
 </head>
-
 <body>
-
 <div class="signup-container">
+  <div class="left">
+    <h1>Welcome to Tune Hive 🎵</h1>
+    <p>Create your account and start listening</p>
 
-    <!-- LEFT SIDE -->
-    <div class="left">
+    <!-- Backend error (e.g. invalid mobile) -->
+    <div class="err" th:if="${error}" th:text="${error}"></div>
+    <!-- JS error -->
+    <div class="err" id="jsErr" style="display:none;"></div>
 
-        <h1>Welcome to Tune Hive</h1>
-        <p>Login in or sign up with your mobile number</p>
-<form action="/send-otp" method="post">
+    <!--
+      This form submits to /send-otp (backend).
+      JS validates first, saves to localStorage, then submits.
+      Backend sends OTP and returns otp.html.
+    -->
+    <form id="signupForm" action="/send-otp" method="post">
 
-    <input type="text" name="mobile" placeholder="Enter your mobile number" required>
+      <div class="input-group">
+        <i class='bx bx-user'></i>
+        <input type="text" name="name" id="name" placeholder="Full name" required>
+      </div>
 
-    <button type="submit" class="continue-btn">Continue</button>
+      <div class="input-group">
+        <i class='bx bx-envelope'></i>
+        <input type="email" name="email" id="email" placeholder="Email address" required>
+      </div>
 
-</form>
-        <p class="terms">
-            Select ‘Continue’ to give consent to Tune Hive Terms of Service and acknowledge Privacy Policy.
-        </p>
+      <div class="input-group">
+        <i class='bx bx-phone'></i>
+        <input type="text" name="mobile" id="mobile" placeholder="10-digit mobile number" maxlength="10" required>
+      </div>
 
-        <div class="checkbox">
-            <input type="checkbox"> I agree to all the Terms and Conditions
-        </div>
+      <div class="input-group">
+        <i class='bx bx-lock-alt'></i>
+        <input type="password" id="password" placeholder="Create password (min 6 chars)" required>
+        <button type="button" class="eye-btn" onclick="togglePwd('password','eye1')">
+          <i class='bx bx-show' id="eye1"></i>
+        </button>
+      </div>
 
-        <p class="or">Or</p>
+      <div class="input-group">
+        <i class='bx bx-lock'></i>
+        <input type="password" id="confirmPwd" placeholder="Confirm password" required>
+        <button type="button" class="eye-btn" onclick="togglePwd('confirmPwd','eye2')">
+          <i class='bx bx-show' id="eye2"></i>
+        </button>
+      </div>
 
-        <div class="social">
-            <button><i class='bx bxl-google'></i> Google</button>
-            <button><i class='bx bxl-facebook'></i> Facebook</button>
-        </div>
+      <div class="checkbox">
+        <input type="checkbox" id="terms">
+        <label for="terms">I agree to the <strong>Terms &amp; Conditions</strong></label>
+      </div>
 
-        <p class="login-text">
-            Already have an account? <span>login</span>
-        </p>
+      <button type="button" class="continue-btn" onclick="doSignup()">Continue</button>
+    </form>
 
+    <p class="terms">By selecting 'Continue' you consent to Tune Hive's Terms of Service and Privacy Policy.</p>
+
+    <div class="or">Or sign up with</div>
+    <div class="social">
+      <button type="button" class="social-btn google-btn"
+              onclick="window.location.href='/oauth2/authorization/google'">
+        <i class='bx bxl-google'></i> Google
+      </button>
+      <button type="button" class="social-btn facebook-btn"
+              onclick="window.open('https://www.facebook.com','_blank')">
+        <i class='bx bxl-facebook'></i> Facebook
+      </button>
     </div>
+    <p class="login-text">Already have an account? <span onclick="window.location.href='/login'">Log in</span></p>
+  </div>
 
-    <!-- RIGHT SIDE -->
-    <div class="right">
-        <img src="/images/music-banner.png">
-    </div>
-
+  <div class="right">
+    <img src="/images/music-banner.png" alt="Tune Hive">
+    <p class="right-tagline">Your music. Your world.</p>
+    <p class="right-sub">Millions of songs, zero limits.</p>
+  </div>
 </div>
 
+<script>
+function togglePwd(inputId, iconId) {
+  var input = document.getElementById(inputId);
+  var icon  = document.getElementById(iconId);
+  input.type = (input.type === 'password') ? 'text' : 'password';
+  icon.className = (input.type === 'text') ? 'bx bx-hide' : 'bx bx-show';
+}
+
+function showErr(msg) {
+  var el = document.getElementById("jsErr");
+  el.textContent = msg;
+  el.style.display = "block";
+  el.scrollIntoView({ behavior: "smooth" });
+}
+
+function doSignup() {
+  var name       = document.getElementById("name").value.trim();
+  var email      = document.getElementById("email").value.trim();
+  var mobile     = document.getElementById("mobile").value.trim();
+  var password   = document.getElementById("password").value;
+  var confirmPwd = document.getElementById("confirmPwd").value;
+  var terms      = document.getElementById("terms").checked;
+
+  if (!name)                         { showErr("Please enter your full name.");            return; }
+  if (!email)                        { showErr("Please enter your email.");                return; }
+  if (!/^[0-9]{10}$/.test(mobile))   { showErr("Enter a valid 10-digit mobile number.");  return; }
+  if (password.length < 6)           { showErr("Password must be at least 6 characters."); return; }
+  if (password !== confirmPwd)        { showErr("Passwords do not match.");                return; }
+  if (!terms)                        { showErr("Please accept the Terms & Conditions.");  return; }
+
+  // Save credentials to localStorage so login.html can verify password
+  localStorage.setItem("user_" + mobile, JSON.stringify({
+    name:     name,
+    email:    email,
+    mobile:   mobile,
+    password: password,
+    premium:  false
+  }));
+
+  // Submit to backend — backend sends OTP, renders otp.html
+  document.getElementById("signupForm").submit();
+}
+</script>
 </body>
 </html>

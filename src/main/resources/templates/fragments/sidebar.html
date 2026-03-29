@@ -1,0 +1,27 @@
+<div th:fragment="sidebar">
+<aside class="sidebar">
+
+<h4>BROWSE</h4>
+<ul class="sidebar-menu">
+
+<li onclick="showSection(event,'latestSection')">New Release ▾</li>
+<li onclick="showSection(event,'trendingSection')">Trending ▾</li>
+<li onclick="showSection(event,'topChartsSection')">Top Charts ▾</li>
+<li onclick="showSection(event,'topPlaylistsSection')">Top Playlists ▾</li>
+<li onclick="showSection(event,'podcastsSection')">Podcasts ▾</li>
+<li onclick="showSection(event,'topArtistsSection')">Top Artists ▾</li>
+<li onclick="showAllSections()">Home</li>
+
+</ul>
+
+<ul>
+<li style="padding:15px;font-size:20px;" onclick="location.href='/history'">History▾</li>
+<li style="padding:15px;font-size:20px;" onclick="location.href='/wishlist'">Wishlist▾</li>
+<li style="padding:15px;font-size:20px;" onclick="location.href='/albums'">Albums▾</li>
+<li style="padding:15px;font-size:20px;" onclick="location.href='/podcasts'">Podcasts▾</li>
+<li style="padding:15px;font-size:20px;" onclick="location.href='/artists'">Artists▾</li>
+</ul>
+
+
+</aside>
+</div>

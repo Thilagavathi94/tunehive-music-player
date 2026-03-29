@@ -1,156 +1,331 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-
 <meta charset="UTF-8">
-<title>Artists</title>
-
+<title>Artists – Tune Hive</title>
 <link rel="stylesheet" th:href="@{/css/style.css}">
-
 <style>
+.page-title { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
 
-/* TITLE */
-.page-title{
-font-size:24px;
-margin-bottom:20px;
+/* Search */
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.08); border-radius: 20px;
+  padding: 8px 16px; flex: 1; max-width: 320px;
+}
+.search-box input {
+  background: none; border: none; outline: none;
+  color: #fff; font-size: 14px; width: 100%;
+}
+.search-box input::placeholder { color: #aaa; }
+.followed-count { font-size: 13px; color: #aaa; }
+
+/* Artist grid */
+.artist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 24px;
 }
 
-/* GRID */
-.artist-grid{
-display:flex;
-flex-wrap:wrap;
-gap:25px;
+.artist-card {
+  text-align: center; cursor: pointer;
+  background: rgba(255,255,255,0.04);
+  border-radius: 16px; padding: 20px 12px 16px;
+  transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+  position: relative;
+}
+.artist-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,46,99,0.1);
+  box-shadow: 0 10px 28px rgba(255,46,99,0.25);
+}
+.artist-card.hidden { display: none; }
+
+.artist-avatar-wrap { position: relative; display: inline-block; margin-bottom: 12px; }
+.artist-card img {
+  width: 110px; height: 110px; border-radius: 50%;
+  object-fit: cover; border: 3px solid transparent;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.artist-card:hover img { border-color: #ff2e63; transform: scale(1.05); }
+.artist-card.followed img { border-color: #ff2e63; }
+
+/* Online dot */
+.online-dot {
+  position: absolute; bottom: 6px; right: 6px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #2ecc71; border: 2px solid #1a1a2e;
 }
 
-/* CARD */
-.artist-card{
-width:160px;
-text-align:center;
-cursor:pointer;
+.artist-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.artist-genre { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+.artist-listeners { font-size: 11px; color: #666; margin-bottom: 12px; }
+
+/* Follow button */
+.follow-btn {
+  padding: 6px 20px; border-radius: 20px; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: 0.2s;
+  border: 1.5px solid #ff2e63; background: none; color: #ff2e63;
+}
+.artist-card.followed .follow-btn {
+  background: #ff2e63; color: #fff;
+}
+.follow-btn:hover { opacity: 0.85; }
+
+/* Top songs mini-list (shows on click) */
+.songs-panel {
+  display: none; margin-top: 12px; text-align: left;
+  border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;
+}
+.artist-card.expanded .songs-panel { display: block; }
+.song-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 4px; border-radius: 6px; cursor: pointer; transition: 0.15s;
+}
+.song-row:hover { background: rgba(255,46,99,0.15); }
+.song-num { font-size: 11px; color: #666; width: 14px; }
+.song-title { font-size: 12px; flex: 1; }
+.song-play-btn {
+  background: none; border: none; color: #ff2e63;
+  font-size: 14px; cursor: pointer; padding: 0;
 }
 
-.artist-card img{
-width:160px;
-height:160px;
-border-radius:50%; /* 🔥 circle */
-object-fit:cover;
-transition:0.3s;
+/* Toast */
+.toast {
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,46,99,0.9); color: #fff; border-radius: 20px;
+  padding: 8px 20px; font-size: 13px; z-index: 1000;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
 }
+.toast.show { opacity: 1; }
 
-.artist-card img:hover{
-transform:scale(1.08);
-box-shadow:0 0 15px rgba(255,46,99,0.6);
-}
-
-.artist-name{
-margin-top:10px;
-font-size:15px;
-}
-
+.section-divider { margin: 40px 0 20px; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
 </style>
-
 </head>
-
 <body>
-
-<!-- NAVBAR -->
-<header class="navbar">
-
-<div class="logo">🎧 TUNE HIVE</div>
-
-<nav class="menu">
-<a href="/player">Music</a>
-<a href="/podcasts">Podcasts</a>
-<a href="/plans">Pro</a>
-</nav>
-
-<div class="search">
-<input type="text" placeholder="Search">
-</div>
-
-</header>
-
+<div class="app">
+<div th:replace="fragments/navbar :: navbar"></div>
 <div class="layout">
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-
-<h4>BROWSE</h4>
-
-<ul class="sidebar-menu">
-<li onclick="location.href='/'">Home</li>
-<li onclick="location.href='/player'">Music</li>
-<li onclick="location.href='/albums'">Albums</li>
-<li onclick="location.href='/podcasts'">Podcasts</li>
-<li onclick="location.href='/artists'" class="active">Artists</li>
-</ul>
-
-<h4>LIBRARY</h4>
-<ul>
-<li onclick="location.href='/history'">History</li>
-<li onclick="location.href='/wishlist'">Wishlist</li>
-<li onclick="location.href='/albums'">Albums</li>
-</ul>
-
-</aside>
-
-<!-- MAIN CONTENT -->
 <main class="content">
 
-<h2 class="page-title">🎤 Top Artists</h2>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+    <h2 class="page-title">🎤 Top Artists</h2>
+    <span class="followed-count" id="followedCount"></span>
+  </div>
 
-<div class="artist-grid">
+  <div class="toolbar">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="artistSearch" placeholder="Search artists..." oninput="filterArtists()">
+    </div>
+  </div>
 
-<!-- ARTIST 1 -->
-<div class="artist-card" onclick="openArtist(0)">
-<img src="/images/movie31.jpg">
-<p class="artist-name">Arijit Singh</p>
-</div>
+  <div class="artist-grid" id="artistGrid">
 
-<!-- ARTIST 2 -->
-<div class="artist-card" onclick="openArtist(1)">
-<img src="/images/movie32.jpg">
-<p class="artist-name">Shreya Ghoshal</p>
-</div>
+    <div class="artist-card" data-index="0" data-name="Arijit Singh" data-genre="Hindi">
+      <div class="artist-avatar-wrap">
+        <img src="/images/movie31.jpg" alt="Arijit Singh">
+        <div class="online-dot"></div>
+      </div>
+      <p class="artist-name">Arijit Singh</p>
+      <p class="artist-genre">Hindi · Romantic</p>
+      <p class="artist-listeners">45.2M listeners</p>
+      <button class="follow-btn" onclick="toggleFollow(event,0)">Follow</button>
+      <div class="songs-panel">
+        <div class="song-row" onclick="playSong('Tum Hi Ho','Arijit Singh')"><span class="song-num">1</span><span class="song-title">Tum Hi Ho</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Channa Mereya','Arijit Singh')"><span class="song-num">2</span><span class="song-title">Channa Mereya</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Ae Dil Hai Mushkil','Arijit Singh')"><span class="song-num">3</span><span class="song-title">Ae Dil Hai Mushkil</span><button class="song-play-btn">▶</button></div>
+      </div>
+    </div>
 
-<!-- ARTIST 3 -->
-<div class="artist-card" onclick="openArtist(2)">
-<img src="/images/movie33.jpg">
-<p class="artist-name">Anirudh</p>
-</div>
+    <div class="artist-card" data-index="1" data-name="Shreya Ghoshal" data-genre="Hindi">
+      <div class="artist-avatar-wrap">
+        <img src="/images/movie32.jpg" alt="Shreya Ghoshal">
+      </div>
+      <p class="artist-name">Shreya Ghoshal</p>
+      <p class="artist-genre">Hindi · Classical</p>
+      <p class="artist-listeners">32.1M listeners</p>
+      <button class="follow-btn" onclick="toggleFollow(event,1)">Follow</button>
+      <div class="songs-panel">
+        <div class="song-row" onclick="playSong('Teri Meri','Shreya Ghoshal')"><span class="song-num">1</span><span class="song-title">Teri Meri</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Sunn Raha Hai','Shreya Ghoshal')"><span class="song-num">2</span><span class="song-title">Sunn Raha Hai</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Tumse Hi','Shreya Ghoshal')"><span class="song-num">3</span><span class="song-title">Tumse Hi</span><button class="song-play-btn">▶</button></div>
+      </div>
+    </div>
 
-<!-- ARTIST 4 -->
-<div class="artist-card" onclick="openArtist(3)">
-<img src="/images/movie34.jpg">
-<p class="artist-name">Sid Sriram</p>
-</div>
+    <div class="artist-card" data-index="2" data-name="Anirudh" data-genre="Tamil">
+      <div class="artist-avatar-wrap">
+        <img src="/images/movie33.jpg" alt="Anirudh">
+        <div class="online-dot"></div>
+      </div>
+      <p class="artist-name">Anirudh</p>
+      <p class="artist-genre">Tamil · Mass</p>
+      <p class="artist-listeners">28.7M listeners</p>
+      <button class="follow-btn" onclick="toggleFollow(event,2)">Follow</button>
+      <div class="songs-panel">
+        <div class="song-row" onclick="playSong('Why This Kolaveri','Anirudh')"><span class="song-num">1</span><span class="song-title">Why This Kolaveri</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Aalaporaan Tamizhan','Anirudh')"><span class="song-num">2</span><span class="song-title">Aalaporaan Tamizhan</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Kannaana Kanney','Anirudh')"><span class="song-num">3</span><span class="song-title">Kannaana Kanney</span><button class="song-play-btn">▶</button></div>
+      </div>
+    </div>
 
-<!-- ARTIST 5 -->
-<div class="artist-card" onclick="openArtist(4)">
-<img src="/images/movie35.jpg">
-<p class="artist-name">Neha Kakkar</p>
-</div>
+    <div class="artist-card" data-index="3" data-name="Sid Sriram" data-genre="Tamil">
+      <div class="artist-avatar-wrap">
+        <img src="/images/movie34.jpg" alt="Sid Sriram">
+      </div>
+      <p class="artist-name">Sid Sriram</p>
+      <p class="artist-genre">Tamil · Melody</p>
+      <p class="artist-listeners">18.4M listeners</p>
+      <button class="follow-btn" onclick="toggleFollow(event,3)">Follow</button>
+      <div class="songs-panel">
+        <div class="song-row" onclick="playSong('Inaindha Neram','Sid Sriram')"><span class="song-num">1</span><span class="song-title">Inaindha Neram</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Yennai Maatrum Kadhale','Sid Sriram')"><span class="song-num">2</span><span class="song-title">Yennai Maatrum Kadhale</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Kanave Kanave','Sid Sriram')"><span class="song-num">3</span><span class="song-title">Kanave Kanave</span><button class="song-play-btn">▶</button></div>
+      </div>
+    </div>
 
-<!-- ARTIST 6 -->
-<div class="artist-card" onclick="openArtist(5)">
-<img src="/images/movie36.jpg">
-<p class="artist-name">Yuvan Shankar Raja</p>
-</div>
+    <div class="artist-card" data-index="4" data-name="Neha Kakkar" data-genre="Hindi">
+      <div class="artist-avatar-wrap">
+        <img src="/images/movie35.jpg" alt="Neha Kakkar">
+        <div class="online-dot"></div>
+      </div>
+      <p class="artist-name">Neha Kakkar</p>
+      <p class="artist-genre">Hindi · Pop</p>
+      <p class="artist-listeners">39.8M listeners</p>
+      <button class="follow-btn" onclick="toggleFollow(event,4)">Follow</button>
+      <div class="songs-panel">
+        <div class="song-row" onclick="playSong('O Humsafar','Neha Kakkar')"><span class="song-num">1</span><span class="song-title">O Humsafar</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Dilbar','Neha Kakkar')"><span class="song-num">2</span><span class="song-title">Dilbar</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Ek Toh Kum Zindagani','Neha Kakkar')"><span class="song-num">3</span><span class="song-title">Ek Toh Kum Zindagani</span><button class="song-play-btn">▶</button></div>
+      </div>
+    </div>
 
-</div>
+    <div class="artist-card" data-index="5" data-name="Yuvan Shankar Raja" data-genre="Tamil">
+      <div class="artist-avatar-wrap">
+        <img src="/images/movie36.jpg" alt="Yuvan Shankar Raja">
+      </div>
+      <p class="artist-name">Yuvan Shankar Raja</p>
+      <p class="artist-genre">Tamil · Legend</p>
+      <p class="artist-listeners">22.5M listeners</p>
+      <button class="follow-btn" onclick="toggleFollow(event,5)">Follow</button>
+      <div class="songs-panel">
+        <div class="song-row" onclick="playSong('Uyire','Yuvan Shankar Raja')"><span class="song-num">1</span><span class="song-title">Uyire</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Venmathi','Yuvan Shankar Raja')"><span class="song-num">2</span><span class="song-title">Venmathi</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('Munbe Vaa','Yuvan Shankar Raja')"><span class="song-num">3</span><span class="song-title">Munbe Vaa</span><button class="song-play-btn">▶</button></div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="section-divider">
+  <div th:replace="fragments/card :: card"></div>
 
 </main>
-
 </div>
 
-<script>
+<div class="toast" id="toast"></div>
 
-// 👉 open artist → go to player
-function openArtist(index){
-    window.location.href="/player";
+<audio id="audioPlayer"></audio>
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</div>
+
+<script th:inline="javascript">
+// Sync Spring server session → frontend sessionStorage so all pages work
+(function(){
+    var m = /*[[${session.mobile}]]*/ null;
+    var p = /*[[${session.premium}]]*/ false;
+    if (m) {
+        sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("mobile",   m);
+        sessionStorage.setItem("premium",  String(p));
+    }
+})();
+</script>
+<script src="/js/script.js"></script>
+<script>
+let followedArtists = JSON.parse(localStorage.getItem("followedArtists")) || [];
+
+// Init follow state
+followedArtists.forEach(i => {
+  const card = document.querySelector(`.artist-card[data-index="${i}"]`);
+  if(card){
+    card.classList.add("followed");
+    card.querySelector(".follow-btn").textContent = "✓ Following";
+  }
+});
+updateFollowedCount();
+
+// Click card to expand top songs
+document.querySelectorAll(".artist-card").forEach(card => {
+  card.addEventListener("click", function(e){
+    if(e.target.classList.contains("follow-btn") ||
+       e.target.classList.contains("song-play-btn") ||
+       e.target.closest(".song-row")) return;
+    document.querySelectorAll(".artist-card").forEach(c => {
+      if(c !== card) c.classList.remove("expanded");
+    });
+    card.classList.toggle("expanded");
+  });
+});
+
+function toggleFollow(e, idx){
+  e.stopPropagation();
+  const card = document.querySelector(`.artist-card[data-index="${idx}"]`);
+  const btn  = card.querySelector(".follow-btn");
+  if(followedArtists.includes(idx)){
+    followedArtists = followedArtists.filter(i=>i!==idx);
+    card.classList.remove("followed");
+    btn.textContent = "Follow";
+    showToast("Unfollowed " + card.dataset.name);
+  } else {
+    followedArtists.push(idx);
+    card.classList.add("followed");
+    btn.textContent = "✓ Following";
+    showToast("✅ Following " + card.dataset.name + "!");
+  }
+  localStorage.setItem("followedArtists", JSON.stringify(followedArtists));
+  updateFollowedCount();
 }
 
-</script>
+function updateFollowedCount(){
+  const el = document.getElementById("followedCount");
+  el.textContent = followedArtists.length ? `Following ${followedArtists.length} artist${followedArtists.length>1?'s':''}` : "";
+}
 
+function filterArtists(){
+  const q = document.getElementById("artistSearch").value.toLowerCase();
+  document.querySelectorAll(".artist-card").forEach(card => {
+    const match = card.dataset.name.toLowerCase().includes(q) ||
+                  card.dataset.genre.toLowerCase().includes(q);
+    card.classList.toggle("hidden", !match);
+  });
+}
+
+function playSong(title, artist){
+  showToast("▶ Playing: " + title + " – " + artist);
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+</script>
 </body>
 </html>

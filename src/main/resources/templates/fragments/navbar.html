@@ -1,0 +1,46 @@
+<div th:fragment="navbar">
+<header class="navbar">
+
+  <div class="logo">🎧 TUNE HIVE</div>
+
+  <nav class="menu">
+    <a href="/dashboard">Music</a>
+    <a href="/podcasts">Podcasts</a>
+    <a href="/plans">Pro</a>
+  </nav>
+
+  <div class="search">
+    <input type="text" placeholder="Search">
+  </div>
+
+  <div class="nav-right">
+
+    <!-- BEFORE LOGIN (hidden if logged in) -->
+    <div id="guestMenu" style="display:flex; align-items:center; gap:16px;">
+      <a href="#" onclick="openLanguagePopup(); return false;">Music language ▾</a>
+      <a href="/login">Login</a>
+      <a href="/signup">Sign up</a>
+    </div>
+
+    <!-- AFTER LOGIN (hidden by default, shown by JS) -->
+    <div id="userMenu" style="display:none; align-items:center; gap:16px;">
+      <a href="#" onclick="openLanguagePopup(); return false;">Music language ▾</a>
+
+      <!-- CLICK-BASED DROPDOWN -->
+      <div class="dropdown" id="menuDropdown">
+        <span class="dropdown-trigger" onclick="toggleDropdown()">Menu ▾</span>
+
+        <div class="dropdown-content" id="dropdownContent">
+          <a href="/account">👤 Profile</a>
+          <a href="/settings">⚙️ Settings</a>
+          <a href="/history">🎵 History</a>
+          <a href="/wishlist">❤️ Wishlist</a>
+          <a href="/help">❓ Help</a>
+          <a href="#" class="logout-link" onclick="logout(); return false;">🚪 Logout</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+</div>

@@ -1,193 +1,645 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:inline="javascript">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Music Player</title>
 
-<link rel="stylesheet" th:href="@{/css/player.css}">
+<meta charset="UTF-8">
+<title>Tune Hive</title>
+
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+<div class="app">
+
+<!-- ── NAVBAR ── -->
 <header class="navbar">
-    <div class="logo">🎵 TUNE HIVE</div>
-    <input type="text" placeholder="Search">
+
+  <!-- LOGO -->
+  <div class="logo">🎧 TUNE HIVE</div>
+
+  <!-- CENTER LINKS -->
+  <nav class="menu">
+    <a href="/dashboard">Music</a>
+    <a href="/podcasts">Podcasts</a>
+    <a href="/plans">Pro</a>
+  </nav>
+
+  <!-- SEARCH -->
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Search songs, artists..." onkeyup="searchSongs()">
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="nav-right">
+
+    <!-- BEFORE LOGIN (hidden if logged in) -->
+    <div id="guestMenu" style="display:flex; align-items:center; gap:16px;">
+      <a href="#" onclick="openLanguagePopup(); return false;">Music language ▾</a>
+      <a href="/login">Login</a>
+      <a href="/signup">Sign up</a>
+    </div>
+
+    <!-- AFTER LOGIN (hidden by default, shown by JS) -->
+    <div id="userMenu" style="display:none; align-items:center; gap:16px;">
+      <a href="#" onclick="openLanguagePopup(); return false;">Music language ▾</a>
+
+      <!-- CLICK-BASED DROPDOWN -->
+      <div class="dropdown" id="menuDropdown">
+        <span class="dropdown-trigger" onclick="toggleDropdown()">Menu ▾</span>
+
+        <div class="dropdown-content" id="dropdownContent">
+          <a href="/account">👤 Profile</a>
+          <a href="/settings">⚙️ Settings</a>
+          <a href="/history">🎵 History</a>
+          <a href="/wishlist">❤️ Wishlist</a>
+          <a href="/help">❓ Help</a>
+          <a href="#" class="logout-link" onclick="logout(); return false;">🚪 Logout</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </header>
 
+<!-- ── LAYOUT ── -->
 <div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      
-        <h4>LIBRARY</h4>
-        <p><a href="/history" style="text-decoration: none; color: white;">History</a></p>
-        <p><a href="/wishlist" style="text-decoration: none; color: white;">Liked Songs</a></p>
-        <p><a href="/albums" style="text-decoration: none; color: white;">Albums</a></p>
-        <p><a href="/artists" style="text-decoration: none; color: white;">Artists</a></p>
-        <p><a href="/podcasts" style="text-decoration: none; color: white;">Podcasts</a></p>
-        <p><a href="/" style="text-decoration: none; color: white;">Home</a></p>
-    </aside>
+<!-- SIDEBAR -->
+<aside class="sidebar">
 
-    <!-- PLAYER CONTENT -->
-   <main class="content">
+  <h4>BROWSE</h4>
+  <ul class="sidebar-menu">
+    <li onclick="showSection(event,'latestSection')">New Release ▾</li>
+    <li onclick="showSection(event,'trendingSection')">Trending ▾</li>
+    <li onclick="showSection(event,'topChartsSection')">Top Charts ▾</li>
+    <li onclick="showSection(event,'topPlaylistsSection')">Top Playlists ▾</li>
+    <li onclick="showSection(event,'podcastsSection')">Podcasts ▾</li>
+    <li onclick="showSection(event,'topArtistsSection')">Top Artists ▾</li>
+    <li onclick="showAllSections()">Home</li>
+  </ul>
 
-    <img id="albumImage" src="/images/majili.jpg" class="album-img">
+  <h4>LIBRARY</h4>
+  <ul class="sidebar-menu">
+    <li onclick="location.href='/history'">History ▾</li>
+    <li onclick="location.href='/wishlist'">Wishlist ▾</li>
+    <li onclick="location.href='/albums'">Albums ▾</li>
+    <li onclick="location.href='/podcasts'">Podcasts ▾</li>
+    <li onclick="location.href='/artists'">Artists ▾</li>
+  </ul>
 
-    <h2 id="songTitle">Majili</h2>
-    <p id="artistName">Tanishk Bagchi</p>
+  <button class="playlist" onclick="location.href='/playlist'">+ New Playlist</button>
 
-    <!-- PROGRESS -->
-    <input type="range" id="progress" value="0">
+</aside>
 
-    <!-- CONTROLS -->
+<!-- MAIN CONTENT -->
+<main class="content">
+    <!-- 🎵 PLAYER SECTION -->
+<div class="player-section">
+
+    <img id="playerImage" src="/images/movie1.jpg" class="player-img">
+
+    <h3 id="playerTitle">Select a Song</h3>
+
+    <audio id="audioPlayer"></audio>
+
+    <!-- ⏱ Progress -->
+    <input type="range" id="progressBar" value="0">
+
+    <!-- 🎮 Controls -->
     <div class="controls">
         <button onclick="prevSong()">⏮</button>
-       <button id="playBtn" onclick="togglePlay()">▶</button>
+        <button onclick="backward()">⏪</button>
+        <button onclick="togglePlay()" id="playBtn">▶</button>
+        <button onclick="forward()">⏩</button>
         <button onclick="nextSong()">⏭</button>
+        <button onclick="muteToggle()">🔊</button>
     </div>
 
-    <!-- SONG LIST -->
-    <div class="song-list">
+</div>
 
-        <div class="song-item" onclick="selectSong(0)">🎵 Majili</div>
-        <div class="song-item" onclick="selectSong(1)">🎵 Barbad</div>
-        <div class="song-item" onclick="selectSong(2)">🎵 Tum Ho</div>
-        <div class="song-item" onclick="selectSong(3)">🎵 Dhun</div>
+<!-- Latest Songs -->
+<div id="latestSection">
+<h3>Latest Songs</h3>
+<div class="row">
 
+  <div class="card">
+    <img src="/images/movie1.jpg">
+    <div class="card-actions">
+    <button onclick="loadSong('/songs/song1.mp3','/images/movie1.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
     </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie2.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song12.mp3','/images/movie2.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <!-- FIXED: was handlePlayClick() which is undefined -->
+  <div class="card">
+    <img src="/images/movie3.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song3.mp3','/images/movie3.jpg','Song 3')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie4.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song4.mp3','/images/movie4.jpg','Song 4')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie5.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song5.mp3','/images/movie5.jpg','Song 5')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie6.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song1.mp3','/images/movie6.jpg','Song 6')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie30.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/majili.mp3','/images/movie30.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie29.jpg" data-lang="tamil">
+    <div class="card-actions">
+     <button onclick="loadSong('/songs/song1.mp3','/images/movie29.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie28.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song2.mp3','/images/movie28.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Trending Now -->
+<div id="trendingSection">
+<h3>Trending Now</h3>
+<div class="row">
+
+  <div class="card" data-title="vikram">
+    <img src="/images/movie1.jpg">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song1.mp3','/images/movie1.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="lubber pandhu">
+    <img src="/images/movie8.jpg" data-lang="tamil">
+    <div class="card-actions">
+<button onclick="loadSong('/songs/song2.mp3','/images/movie8.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="darbar">
+    <img src="/images/movie9.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song3.mp3','/images/movie9.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="kabali">
+    <img src="/images/movie10.jpg" data-lang="hindi">
+    <div class="card-actions">
+                               <button onclick="loadSong('/songs/song4.mp3','/images/movie10.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="iswaran">
+    <img src="/images/movie11.jpg" data-lang="hindi">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song5.mp3','/images/movie11.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="sattai">
+    <img src="/images/movie27.jpg" data-lang="hindi">
+    <div class="card-actions">
+<button onclick="loadSong('/songs/majili.mp3','/images/movie27.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="kana">
+    <img src="/images/movie26.jpg" data-lang="hindi">
+    <div class="card-actions">
+        <button onclick="loadSong('/songs/song1.mp3','/images/movie26.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="maari">
+    <img src="/images/movie25.jpg" data-lang="hindi">
+    <div class="card-actions">
+     <button onclick="loadSong('/songs/song2.mp3','/images/movie25 .jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Top Charts -->
+<div id="topChartsSection">
+<h3>Top Charts</h3>
+<div class="row">
+
+  <div class="card" data-title="kanguva">
+    <img src="/images/movie13.jpg" data-lang="telugu">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song3.mp3','/images/movie13.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="maaveeran">
+    <img src="/images/movie14.jpg" data-lang="telugu">
+    <div class="card-actions">
+<button onclick="loadSong('/songs/song4.mp3','/images/movie14.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="beast">
+    <img src="/images/movie15.jpg" data-lang="telugu">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song5.mp3','/images/movie15.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="nayagan">
+    <img src="/images/movie16.jpg" data-lang="telugu">
+    <div class="card-actions">
+<button onclick="loadSong('/songs/song1.mp3','/images/movie16.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="bombay">
+    <img src="/images/movie17.jpg" data-lang="telugu">
+    <div class="card-actions">
+     <button onclick="loadSong('/songs/song2.mp3','/images/movie17.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="madras">
+    <img src="/images/movie18.jpg" data-lang="telugu">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song2.mp3','/images/movie18.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="soorai potru">
+    <img src="/images/movie24.jpg" data-lang="telugu">
+    <div class="card-actions">
+<button onclick="loadSong('/songs/song3.mp3','/images/movie24.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="aariyan">
+    <img src="/images/movie23.jpg" data-lang="telugu">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song4.mp3','/images/movie23.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card" data-title="kaithi">
+    <img src="/images/movie22.jpg" data-lang="telugu">
+    <div class="card-actions">
+    <button onclick="loadSong('/songs/song5.mp3','/images/movie22.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Top Playlists -->
+<div id="topPlaylistsSection">
+<h3>Top Playlists</h3>
+<div class="row">
+
+  <div class="card">
+    <img src="/images/movie19.jpg" data-lang="tamil">
+    <div class="card-actions">
+     <button onclick="loadSong('/songs/song1.mp3','/images/movie19.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie20.jpg" data-lang="tamil">
+    <div class="card-actions">
+<button onclick="loadSong('/songs/song2.mp3','/images/movie20.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie21.jpg" data-lang="tamil">
+    <div class="card-actions">
+   <button onclick="loadSong('/songs/song3.mp3','/images/movie21.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie22.jpg" data-lang="tamil">
+    <div class="card-actions">
+     <button onclick="loadSong('/songs/song4.mp3','/images/movie22.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie23.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song5.mp3','/images/movie23.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie24.jpg" data-lang="tamil">
+    <div class="card-actions">
+   <button onclick="loadSong('/songs/song2.mp3','/images/movie24.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie1.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song3.mp3','/images/movie1.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie2.jpg" data-lang="tamil">
+    <div class="card-actions">
+           <button onclick="loadSong('/songs/song2.mp3','/images/movie2.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="/images/movie3.jpg" data-lang="tamil">
+    <div class="card-actions">
+      <button onclick="loadSong('/songs/song1.mp3','/images/movie3.jpg','Majili Song')">▶</button>
+      <button onclick="addWishlist(this)">❤️</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Podcasts -->
+<div id="podcastsSection">
+<h3>Podcasts</h3>
+<div class="row">
+  <img src="/images/movie25.jpg" data-lang="hindi">
+  <img src="/images/movie26.jpg" data-lang="hindi">
+  <img src="/images/movie27.jpg" data-lang="hindi">
+  <img src="/images/movie28.jpg" data-lang="hindi">
+  <img src="/images/movie29.jpg" data-lang="hindi">
+  <img src="/images/movie30.jpg" data-lang="hindi">
+  <img src="/images/movie6.jpg"  data-lang="tamil">
+  <img src="/images/movie5.jpg"  data-lang="tamil">
+  <img src="/images/movie4.jpg"  data-lang="tamil">
+</div>
+</div>
+
+<!-- Top Artists -->
+<div id="topArtistsSection">
+<h3>Top Artists</h3>
+<div class="row">
+  <img src="/images/movie31.jpg" data-lang="tamil">
+  <img src="/images/movie32.jpg" data-lang="tamil">
+  <img src="/images/movie33.jpg" data-lang="tamil">
+  <img src="/images/movie34.jpg" data-lang="tamil">
+  <img src="/images/movie35.jpg" data-lang="tamil">
+  <img src="/images/movie36.jpg" data-lang="tamil">
+</div>
+</div>
 
 </main>
 </div>
 
-<audio id="audioPlayer">
-    <source src="/songs/majili.mp3">
-</audio>
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+<div class="footer-container">
+
+  <div class="footer-col">
+    <h4>Top Artists</h4>
+    <p>Neha Kakkar</p><p>Arijit Singh</p><p>Badshah</p>
+    <p>Justin Bieber</p><p>Ed Sheeran</p><p>Shreya Ghoshal</p>
+    <p>Sanam Puri</p><p>Armaan Malik</p>
+  </div>
+
+  <div class="footer-col">
+    <h4>Top Actors</h4>
+    <p>Rajini</p><p>Vijay</p><p>Surya</p>
+    <p>Prabhu</p><p>Allu Arjun</p><p>Ravi</p>
+  </div>
+
+  <div class="footer-col">
+    <h4>Devotional Songs</h4>
+    <p>Krishna</p><p>Ganesh</p><p>Hanuman</p>
+    <p>Gayatri</p><p>Durga</p>
+  </div>
+
+  <div class="footer-col">
+    <h4>Language</h4>
+    <p>Hindi songs</p><p>Tamil songs</p><p>Telugu songs</p>
+    <p>Malayalam songs</p><p>Odia songs</p>
+  </div>
+
+  <div class="footer-col">
+    <h4>Artist Originals</h4>
+    <p>Zaeden</p><p>Doobey</p><p>Badshah</p>
+    <p>Indie Hits</p><p>Lo-fi Beats</p>
+  </div>
+
+  <div class="footer-col">
+    <h4>Company</h4>
+    <p>About us</p><p>Culture</p><p>Blogs</p><p>Jobs</p>
+    <p>Press</p><p>Advertise</p><p>Terms & Privacy</p><p>Help & Support</p>
+  </div>
+
+</div>
+
+<div class="footer-bottom">
+  <p>© 2025 Tune Hive Media Limited. All rights reserved.</p>
+  <div class="social">
+    <span>FOLLOW US</span>
+    <img src="/images/youtube.png"  alt="YouTube">
+    <img src="/images/facebook.png" alt="Facebook">
+    <img src="/images/linkedin.png" alt="LinkedIn">
+    <img src="/images/twitter.png"  alt="Twitter">
+  </div>
+</div>
+</footer>
+
+</div><!-- /.app -->
+
+<!-- LANGUAGE POPUP -->
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
+</div>
+
+
+
+<script th:inline="javascript">
+// Sync Spring server session → frontend sessionStorage so all pages work
+(function(){
+    var m = /*[[${session.mobile}]]*/ null;
+    var p = /*[[${session.premium}]]*/ false;
+    if (m) {
+        sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("mobile",   m);
+        sessionStorage.setItem("premium",  String(p));
+    }
+})();
+</script>
+<script src="/js/script.js"></script>
 
 <script>
 
 
 
-let songs = [
-    {
-        title: "Majili",
-        artist: "Tanishk Bagchi",
-        src: "/songs/majili.mp3",
-        img: "/images/majili.jpg"
-    },
-    {
-        title: "Barbad",
-        artist: "Faheem Abdullah",
-        src: "/songs/song1.mp3",
-        img: "/images/movie1.jpg"
-    },
-    {
-        title: "Tum Ho",
-        artist: "Arslan Kamil",
-        src: "/songs/song2.mp3",
-        img: "/images/movie2.jpg"
-    },
-    {
-        title: "Dhun",
-        artist: "Various Artists",
-        src: "/songs/song3.mp3",
-        img: "/images/movie3.jpg"
-    }
+var audio = document.getElementById("audioPlayer");
+var songs = [
+    {src:"/songs/song1.mp3", img:"/images/movie1.jpg", title:"Song 1"},
+    {src:"/songs/song2.mp3", img:"/images/movie2.jpg", title:"Song 2"},
+    {src:"/songs/song3.mp3", img:"/images/movie3.jpg", title:"Song 3"},
+    {src:"/songs/song4.mp3", img:"/images/movie4.jpg", title:"Song 4"},
+    {src:"/songs/song5.mp3", img:"/images/movie5.jpg", title:"Song 5"},
+    {src:"/songs/majili.mp3", img:"/images/movie30.jpg", title:"Majili Song"},
 ];
 
-let currentSong = 0;
-let playCount = 0;
-let isPremium = /*[[${session.premium}]]*/ false;
+let currentIndex = 0;
 
-let audio = document.getElementById("audioPlayer");
-
-// 🔥 load song
-function loadSong(index){
-    currentSong = index;
-
-    audio.src = songs[index].src;
-
-    document.getElementById("songTitle").innerText = songs[index].title;
-    document.getElementById("artistName").innerText = songs[index].artist;
-    document.getElementById("albumImage").src = songs[index].img;
+function loadSong(src, img, title){
+    audio.src = src;
+    audio.play();
+    document.getElementById("playerImage").src = img;
+    document.getElementById("playerTitle").innerText = title;
 }
 
-// ▶ PLAY
-let playBtn = document.getElementById("playBtn");
-
-// ▶ / ⏸ toggle
 function togglePlay(){
-
-    // 🔥 PREMIUM CHECK
-    if(!isPremium){
-        if(playCount === 0){
-            playCount++;
-        } else if(audio.paused){
-            alert("Limit reached! Upgrade to premium");
-            window.location.href="/plans";
-            return;
-        }
-    }
+    let btn = document.getElementById("playBtn");
 
     if(audio.paused){
         audio.play();
-        playBtn.innerText = "⏸";
-
-        // ✅ SAVE HISTORY HERE
-        saveToHistory(songs[currentSong]);
-
-    }else{
+        btn.innerText = "⏸";
+    } else {
         audio.pause();
-        playBtn.innerText = "▶";
+        btn.innerText = "▶";
     }
 }
 
-// ⏭ NEXT
 function nextSong(){
-    currentSong = (currentSong + 1) % songs.length;
-    loadSong(currentSong);
-    audio.play();
-    saveToHistory(songs[currentSong]);
+    currentIndex = (currentIndex + 1) % songs.length;
+    let s = songs[currentIndex];
+    loadSong(s.src, s.img, s.title);
 }
 
-// ⏮ PREV
 function prevSong(){
-    currentSong = (currentSong - 1 + songs.length) % songs.length;
-    loadSong(currentSong);
-    audio.play();
-    saveToHistory(songs[currentSong]);
+    currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+    let s = songs[currentIndex];
+    loadSong(s.src, s.img, s.title);
 }
 
-// 🎵 CLICK SELECT
-function selectSong(index){
-    loadSong(index);
-    audio.play();
-    playBtn.innerText = "⏸";
-
-    // ✅ SAVE
-    saveToHistory(songs[index]);
+function forward(){
+    audio.currentTime += 10;
 }
 
-// load first song initially
-loadSong(0);
-
-function saveToHistory(song){
-
-let history = JSON.parse(localStorage.getItem("history")) || [];
-
-// avoid duplicate (optional)
-history = history.filter(item => item.src !== song.src);
-
-// add latest on top
-history.unshift(song);
-
-// limit to 10 songs (optional)
-if(history.length > 10){
-    history.pop();
+function backward(){
+    audio.currentTime -= 10;
 }
 
-localStorage.setItem("history", JSON.stringify(history));
+function muteToggle(){
+    audio.muted = !audio.muted;
 }
+
+// auto next
+audio.addEventListener("ended", function () {
+    nextSong();
+});
+
+// progress update
+audio.addEventListener("timeupdate", function () {
+    if (!audio.duration) return;
+
+    let progress = (audio.currentTime / audio.duration) * 100;
+    document.getElementById("progressBar").value = progress;
+});
+
+// seek
+let progressBar = document.getElementById("progressBar");
+
+progressBar.addEventListener("input", function () {
+    if (!audio.duration) return;
+
+    let seekTime = (this.value / 100) * audio.duration;
+    audio.currentTime = seekTime;
+});
+
+// smooth drag
+progressBar.addEventListener("mousedown", () => audio.pause());
+progressBar.addEventListener("mouseup", () => audio.play());
+  if (!sessionStorage.getItem("loggedIn")) {
+    window.location.href = "/login";
+  }
 </script>
 
 </body>

@@ -1,76 +1,184 @@
-body{
-margin:0;
-font-family:Arial;
-background:url('/images/music-bg.jpg') center/cover no-repeat;
-color:white;
+/* success.css - page-specific styles only */
+/* body, sidebar, footer, navbar come from style.css */
+
+.content {
+    display: block;
+    padding: 40px 30px;
 }
 
-/* NAVBAR */
-.navbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px;
-background:rgba(0,0,0,0.8);
+/* ── Success Card ── */
+.success-card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    width: 380px;
+    max-width: 90%;
+    margin: 0 auto 30px auto;
 }
 
-.navbar input{
-padding:8px;
-border-radius:20px;
-border:none;
+.success-card h1 {
+    margin-bottom: 10px;
+    font-size: 26px;
+    color: #fff;
 }
 
-/* LAYOUT */
-.layout{
-display:flex;
+.success-card p {
+    color: #ccc;
+    margin: 8px 0;
 }
 
-/* SIDEBAR */
-.sidebar{
-width:220px;
-background:rgba(0,0,0,0.9);
-padding:20px;
-height:100vh;
+.success-card h3 {
+    margin: 20px 0 10px;
+    color: #fff;
 }
 
-.sidebar p{
-padding:10px;
-cursor:pointer;
+.success-card a.dashboard-btn {
+    display: block;
+    margin-top: 20px;
+    padding: 12px;
+    width: 100%;
+    background: #e91e63;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
+    transition: background 0.3s;
 }
 
-.sidebar p:hover{
-background:#333;
+.success-card a.dashboard-btn:hover {
+    background: #ff4081;
 }
 
-/* CONTENT */
-.content{
-flex:1;
-display:flex;
-justify-content:center;
-align-items:center;
+/* ── Section Divider ── */
+.section-divider {
+    margin: 30px 0 20px;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* SUCCESS CARD */
-.success-card{
-background:rgba(0,0,0,0.6);
-backdrop-filter:blur(12px);
-padding:40px;
-border-radius:20px;
-text-align:center;
-width:350px;
+.section-heading {
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: #fff;
 }
 
-.success-card h1{
-margin-bottom:10px;
+/* ── Movie Cards ── */
+.movie-cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 10px;
 }
 
-.success-card button{
-margin-top:20px;
-padding:12px;
-width:100%;
-background:#e91e63;
-border:none;
-border-radius:20px;
-color:white;
-cursor:pointer;
+.movie-card {
+    width: 140px;
+    cursor: pointer;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.movie-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(255, 46, 99, 0.35);
+}
+
+.movie-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.movie-card .card-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 6px;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.movie-card .card-actions button {
+    background: rgba(255, 46, 99, 0.8);
+    border: none;
+    color: white;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.movie-card .card-actions button:hover {
+    background: #ff2e63;
+}
+
+/* ── Language Popup ── */
+.language-popup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+.language-popup.active {
+    display: flex;
+}
+
+.language-box {
+    background: #1a1a2e;
+    border-radius: 14px;
+    padding: 28px 32px;
+    min-width: 260px;
+    text-align: center;
+    color: #fff;
+}
+
+.language-box h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.language-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.language-list label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.language-list input[type="checkbox"] {
+    accent-color: #e91e63;
+    width: 16px;
+    height: 16px;
+}
+
+.update-btn {
+    padding: 10px 28px;
+    background: #e91e63;
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.update-btn:hover {
+    background: #ff4081;
 }

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Help & Support</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<style>
+
+.help-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+}
+.help-container h1 { text-align: center; margin-bottom: 20px; }
+
+.faq { margin-bottom: 15px; }
+.faq h3 {
+    cursor: pointer; padding: 12px 15px;
+    background: rgba(255,255,255,0.08); border-radius: 8px;
+    font-size: 15px; transition: 0.3s;
+}
+.faq h3:hover { background: rgba(255,46,99,0.3); }
+.faq p {
+    display: none; padding: 12px 15px; font-size: 14px; color: #ccc;
+    background: rgba(255,255,255,0.03); border-radius: 0 0 8px 8px; margin: 0;
+}
+
+.contact-box { margin-top: 25px; }
+.contact-box h2 { margin-bottom: 15px; }
+.contact-box input,
+.contact-box textarea {
+    width: 100%; padding: 10px 14px; margin: 8px 0;
+    border-radius: 10px; border: none;
+    background: rgba(255,255,255,0.9); color: #333;
+    font-size: 14px; box-sizing: border-box;
+}
+.contact-box textarea { resize: vertical; }
+.contact-box button {
+    width: 100%; padding: 12px; background: #ff2e63;
+    border: none; color: white; border-radius: 20px;
+    cursor: pointer; font-size: 15px; margin-top: 5px; transition: 0.3s;
+}
+.contact-box button:hover { background: #ff4081; }
+
+/* ── Movie Cards ── */
+.section-divider { margin: 40px 0 20px; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
+.section-heading { font-size: 18px; margin-bottom: 14px; color: #fff; }
+.movie-cards-row { display: flex; flex-wrap: wrap; gap: 16px; padding-bottom: 10px; }
+.movie-card {
+    width: 140px; cursor: pointer; border-radius: 10px;
+    overflow: hidden; background: rgba(255,255,255,0.05); transition: 0.3s;
+}
+.movie-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(255,46,99,0.35); }
+.movie-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.movie-card .card-actions {
+    display: flex; justify-content: space-around;
+    padding: 8px 6px; background: rgba(0,0,0,0.45);
+}
+.movie-card .card-actions button {
+    background: rgba(255,46,99,0.8); border: none; color: white;
+    border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 13px; transition: 0.2s;
+}
+.movie-card .card-actions button:hover { background: #ff2e63; }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="layout">
+<!-- SIDEBAR -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+    <div class="help-container">
+        <h1>❓ Help & Support</h1>
+
+        <div class="faq">
+            <h3 onclick="toggleFAQ(this)">How to play songs?</h3>
+            <p>Click on any play button ▶ to start listening.</p>
+        </div>
+        <div class="faq">
+            <h3 onclick="toggleFAQ(this)">Why song stopped after 1 play?</h3>
+            <p>Free users have limited play. Upgrade to premium for unlimited access.</p>
+        </div>
+        <div class="faq">
+            <h3 onclick="toggleFAQ(this)">How to upgrade to premium?</h3>
+            <p>Go to Plans page and choose your subscription.</p>
+        </div>
+        <div class="faq">
+            <h3 onclick="toggleFAQ(this)">How to add songs to wishlist?</h3>
+            <p>Click ❤️ button on any song card.</p>
+        </div>
+
+        <div class="contact-box">
+            <h2>📩 Contact Support</h2>
+            <form>
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea rows="4" placeholder="Your Message"></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Movie Cards Section ── -->
+    <hr class="section-divider">
+    <div th:replace="fragments/card :: card"></div>
+</main>
+</div>
+
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+</div>
+<audio id="audioPlayer"></audio>
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
+</div>
+<script src="/js/script.js"></script>
+<script>
+function toggleFAQ(el) {
+    let p = el.nextElementSibling;
+    p.style.display = (p.style.display === "block") ? "none" : "block";
+}
+</script>
+</body>
+</html>

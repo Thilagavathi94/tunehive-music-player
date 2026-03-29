@@ -20,3 +20,9 @@ function playSong(){
 }
 audio.muted = false;
 audio.volume = 1;
+function logout(){
+
+    sessionStorage.clear();   // 🔥 important
+
+    window.location.href = "/";  // go to home
+}

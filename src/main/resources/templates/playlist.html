@@ -1,169 +1,379 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-
 <meta charset="UTF-8">
-<title>Playlists</title>
-
+<title>Playlists – Tune Hive</title>
 <link rel="stylesheet" th:href="@{/css/style.css}">
-
 <style>
+.page-title { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
 
-/* TITLE */
-.page-title{
-font-size:24px;
-margin-bottom:20px;
+/* Create bar */
+.create-bar {
+  display: flex; gap: 10px; align-items: center; margin-bottom: 28px; flex-wrap: wrap;
+}
+.create-bar input {
+  padding: 10px 18px; border-radius: 20px; border: none;
+  background: rgba(255,255,255,0.1); color: #fff; font-size: 14px;
+  width: 260px; outline: none; transition: background 0.2s;
+}
+.create-bar input:focus { background: rgba(255,255,255,0.15); }
+.create-bar input::placeholder { color: #aaa; }
+.create-btn {
+  padding: 10px 22px; background: #ff2e63; border: none;
+  color: white; border-radius: 20px; cursor: pointer; font-size: 14px;
+  font-weight: 600; transition: 0.2s;
+}
+.create-btn:hover { background: #ff4081; transform: translateY(-1px); }
+
+/* Stats bar */
+.stats-bar { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+.stat-pill {
+  background: rgba(255,255,255,0.06); border-radius: 20px;
+  padding: 6px 16px; font-size: 13px; color: #aaa;
 }
 
-/* CREATE BOX */
-.create-box{
-margin-bottom:20px;
+/* Playlist grid */
+.playlist-grid { display: flex; flex-wrap: wrap; gap: 18px; }
+
+.playlist-card {
+  width: 180px; background: rgba(255,255,255,0.06);
+  border-radius: 14px; padding: 18px 14px 14px;
+  cursor: pointer; transition: 0.25s; position: relative;
+  border: 2px solid transparent;
+}
+.playlist-card:hover {
+  background: rgba(255,46,99,0.12); transform: translateY(-4px);
+  border-color: rgba(255,46,99,0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 
-.create-box input{
-padding:10px;
-width:250px;
-border-radius:20px;
-border:none;
+.playlist-emoji { font-size: 32px; margin-bottom: 10px; text-align: center; }
+.playlist-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 5px; word-break: break-word; }
+.playlist-card .song-count { font-size: 12px; color: #aaa; margin-bottom: 12px; }
+
+/* Card action buttons */
+.card-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.card-btn {
+  flex: 1; padding: 5px 0; font-size: 12px; border: none;
+  border-radius: 8px; cursor: pointer; transition: 0.15s; font-weight: 500;
+}
+.btn-open  { background: #ff2e63; color: #fff; }
+.btn-open:hover  { background: #ff4081; }
+.btn-edit  { background: rgba(255,255,255,0.1); color: #fff; }
+.btn-edit:hover  { background: rgba(255,255,255,0.2); }
+.btn-del   { background: rgba(255,80,80,0.2); color: #ff6b6b; }
+.btn-del:hover   { background: rgba(255,80,80,0.35); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 60px 20px; color: #555; width: 100%;
+}
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+/* Playlist Detail Panel */
+.detail-panel {
+  display: none; margin-top: 28px;
+  background: rgba(255,255,255,0.04); border-radius: 16px; padding: 24px;
+  border: 1px solid rgba(255,46,99,0.2);
+}
+.detail-panel.open { display: block; }
+.detail-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+}
+.detail-title { font-size: 18px; font-weight: 700; }
+.close-detail {
+  background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer;
 }
 
-.create-box button{
-padding:10px 20px;
-background:#ff2e63;
-border:none;
-color:white;
-border-radius:20px;
-margin-left:10px;
-cursor:pointer;
+/* Songs inside detail */
+.song-list { display: flex; flex-direction: column; gap: 6px; }
+.song-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; background: rgba(255,255,255,0.05);
+  border-radius: 8px; transition: 0.2s;
+}
+.song-item:hover { background: rgba(255,46,99,0.12); }
+.song-num { font-size: 12px; color: #666; width: 18px; }
+.song-info { flex: 1; }
+.song-title { font-size: 13px; font-weight: 500; }
+.song-artist { font-size: 11px; color: #aaa; }
+.song-play { background: none; border: none; color: #ff2e63; font-size: 16px; cursor: pointer; }
+.song-remove { background: none; border: none; color: #666; font-size: 14px; cursor: pointer; }
+.song-remove:hover { color: #ff6b6b; }
+
+.add-song-bar {
+  display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;
+}
+.add-song-bar input {
+  flex: 1; padding: 9px 14px; border-radius: 12px; border: none;
+  background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; outline: none;
+  min-width: 120px;
+}
+.add-song-bar input::placeholder { color: #777; }
+.add-song-bar button {
+  padding: 9px 18px; border-radius: 12px; background: #ff2e63;
+  border: none; color: #fff; cursor: pointer; font-size: 13px;
 }
 
-/* PLAYLIST GRID */
-.playlist-grid{
-display:flex;
-flex-wrap:wrap;
-gap:20px;
+/* Rename modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 1001; display: none; align-items: center; justify-content: center;
 }
-
-/* CARD */
-.playlist-card{
-width:180px;
-padding:20px;
-background:#222;
-border-radius:10px;
-cursor:pointer;
-text-align:center;
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #1a1a2e; border-radius: 16px; padding: 28px 28px 24px;
+  min-width: 280px; color: #fff;
 }
-
-.playlist-card:hover{
-background:#333;
+.modal-box h3 { margin-bottom: 14px; font-size: 16px; }
+.modal-box input {
+  width: 100%; padding: 10px 14px; border-radius: 10px; border: none;
+  background: rgba(255,255,255,0.1); color: #fff; font-size: 14px;
+  outline: none; margin-bottom: 14px;
 }
+.modal-actions { display: flex; gap: 8px; }
+.modal-actions button {
+  flex: 1; padding: 10px; border-radius: 10px; border: none;
+  font-size: 14px; cursor: pointer;
+}
+.btn-save { background: #ff2e63; color: #fff; }
+.btn-cancel { background: rgba(255,255,255,0.1); color: #fff; }
 
+/* Toast */
+.toast {
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,46,99,0.9); color: #fff; border-radius: 20px;
+  padding: 8px 20px; font-size: 13px; z-index: 1000;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+.section-divider { margin: 40px 0 20px; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
+
+/* Emojis for playlist */
+.emoji-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.emoji-opt {
+  font-size: 20px; cursor: pointer; padding: 4px;
+  border-radius: 6px; transition: background 0.15s;
+}
+.emoji-opt:hover, .emoji-opt.selected { background: rgba(255,46,99,0.25); }
 </style>
-
 </head>
-
 <body>
-
-<!-- NAVBAR -->
-<header class="navbar">
-<div class="logo">🎧 TUNE HIVE</div>
-</header>
-
+<div class="app">
+<div th:replace="fragments/navbar :: navbar"></div>
 <div class="layout">
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-
-<h4>BROWSE</h4>
-<ul class="sidebar-menu">
-<li onclick="location.href='/'">Home</li>
-<li onclick="location.href='/player'">Music</li>
-<li onclick="location.href='/playlist'" class="active">Playlists</li>
-</ul>
-
-<h4>LIBRARY</h4>
-<ul>
-<li onclick="location.href='/history'">History</li>
-<li onclick="location.href='/wishlist'">Wishlist</li>
-</ul>
-
-</aside>
-
-<!-- MAIN CONTENT -->
 <main class="content">
 
-<h2 class="page-title">🎶 My Playlists</h2>
+  <h2 class="page-title">🎵 My Playlists</h2>
 
-<!-- CREATE -->
-<div class="create-box">
-<input type="text" id="playlistName" placeholder="Enter playlist name">
-<button onclick="createPlaylist()">Create</button>
-</div>
+  <!-- Create bar -->
+  <div class="create-bar">
+    <input type="text" id="playlistName" placeholder="New playlist name..." maxlength="30">
+    <button class="create-btn" onclick="createPlaylist()">＋ Create</button>
+  </div>
 
-<!-- PLAYLIST LIST -->
-<div class="playlist-grid" id="playlistContainer"></div>
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-pill" id="totalPlaylists">0 Playlists</div>
+    <div class="stat-pill" id="totalSongs">0 Songs total</div>
+  </div>
+
+  <!-- Grid -->
+  <div class="playlist-grid" id="playlistContainer"></div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <div class="detail-title" id="detailTitle"></div>
+      <button class="close-detail" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="song-list" id="songList"></div>
+    <div class="add-song-bar">
+      <input type="text" id="songTitleInput" placeholder="Song title">
+      <input type="text" id="songArtistInput" placeholder="Artist">
+      <button onclick="addSongToOpen()">Add</button>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+  <div th:replace="fragments/card :: card"></div>
 
 </main>
-
 </div>
 
+<!-- Rename Modal -->
+<div class="modal-overlay" id="renameModal">
+  <div class="modal-box">
+    <h3>✏️ Rename Playlist</h3>
+    <input type="text" id="renameInput" placeholder="New name" maxlength="30">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeRename()">Cancel</button>
+      <button class="btn-save"   onclick="saveRename()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<audio id="audioPlayer"></audio>
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</div>
+
+<script src="/js/script.js"></script>
 <script>
+const EMOJIS = ["🎵","🎶","🔥","💿","🎸","🎹","🎤","🌙","❤️","⚡","🌊","🎧"];
+let playlists    = JSON.parse(localStorage.getItem("playlists")) || [];
+let openIndex    = -1;
+let renameIndex  = -1;
 
-// CREATE PLAYLIST
+function save(){ localStorage.setItem("playlists", JSON.stringify(playlists)); }
+
 function createPlaylist(){
+  const name = document.getElementById("playlistName").value.trim();
+  if(!name){ showToast("Enter a playlist name"); return; }
+  const emoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  playlists.push({ name, emoji, songs: [] });
+  save();
+  document.getElementById("playlistName").value = "";
+  renderPlaylists();
+  showToast("✅ Playlist "" + name + "" created!");
+}
 
-let name = document.getElementById("playlistName").value;
+function renderPlaylists(){
+  const container = document.getElementById("playlistContainer");
+  container.innerHTML = "";
 
-if(name === ""){
-    alert("Enter playlist name");
+  if(playlists.length === 0){
+    container.innerHTML = `<div class="empty-state"><div class="icon">🎼</div><p>No playlists yet.<br>Create your first one above!</p></div>`;
+  } else {
+    playlists.forEach((pl, i) => {
+      const card = document.createElement("div");
+      card.className = "playlist-card";
+      card.innerHTML = `
+        <div class="playlist-emoji">${pl.emoji || "🎵"}</div>
+        <h3>${pl.name}</h3>
+        <p class="song-count">${pl.songs.length} song${pl.songs.length !== 1 ? 's' : ''}</p>
+        <div class="card-btns">
+          <button class="card-btn btn-open"  onclick="openDetail(${i})">▶ Open</button>
+          <button class="card-btn btn-edit"  onclick="openRename(event,${i})">✏️</button>
+          <button class="card-btn btn-del"   onclick="deletePlaylist(event,${i})">🗑</button>
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+  updateStats();
+}
+
+function updateStats(){
+  const total = playlists.length;
+  const songs = playlists.reduce((s,p)=>s+p.songs.length,0);
+  document.getElementById("totalPlaylists").textContent = total + " Playlist" + (total!==1?"s":"");
+  document.getElementById("totalSongs").textContent     = songs + " Song" + (songs!==1?"s":"") + " total";
+}
+
+function deletePlaylist(e, i){
+  e.stopPropagation();
+  if(!confirm("Delete "" + playlists[i].name + ""?")) return;
+  const name = playlists[i].name;
+  playlists.splice(i, 1);
+  save();
+  if(openIndex === i){ closeDetail(); }
+  renderPlaylists();
+  showToast("🗑 "" + name + "" deleted");
+}
+
+function openRename(e, i){
+  e.stopPropagation();
+  renameIndex = i;
+  document.getElementById("renameInput").value = playlists[i].name;
+  document.getElementById("renameModal").classList.add("open");
+}
+function closeRename(){ document.getElementById("renameModal").classList.remove("open"); }
+function saveRename(){
+  const val = document.getElementById("renameInput").value.trim();
+  if(!val) return;
+  playlists[renameIndex].name = val;
+  save(); closeRename(); renderPlaylists();
+  showToast("✏️ Renamed to "" + val + """);
+  if(openIndex === renameIndex) document.getElementById("detailTitle").textContent = val;
+}
+
+function openDetail(i){
+  openIndex = i;
+  document.getElementById("detailTitle").textContent = playlists[i].emoji + " " + playlists[i].name;
+  renderSongs();
+  document.getElementById("detailPanel").classList.add("open");
+  document.getElementById("detailPanel").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+function closeDetail(){
+  document.getElementById("detailPanel").classList.remove("open");
+  openIndex = -1;
+}
+
+function renderSongs(){
+  const list = document.getElementById("songList");
+  const pl   = playlists[openIndex];
+  if(!pl) return;
+  if(pl.songs.length === 0){
+    list.innerHTML = "<p style='color:#555;font-size:13px;padding:8px 0'>No songs yet. Add some below!</p>";
     return;
+  }
+  list.innerHTML = pl.songs.map((s,j) => `
+    <div class="song-item">
+      <span class="song-num">${j+1}</span>
+      <div class="song-info">
+        <div class="song-title">${s.title}</div>
+        <div class="song-artist">${s.artist || "Unknown"}</div>
+      </div>
+      <button class="song-play" onclick="showToast('▶ Playing: ${s.title}')">▶</button>
+      <button class="song-remove" onclick="removeSong(${j})" title="Remove">✕</button>
+    </div>`).join("");
 }
 
-let playlists = JSON.parse(localStorage.getItem("playlists")) || [];
-
-playlists.push({
-    name:name,
-    songs:[]
-});
-
-localStorage.setItem("playlists", JSON.stringify(playlists));
-
-document.getElementById("playlistName").value="";
-
-loadPlaylists();
+function removeSong(j){
+  playlists[openIndex].songs.splice(j,1);
+  save(); renderSongs(); renderPlaylists();
+  showToast("Removed song");
 }
 
-
-// LOAD PLAYLISTS
-function loadPlaylists(){
-
-let playlists = JSON.parse(localStorage.getItem("playlists")) || [];
-
-let container = document.getElementById("playlistContainer");
-container.innerHTML="";
-
-playlists.forEach((pl,index)=>{
-
-let div = document.createElement("div");
-div.className="playlist-card";
-
-div.innerHTML = `
-<h3>${pl.name}</h3>
-<p>${pl.songs.length} songs</p>
-`;
-
-div.onclick = function(){
-    window.location.href = "/playlist-details?index="+index;
-};
-
-container.appendChild(div);
-
-});
+function addSongToOpen(){
+  const title  = document.getElementById("songTitleInput").value.trim();
+  const artist = document.getElementById("songArtistInput").value.trim();
+  if(!title){ showToast("Enter a song title"); return; }
+  playlists[openIndex].songs.push({ title, artist: artist || "Unknown" });
+  save();
+  document.getElementById("songTitleInput").value  = "";
+  document.getElementById("songArtistInput").value = "";
+  renderSongs(); renderPlaylists();
+  showToast("✅ Added "" + title + "" to playlist");
 }
 
-loadPlaylists();
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
 
+// Init
+renderPlaylists();
 </script>
-
 </body>
 </html>

@@ -2,116 +2,530 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Plans</title>
-
+<title>Tune Hive - Plans</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
 <link rel="stylesheet" th:href="@{/css/plans.css}">
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
 </head>
 
 <body>
+<div class="app">
 
 <!-- NAVBAR -->
-<div class="navbar">
-    <div class="logo">🎵 TUNE HIVE</div>
-    <input type="text" placeholder="Search">
-    <div class="nav-right">Music language ▾ | Login ▾</div>
-</div>
+<div th:replace="fragments/navbar :: navbar"></div>
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-         <h4>LIBRARY</h4>
-        <p><a href="/history" style="text-decoration: none; color: white;">History</a></p>
-        <p><a href="/wishlist" style="text-decoration: none; color: white;">Liked Songs</a></p>
-        <p><a href="/albums" style="text-decoration: none; color: white;">Albums</a></p>
-        <p><a href="/artists" style="text-decoration: none; color: white;">Artists</a></p>
-        <p><a href="/podcasts" style="text-decoration: none; color: white;">Podcasts</a></p>
-        <p><a href="/index" style="text-decoration: none; color: white;">Home</a></p>
-        <button class="playlist">+ New Play List</button>
-    </aside>
+<!-- SIDEBAR -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <!-- MAIN CONTENT -->
-    <main class="content">
+<!-- MAIN CONTENT -->
+<main class="content">
 
-        <h2>Available Plans</h2>
+  <!-- ══ PLANS SECTION ══ -->
+  <div class="plans-wrapper">
 
-        <div class="plans">
+    <div class="plans-header">
+      <h2>💎 Choose Your Plan</h2>
+      <p class="plans-sub">Upgrade for an uninterrupted, high-quality music experience</p>
+    </div>
 
-            <!-- PLAN 1 -->
-            <div class="plan-card">
-                <h3>Pro Individual</h3>
-                <ul>
-                    <li>✔ Ad-free Music</li>
-                    <li>✔ Unlimited Downloads</li>
-                    <li>✔ Unlimited Hires tunes</li>
-                    <li>✔ 2X Better sound Quality</li>
-                </ul>
-              <button class="price" onclick="goToPayment('individual')">₹9 for 2 months</button>
-                <p>Renews in 1 month</p>
-            </div>
+    <div class="plans">
 
-            <!-- PLAN 2 -->
-            <div class="plan-card">
-                <h3>Pro Student</h3>
-                <ul>
-                    <li>✔ Ad-free Music</li>
-                    <li>✔ Unlimited Downloads</li>
-                    <li>✔ Unlimited Hires tunes</li>
-                    <li>✔ 2X Better sound Quality</li>
-                </ul>
-               <button class="price" onclick="goToPayment('student')">₹49 / month</button>
-                <p>Save up to 67%</p>
-            </div>
-
-            <!-- PLAN 3 -->
-            <div class="plan-card">
-                <h3>Pro Lite</h3>
-                <ul>
-                    <li>✔ Ad-free Music</li>
-                    <li>✔ Unlimited Downloads</li>
-                </ul>
-               <button class="price" onclick="goToPayment('lite')">₹9 / day</button>
-                <button class="price">₹29 / week</button>
-                <p>Limited features</p>
-            </div>
-
+      <!-- PLAN 1 — Pro Individual -->
+      <div class="plan-card featured">
+        <div class="plan-badge">🔥 Most Popular</div>
+        <h3>Pro Individual</h3>
+        <div class="plan-price-block">
+          <span class="plan-amount">₹9</span>
+          <span class="plan-period">for 2 months</span>
         </div>
+        <ul>
+          <li>✔ Ad-free Music</li>
+          <li>✔ Unlimited Downloads</li>
+          <li>✔ Unlimited Hi-res Tunes</li>
+          <li>✔ 2× Better Sound Quality</li>
+          <li>✔ Offline Listening</li>
+        </ul>
+        <button class="price" onclick="goToPayment('individual')">Get Started</button>
+        <p>Renews every month after trial</p>
+      </div>
 
-        <!-- FOOTER -->
-        <div class="footer">
-
-            <div class="footer-col">
-                <h4>Top Artists</h4>
-                <p>Arijit Singh</p>
-                <p>Neha Kakkar</p>
-                <p>Badshah</p>
-            </div>
-
-            <div class="footer-col">
-                <h4>Top Actors</h4>
-                <p>Rajini</p>
-                <p>Vijay</p>
-                <p>Surya</p>
-            </div>
-
-            <div class="footer-col">
-                <h4>Company</h4>
-                <p>About</p>
-                <p>Blogs</p>
-                <p>Help</p>
-            </div>
-
+      <!-- PLAN 2 — Pro Student -->
+      <div class="plan-card">
+        <h3>Pro Student</h3>
+        <div class="plan-price-block">
+          <span class="plan-amount">₹49</span>
+          <span class="plan-period">/ month</span>
         </div>
+        <ul>
+          <li>✔ Ad-free Music</li>
+          <li>✔ Unlimited Downloads</li>
+          <li>✔ Unlimited Hi-res Tunes</li>
+          <li>✔ 2× Better Sound Quality</li>
+          <li>✔ Student Verification Required</li>
+        </ul>
+        <button class="price" onclick="goToPayment('student')">Get Started</button>
+        <p>Save up to 67% vs Individual</p>
+      </div>
 
-    </main>
+      <!-- PLAN 3 — Pro Lite -->
+      <div class="plan-card">
+        <h3>Pro Lite</h3>
+        <div class="plan-price-block">
+          <span class="plan-amount">₹9</span>
+          <span class="plan-period">/ day</span>
+        </div>
+        <ul>
+          <li>✔ Ad-free Music</li>
+          <li>✔ Unlimited Downloads</li>
+          <li>✗ Hi-res Audio</li>
+          <li>✗ Offline Listening</li>
+          <li class="plan-note">Limited features</li>
+        </ul>
+        <button class="price" onclick="goToPayment('lite')">₹9 / day</button>
+        <button class="price price-alt" onclick="goToPayment('lite-week')">₹29 / week</button>
+        <p>Best for short-term use</p>
+      </div>
 
+    </div>
+  </div>
+
+  <!-- ══ DIVIDER ══ -->
+  <div class="section-divider">
+    <span>🎵 Explore Music While You Decide</span>
+  </div>
+
+  <!-- ══ LATEST SONGS ══ -->
+  <div id="latestSection">
+    <h3>Latest Songs</h3>
+    <div class="row">
+      <div class="card" data-song="/songs/song1.mp3" data-title="vicram">
+        <img src="/images/movie1.jpg">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song1.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song2.mp3" data-title="lubber pandhu">
+        <img src="/images/movie2.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song2.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song3.mp3" data-title="darbar">
+        <img src="/images/movie3.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song3.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song4.mp3" data-title="kabali">
+        <img src="/images/movie4.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song4.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song5.mp3">
+        <img src="/images/movie5.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song5.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song6.mp3">
+        <img src="/images/movie6.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song6.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/majili.mp3">
+        <img src="/images/movie30.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/majili.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song1.mp3">
+        <img src="/images/movie29.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song1.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song2.mp3">
+        <img src="/images/movie28.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song2.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TRENDING NOW ══ -->
+  <div id="trendingSection">
+    <h3>Trending Now</h3>
+    <div class="row">
+      <div class="card" data-song="/songs/song1.mp3" data-title="vikram">
+        <img src="/images/movie1.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song1.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song2.mp3" data-title="lubber pandhu">
+        <img src="/images/movie8.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song2.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song3.mp3" data-title="darbar">
+        <img src="/images/movie9.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song3.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song4.mp3" data-title="kabali">
+        <img src="/images/movie10.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song4.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song5.mp3" data-title="iswaran">
+        <img src="/images/movie11.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song5.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song6.mp3" data-title="sattai">
+        <img src="/images/movie27.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song6.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song7.mp3" data-title="kana">
+        <img src="/images/movie26.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song7.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song8.mp3" data-title="maari">
+        <img src="/images/movie25.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song8.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOP CHARTS ══ -->
+  <div id="topChartsSection">
+    <h3>Top Charts</h3>
+    <div class="row">
+      <div class="card" data-song="/songs/song9.mp3" data-title="kanguva">
+        <img src="/images/movie13.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song9.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song10.mp3" data-title="maaveeran">
+        <img src="/images/movie14.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song10.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song11.mp3" data-title="beast">
+        <img src="/images/movie15.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song11.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song12.mp3">
+        <img src="/images/movie16.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song12.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song13.mp3">
+        <img src="/images/movie17.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song13.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song14.mp3">
+        <img src="/images/movie18.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song14.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song15.mp3">
+        <img src="/images/movie24.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song15.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song16.mp3">
+        <img src="/images/movie23.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song16.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song17.mp3">
+        <img src="/images/movie22.jpg" data-lang="telugu">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song17.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOP PLAYLISTS ══ -->
+  <div id="topPlaylistsSection">
+    <h3>Top Playlists</h3>
+    <div class="row">
+      <div class="card" data-song="/songs/song18.mp3">
+        <img src="/images/movie19.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song18.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song19.mp3">
+        <img src="/images/movie20.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song19.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song20.mp3">
+        <img src="/images/movie21.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song20.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song21.mp3">
+        <img src="/images/movie22.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song21.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song22.mp3">
+        <img src="/images/movie23.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song22.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song23.mp3">
+        <img src="/images/movie24.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song23.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song24.mp3">
+        <img src="/images/movie1.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song24.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song25.mp3">
+        <img src="/images/movie2.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song25.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song26.mp3">
+        <img src="/images/movie3.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song26.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PODCASTS ══ -->
+  <div id="podcastsSection">
+    <h3>Podcasts</h3>
+    <div class="row">
+      <div class="card" data-song="/songs/song27.mp3">
+        <img src="/images/movie25.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song27.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song28.mp3">
+        <img src="/images/movie26.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song28.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song29.mp3">
+        <img src="/images/movie27.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song29.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song30.mp3">
+        <img src="/images/movie28.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song30.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song31.mp3">
+        <img src="/images/movie29.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song31.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song32.mp3">
+        <img src="/images/movie30.jpg" data-lang="hindi">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song32.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song33.mp3">
+        <img src="/images/movie6.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song33.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song34.mp3">
+        <img src="/images/movie5.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song34.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song35.mp3">
+        <img src="/images/movie4.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song35.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOP ARTISTS ══ -->
+  <div id="topArtistsSection">
+    <h3>Top Artists</h3>
+    <div class="row">
+      <div class="card" data-song="/songs/song36.mp3">
+        <img src="/images/movie31.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song36.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song37.mp3">
+        <img src="/images/movie32.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song37.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song38.mp3">
+        <img src="/images/movie33.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song38.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song39.mp3">
+        <img src="/images/movie34.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song39.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song40.mp3">
+        <img src="/images/movie35.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song40.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+      <div class="card" data-song="/songs/song41.mp3">
+        <img src="/images/movie36.jpg" data-lang="tamil">
+        <div class="card-actions">
+          <button onclick="playSong('/songs/song41.mp3', this)">▶</button>
+          <button onclick="addWishlist(this)">❤️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
 </div>
+
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+
+</div><!-- end .app -->
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
+</div>
+<audio id="audioPlayer"></audio>
+<!-- GLOBAL JS -->
+<script th:inline="javascript">
+(function(){
+    var m = /*[[${session.mobile}]]*/ null;
+    var p = /*[[${session.premium}]]*/ false;
+    if (m) {
+        sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("mobile",   m);
+        sessionStorage.setItem("premium",  String(p));
+    }
+})();
+</script>
+<script src="/js/script.js"></script>
 <script>
-function goToPayment(plan){
+function goToPayment(plan) {
     window.location.href = "/payment?plan=" + plan;
 }
 </script>
+
 </body>
 </html>

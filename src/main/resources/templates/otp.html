@@ -2,44 +2,109 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>OTP</title>
+<title>OTP Verification – Tune Hive</title>
 <link rel="stylesheet" th:href="@{/css/signup.css}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Poppins',Arial,sans-serif; height:100vh;
+    display:flex; justify-content:center; align-items:center;
+    background:linear-gradient(135deg,#fce4ec 0%,#f3e5f5 100%);
+  }
+  .signup-container {
+    width:90%; max-width:900px; min-height:480px; display:flex;
+    background:white; border-radius:20px; overflow:hidden;
+    box-shadow:0 8px 40px rgba(233,30,99,0.15);
+  }
+  .left {
+    flex:1; padding:50px 45px; display:flex;
+    flex-direction:column; justify-content:center;
+  }
+  .left h1 { font-size:24px; font-weight:700; color:#222; margin-bottom:6px; }
+  .left .sub { color:#777; font-size:13.5px; margin-bottom:24px; }
+  .mobile-badge {
+    display:inline-block; background:#fce4ec; color:#c2185b;
+    border-radius:20px; padding:5px 14px; font-size:13px;
+    font-weight:600; margin-bottom:24px;
+  }
+  /* Dev-mode OTP display */
+  .otp-display {
+    background:#e8f5e9; border:1px solid #a5d6a7; border-radius:10px;
+    padding:10px 16px; font-size:13px; color:#2e7d32; margin-bottom:20px;
+  }
+  .otp-display strong { font-size:22px; letter-spacing:4px; }
+  .err { background:#ffeaea; color:#c0392b; border:1px solid #f5c6cb;
+         border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:14px; }
+  .input-group { position:relative; margin-bottom:20px; }
+  .input-group input {
+    width:100%; padding:14px 20px; border-radius:25px;
+    border:2px solid #eee; font-size:22px; letter-spacing:8px;
+    text-align:center; font-family:inherit; background:#fafafa;
+    transition:border 0.2s; outline:none;
+  }
+  .input-group input:focus { border-color:#e91e63; background:#fff; }
+  .continue-btn {
+    width:100%; padding:13px; border:none; border-radius:25px;
+    background:linear-gradient(90deg,#e91e63,#c2185b); color:white;
+    font-size:15px; font-weight:600; font-family:inherit; cursor:pointer;
+    transition:opacity 0.2s,transform 0.1s; margin-bottom:16px;
+  }
+  .continue-btn:hover { opacity:0.92; transform:translateY(-1px); }
+  .resend { font-size:13px; color:#666; text-align:center; }
+  .resend span { color:#e91e63; font-weight:600; cursor:pointer; text-decoration:underline; }
+  .right {
+    flex:1; display:flex; flex-direction:column; justify-content:center;
+    align-items:center; background:linear-gradient(160deg,#fce4ec 0%,#f8bbd0 100%); padding:40px;
+  }
+  .right img { width:80%; object-fit:contain; border-radius:12px; }
+  .right-tagline { margin-top:20px; font-size:18px; font-weight:700; color:#c2185b; text-align:center; }
+</style>
 </head>
-
 <body>
-
 <div class="signup-container">
+  <div class="left">
+    <h1>📱 Verify Your Number</h1>
+    <p class="sub">We sent a 6-digit code to</p>
+    <span class="mobile-badge" th:text="${mobile}">9876543210</span>
 
-    <div class="left">
-
-        <h1>Enter your 6-Digit Code</h1>
-
-        <p>
-            Sent to: <b th:text="${mobile}"></b>
-        </p>
-
-        <!-- ERROR MESSAGE -->
-        <p style="color:red;" th:text="${error}"></p>
-
-        <!-- 🔥 OPTIONAL: SHOW OTP FOR DEMO -->
-        <p style="color:green;" th:text="${otp}"></p>
-
-        <form action="/verify-otp" method="post">
-           <input type="text" name="userOtp"
-       pattern="[0-9]{6}"
-       maxlength="6"
-       placeholder="Enter OTP"
-       required>
-            <button class="continue-btn">Log in</button>
-        </form>
-
+    <!-- DEVELOPMENT: show OTP on screen -->
+    <div class="otp-display" th:if="${otp != null}">
+      Your OTP (dev mode): <strong th:text="${otp}">123456</strong>
     </div>
 
-    <div class="right">
-        <img src="/images/music-banner.png">
-    </div>
+    <!-- Error from backend -->
+    <div class="err" th:if="${error}" th:text="${error}"></div>
 
+    <form action="/verify-otp" method="post">
+      <div class="input-group">
+        <input type="text" name="userOtp" id="otpInput"
+               pattern="[0-9]{6}" maxlength="6"
+               placeholder="– – – – – –" required
+               autofocus autocomplete="one-time-code">
+      </div>
+      <button type="submit" class="continue-btn">Verify &amp; Continue →</button>
+    </form>
+
+    <p class="resend">Didn't receive it?
+      <span onclick="window.location.href='/signup'">Resend OTP</span>
+    </p>
+  </div>
+
+  <div class="right">
+    <img src="/images/music-banner.png" alt="Tune Hive">
+    <p class="right-tagline">Almost there! 🎶</p>
+  </div>
 </div>
 
+<script>
+// Auto-submit when 6 digits entered
+document.getElementById("otpInput").addEventListener("input", function() {
+  if (this.value.length === 6) {
+    this.closest("form").submit();
+  }
+});
+</script>
 </body>
 </html>

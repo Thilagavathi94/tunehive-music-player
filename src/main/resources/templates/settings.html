@@ -1,101 +1,132 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-
 <meta charset="UTF-8">
 <title>Settings</title>
-
 <link rel="stylesheet" th:href="@{/css/style.css}">
-
 <style>
 
-.settings-box{
-max-width:500px;
-margin:auto;
-background:#222;
-padding:30px;
-border-radius:15px;
+.settings-box {
+    max-width: 500px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
 }
+.settings-box h2 { text-align: center; margin-bottom: 8px; font-size: 22px; }
+.settings-box .subtitle {
+    text-align: center; color: #aaa; font-size: 13px; margin-bottom: 24px;
+}
+.settings-box label {
+    display: block; font-size: 13px; color: #aaa; margin: 14px 0 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.settings-box input {
+    width: 100%; padding: 12px 15px; border-radius: 10px; border: none;
+    background: rgba(255,255,255,0.9); color: #333; font-size: 14px; box-sizing: border-box;
+}
+.settings-box .update-btn {
+    width: 100%; padding: 12px; background: #ff2e63; border: none;
+    color: white; border-radius: 20px; margin-top: 20px;
+    cursor: pointer; font-size: 15px; transition: 0.3s;
+}
+.settings-box .update-btn:hover { background: #ff4081; }
+.settings-box .logout-btn {
+    width: 100%; padding: 12px; background: rgba(255,50,50,0.7); border: none;
+    color: white; border-radius: 20px; margin-top: 12px;
+    cursor: pointer; font-size: 15px; transition: 0.3s;
+}
+.settings-box .logout-btn:hover { background: rgba(255,50,50,0.9); }
 
-.settings-box h2{
-text-align:center;
-margin-bottom:20px;
+/* ── Movie Cards ── */
+.section-divider { margin: 40px 0 20px; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
+.section-heading { font-size: 18px; margin-bottom: 14px; color: #fff; }
+.movie-cards-row { display: flex; flex-wrap: wrap; gap: 16px; padding-bottom: 10px; }
+.movie-card {
+    width: 140px; cursor: pointer; border-radius: 10px;
+    overflow: hidden; background: rgba(255,255,255,0.05); transition: 0.3s;
 }
-
-.settings-box input{
-width:100%;
-padding:10px;
-margin:10px 0;
-border-radius:10px;
-border:none;
+.movie-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(255,46,99,0.35); }
+.movie-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.movie-card .card-actions {
+    display: flex; justify-content: space-around;
+    padding: 8px 6px; background: rgba(0,0,0,0.45);
 }
-
-.settings-box button{
-width:100%;
-padding:12px;
-background:#ff2e63;
-border:none;
-color:white;
-border-radius:20px;
-margin-top:10px;
-cursor:pointer;
+.movie-card .card-actions button {
+    background: rgba(255,46,99,0.8); border: none; color: white;
+    border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 13px; transition: 0.2s;
 }
-
-.logout{
-background:red;
-}
+.movie-card .card-actions button:hover { background: #ff2e63; }
 
 </style>
-
 </head>
-
 <body>
+<div class="app">
 
-<header class="navbar">
-<div class="logo">🎧 TUNE HIVE</div>
-</header>
-
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
 <div class="layout">
+<!-- SIDEBAR -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-<aside class="sidebar">
-<ul class="sidebar-menu">
-<li onclick="location.href='/'">Home</li>
-<li onclick="location.href='/account'">Account</li>
-<li onclick="location.href='/settings'" class="active">Settings</li>
-</ul>
-</aside>
-
+<!-- MAIN CONTENT -->
 <main class="content">
 
-<div class="settings-box">
+    <div class="settings-box">
+        <h2>⚙️ Settings</h2>
+        <p class="subtitle">Update your profile details below</p>
 
-<h2>⚙️ Settings</h2>
+        <!--
+            POST /update-profile
+            Fields: mobile (required) + email (optional)
+            On save → redirects to /account showing updated values
+        -->
+        <form action="/update-profile" method="post">
 
-<form action="" method="post">
+            <label>📱 New Mobile Number</label>
+            <input type="text" name="mobile"
+                   placeholder="Enter new mobile number"
+                   pattern="^[6-9]\d{9}$"
+                   title="Enter valid 10-digit mobile number"
+                   required>
 
-<input type="text" name="mobile" placeholder="Update Mobile">
+            <label>📧 Email Address</label>
+            <input type="email" name="email"
+                   placeholder="Enter your email (optional)">
 
-<form action="" method="post">
-    <input type="text" name="mobile" required>
-    <button type="submit">Update</button>
-</form>
-</form>
+            <button type="submit" class="update-btn">✅ Save Changes</button>
+        </form>
 
-<button class="logout" onclick="logout()">Logout</button>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </div>
 
-</div>
+    <!-- ── Movie Cards Section ── -->
+    <hr class="section-divider">
+  <div th:replace="fragments/card :: card"></div>
 
 </main>
-
 </div>
+<audio id="audioPlayer"></audio>
 
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+</div>
+<div id="languagePopup" class="language-popup">
+  <div class="language-box">
+    <h3>Select Language</h3>
+    <div class="language-list">
+      <label><input type="checkbox" value="tamil"> Tamil</label>
+      <label><input type="checkbox" value="hindi"> Hindi</label>
+      <label><input type="checkbox" value="telugu"> Telugu</label>
+      <label><input type="checkbox" value="malayalam"> Malayalam</label>
+    </div>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
+  </div>
+</div>
+<script src="/js/script.js"></script>
 <script>
-
-function logout(){
-    window.location.href="/logout";
-}
-
+function logout() { window.location.href = "/custom-logout"; }
 </script>
-
 </body>
 </html>

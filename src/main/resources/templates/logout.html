@@ -1,45 +1,129 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
 
 <meta charset="UTF-8">
 <title>Logged Out</title>
 
-<link rel="stylesheet" th:href="@{/css/logout.css}">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+
+<style>
+
+.logout-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    padding: 60px 20px;
+}
+
+.logout-box {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    color: white;
+    width: 420px;
+    max-width: 90%;
+}
+
+.logout-box h2 {
+    margin-bottom: 12px;
+    font-size: 22px;
+}
+
+.logout-box p {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.logout-box a {
+    text-decoration: none;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn {
+    background: white;
+    color: black;
+}
+
+.login-btn:hover {
+    background: #f0f0f0;
+}
+
+.home-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.home-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="logout-container">
+<div class="app">
 
-<div class="logout-box">
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar"></div>
 
-<h2>You have been logged out.</h2>
+<div class="layout">
 
-<p>
-Thank you for using Tune Hive Music player.
-See you soon.
-</p>
+<!-- SIDEBAR -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-<a href="/signup">
-<button class="login-btn">
-Login again
-</button>
-</a>
+<!-- MAIN CONTENT -->
+<main class="content">
 
+    <div class="logout-container">
+        <div class="logout-box">
 
-<a href="/">
-<button class="login-btn">
-Home Page
-</button>
-</a>
+            <h2>You've been logged out 👋</h2>
 
+            <p>
+                Thank you for using Tune Hive Music Player.<br>
+                See you again soon!
+            </p>
+
+            <a href="/signup">
+                <button class="logout-btn login-btn">Login Again</button>
+            </a>
+
+            <a href="/">
+                <button class="logout-btn home-btn">Go to Home page</button>
+            </a>
+
+        </div>
+    </div>
+
+</main>
 
 </div>
 
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+
 </div>
+
+<script src="/js/script.js"></script>
 
 </body>
 </html>
