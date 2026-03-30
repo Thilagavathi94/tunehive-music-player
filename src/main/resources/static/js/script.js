@@ -13,7 +13,22 @@ function isLoggedIn() {
 }
 
 function isPremium() {
-  return sessionStorage.getItem("premium") === "true";
+  if (sessionStorage.getItem("premium") === "true") return true;
+  var mobile = sessionStorage.getItem("mobile");
+  if (mobile) {
+    try {
+      var stored = localStorage.getItem("user_" + mobile);
+      if (stored) {
+        var u = JSON.parse(stored);
+        if (u.premium === true || u.plan === "PRO") {
+          sessionStorage.setItem("premium", "true");
+          localStorage.removeItem("playCount");
+          return true;
+        }
+      }
+    } catch(e) {}
+  }
+  return false;
 }
 
 /* ════════════════════════════════════════════════
@@ -182,7 +197,7 @@ window.playSong = function(src, btn) {
     return;
   }
 
-  // Premium / free limit check
+  // Premium / free limit check — isPremium() also checks localStorage
   if (!isPremium()) {
     var count = parseInt(localStorage.getItem("playCount") || "0");
     if (count >= 3) {
@@ -227,34 +242,6 @@ window.playSong = function(src, btn) {
   saveHistory(src, btn);
 };
 
-/*
- * playAnySong(element)
- * Called from dashboard.html cards (element has data-song attr).
- */
-let playCount = parseInt(localStorage.getItem("playCount")) || 0;
-
-function playSong(src, btn) {
-
-  if (!isLoggedIn()) {
-    window.location.href = "/signup";
-    return;
-  }
-
-  if (!isPremium() && playCount >= 1) {
-    alert("Limit reached! Upgrade plan.");
-    window.location.href = "/plans";
-    return;
-  }
-
-  let audio = document.getElementById("audioPlayer");
-  audio.src = src;
-  audio.play();
-
-  if (!isPremium()) {
-    playCount++;
-    localStorage.setItem("playCount", playCount);
-  }
-}
 /*
  * loadSong(src, img, title)
  * Called from player.html full player.
