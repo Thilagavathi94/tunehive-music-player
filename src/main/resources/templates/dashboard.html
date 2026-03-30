@@ -96,13 +96,11 @@
     <!-- ALBUM BANNER -->
     <section class="album-banner">
 
-  <div class="album-info" data-song="/songs/majili.mp3">
+  <div class="album-info card" data-song="/songs/majili.mp3">
     <img src="/images/majili.jpg" alt="Majili">
     <h1>MAJILI</h1>
     <p>Various Artists • 7 songs</p>
-
-    <!-- ✅ FIXED -->
-    <button onclick="playAnySong(this.closest('.card'))">▶</button>
+    <button onclick="playAnySong(this.closest('.card'))">▶ Play</button>
   </div>
 
   <div class="album-songs">
@@ -615,47 +613,58 @@
 <script>
 
 // ─── PLAYER LOGIC ───────────────────────────────────────────
-let playCount = parseInt(localStorage.getItem("playCount")) || 0;
-let isPremium = sessionStorage.getItem("premium") === "true"
-    || /*[[${premium}]]*/ false;
+var audio = document.getElementById("audioPlayer");
+var isPlaying = false;
 
-let audio = document.getElementById("audioPlayer");
-let isPlaying = false;
+function checkPremium() {
+    // Check sessionStorage first
+    if (sessionStorage.getItem("premium") === "true") return true;
+    // Check localStorage keyed by mobile (persists after session expiry)
+    var mobile = sessionStorage.getItem("mobile");
+    if (mobile) {
+        try {
+            var stored = localStorage.getItem("user_" + mobile);
+            if (stored) {
+                var u = JSON.parse(stored);
+                if (u.premium === true || u.plan === "PRO") {
+                    // Sync back to sessionStorage and clear old play count
+                    sessionStorage.setItem("premium", "true");
+                    localStorage.removeItem("playCount");
+                    return true;
+                }
+            }
+        } catch(e) {}
+    }
+    return false;
+}
 
 function playAnySong(element) {
-
-    let audio = document.getElementById("audioPlayer");
-    let song = element?.getAttribute("data-song");
+    var audio = document.getElementById("audioPlayer");
+    var song = element ? element.getAttribute("data-song") : null;
 
     if (!song) {
-        alert("No song found!");
+        alert("Song not found! Please check the file path.");
         return;
     }
 
-    let isPremium = sessionStorage.getItem("premium") === "true";
-    let playCount = parseInt(localStorage.getItem("playCount")) || 0;
+    var premium  = checkPremium();
+    var playCount = parseInt(localStorage.getItem("playCount") || "0");
 
-    // 🚫 FREE USER LIMIT
-    if (!isPremium && playCount >= 1) {
-
-        let confirmPlan = confirm("Free limit reached! Upgrade to Premium?");
-
-        if (confirmPlan) {
-            window.location.href = "/plans";
-        }
-
+    // FREE USER LIMIT — 3 songs
+    if (!premium && playCount >= 3) {
+        var confirmPlan = confirm("You've played 3 free songs. Upgrade to PRO for unlimited listening?");
+        if (confirmPlan) window.location.href = "/plans";
         return;
     }
 
-    // 🎵 PLAY SONG
+    // PLAY SONG
     audio.src = song;
     audio.load();
-    audio.play();
+    audio.play().catch(function(e){ console.warn("Play error:", e.message); });
 
-    // 🔥 INCREASE COUNT (only for free user)
-    if (!isPremium) {
-        playCount++;
-        localStorage.setItem("playCount", playCount);
+    // Increment count only for free users
+    if (!premium) {
+        localStorage.setItem("playCount", playCount + 1);
     }
 }
 // ─── SIDEBAR SECTION TOGGLE ──────────────────────────────────
