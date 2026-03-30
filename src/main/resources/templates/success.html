@@ -392,12 +392,27 @@
 
 </div>
 
-<script>
-  // Mark premium in frontend session
+<script th:inline="javascript">
+  // ── Get mobile from Spring session (passed by controller) ──
+  var mobile = /*[[${mobile}]]*/ null;
+
+  // ── Update sessionStorage (frontend auth) ──
   sessionStorage.setItem("premium", "true");
   sessionStorage.setItem("loggedIn", "true");
+  if (mobile) sessionStorage.setItem("mobile", mobile);
 
-  // Auto-redirect to player after 3 seconds
+  // ── Persist PRO plan in localStorage keyed by phone number ──
+  // This survives server restarts and session expiry
+  if (mobile) {
+    var stored = localStorage.getItem("user_" + mobile);
+    var user = stored ? JSON.parse(stored) : {};
+    user.premium = true;
+    user.plan    = "PRO";
+    user.mobile  = mobile;
+    localStorage.setItem("user_" + mobile, JSON.stringify(user));
+  }
+
+  // ── Auto-redirect to player after 3 seconds ──
   setTimeout(function() {
     window.location.href = "/player";
   }, 3000);

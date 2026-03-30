@@ -132,7 +132,18 @@ public String doLogin(@RequestParam String mobile,
 
     session.setAttribute("mobile", mobile);
 
-    return "redirect:/dashboard";  // ✅ VERY IMPORTANT
+    // ── Restore premium/plan from TempStorage if user already upgraded ──
+    User user = TempStorage.users.get(mobile);
+    if (user != null) {
+        session.setAttribute("premium", user.isPremium());
+        session.setAttribute("plan",    user.getPlan() != null ? user.getPlan() : "FREE");
+        session.setAttribute("email",   user.getEmail());
+    } else {
+        session.setAttribute("premium", false);
+        session.setAttribute("plan",    "FREE");
+    }
+
+    return "redirect:/dashboard";
 }
     // ─────────────────────────────────────────
     // DASHBOARD
@@ -180,6 +191,7 @@ public String doLogin(@RequestParam String mobile,
 
         model.addAttribute("plan",   "PRO");
         model.addAttribute("amount", "₹99");
+        model.addAttribute("mobile", mobile);
 
         return "success";
     }
