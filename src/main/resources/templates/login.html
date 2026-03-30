@@ -78,18 +78,7 @@
     <!-- JS error -->
     <div class="err" id="jsErr" style="display:none;"></div>
 
-    <!--
-      HOW THIS WORKS:
-      1. User enters mobile + password.
-      2. JS checks password against localStorage (saved during signup).
-      3. If correct, JS sets sessionStorage flags for frontend.
-      4. JS submits this form to /do-login (backend).
-      5. Backend sets Spring HttpSession (needed for /dashboard, /albums etc.).
-      6. Backend redirects to /dashboard — everything works!
-    -->
-   <form action="/do-login" method="post">
-
-      <!-- This hidden field gets filled by JS before submit -->
+    <form id="loginForm" action="/do-login" method="post">
       <input type="hidden" name="mobile" id="mobileHidden">
 
       <div class="input-group">
@@ -147,7 +136,6 @@ function doLogin() {
   var mobile   = document.getElementById("mobileInput").value.trim();
   var password = document.getElementById("passwordInput").value;
 
-  // Basic validation
   if (!/^[0-9]{10}$/.test(mobile)) {
     showErr("Enter a valid 10-digit mobile number.");
     return;
@@ -157,39 +145,30 @@ function doLogin() {
     return;
   }
 
-  // Check localStorage (saved by signup.html)
   var stored = localStorage.getItem("user_" + mobile);
 
   if (stored) {
     var user = JSON.parse(stored);
-    // If password was saved, verify it
     if (user.password && user.password !== password) {
       showErr("Incorrect password. Please try again.");
       return;
     }
-    // Update frontend session
     sessionStorage.setItem("loggedIn", "true");
     sessionStorage.setItem("mobile",   mobile);
     sessionStorage.setItem("premium",  String(user.premium || false));
     sessionStorage.setItem("name",     user.name || "");
   } else {
-    // User registered via OTP only (no localStorage record).
-    // Trust them — backend will decide if mobile exists.
     sessionStorage.setItem("loggedIn", "true");
     sessionStorage.setItem("mobile",   mobile);
     sessionStorage.setItem("premium",  "false");
   }
 
-  // Set hidden form field and submit to backend
-  // Backend /do-login sets Spring HttpSession → all pages work
   document.getElementById("mobileHidden").value = mobile;
   document.getElementById("loginForm").submit();
 }
 
-  if (sessionStorage.getItem("loggedIn") === "true") {
-    window.location.href = "/dashboard";
-  }
-
+// ✅ REMOVED the auto-redirect that caused the infinite loop
+// The backend redirect after /do-login handles navigation now
 </script>
 </body>
 </html>

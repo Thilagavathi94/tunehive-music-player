@@ -97,28 +97,48 @@
 <!-- MAIN CONTENT -->
 <main class="content">
     <!-- 🎵 PLAYER SECTION -->
-<div class="player-section">
+<div class="player-section" style="display:flex;flex-direction:column;align-items:center;
+     width:100%;padding:30px 20px 20px;text-align:center;">
 
-    <img id="playerImage" src="/images/movie1.jpg" class="player-img">
+    <!-- Spinning album art -->
+    <img id="playerImage" src="/images/movie1.jpg" class="player-img"
+         onerror="this.src='/images/music-banner.png';this.onerror=null;"
+         style="width:180px;height:180px;border-radius:50%;object-fit:cover;
+                border:4px solid #e91e63;box-shadow:0 0 24px rgba(233,30,99,0.4);
+                margin-bottom:14px;">
 
-    <h3 id="playerTitle">Select a Song</h3>
+    <h3 id="playerTitle" style="margin-bottom:4px;">Select a Song</h3>
+    <p  id="playerArtist" style="font-size:13px;color:#e91e63;margin-bottom:16px;">— Tune Hive —</p>
 
     <audio id="audioPlayer"></audio>
 
-    <!-- ⏱ Progress -->
-    <input type="range" id="progressBar" value="0">
+    <!-- ⏱ Progress + time — fixed width, centered -->
+    <div style="width:100%;max-width:500px;margin-bottom:12px;">
+      <input type="range" id="progressBar" value="0" min="0" max="100" step="0.1"
+             style="width:100%;accent-color:#e91e63;cursor:pointer;display:block;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#aaa;margin-top:4px;">
+        <span id="currentTime">0:00</span>
+        <span id="totalTime">0:00</span>
+      </div>
+    </div>
 
     <!-- 🎮 Controls -->
-    <div class="controls">
-        <button onclick="prevSong()">⏮</button>
-        <button onclick="backward()">⏪</button>
-        <button onclick="togglePlay()" id="playBtn">▶</button>
-        <button onclick="forward()">⏩</button>
-        <button onclick="nextSong()">⏭</button>
-        <button onclick="muteToggle()">🔊</button>
+    <div class="controls" style="display:flex;gap:10px;justify-content:center;">
+        <button onclick="prevSong()"   title="Previous">⏮</button>
+        <button onclick="backward()"   title="Rewind 10s">⏪</button>
+        <button onclick="togglePlay()" id="playBtn" title="Play/Pause">▶</button>
+        <button onclick="forward()"    title="Forward 10s">⏩</button>
+        <button onclick="nextSong()"   title="Next">⏭</button>
+        <button onclick="muteToggle()" title="Mute">🔊</button>
     </div>
 
 </div>
+
+<style>
+/* Highlight the card that is currently playing */
+.card.now-playing { outline: 3px solid #e91e63; border-radius: 10px; }
+.card.now-playing img { opacity: 0.85; }
+</style>
 
 <!-- Latest Songs -->
 <div id="latestSection">
@@ -539,7 +559,7 @@
 
 
 <script th:inline="javascript">
-// Sync Spring server session → frontend sessionStorage so all pages work
+// Sync Spring server session → frontend sessionStorage
 (function(){
     var m = /*[[${session.mobile}]]*/ null;
     var p = /*[[${session.premium}]]*/ false;
@@ -550,96 +570,248 @@
     }
 })();
 </script>
-<script src="/js/script.js"></script>
 
+<!--
+  ══════════════════════════════════════════════════════════
+  PLAYER ENGINE  — runs BEFORE script.js
+  Why before? script.js overwrites window.loadSong with its
+  own version that does NOT update currentIndex or playerImage.
+  By defining our loadSong first and then re-assigning
+  window.loadSong AFTER script.js loads (at the bottom),
+  we guarantee card ▶ buttons always go through our engine.
+  ══════════════════════════════════════════════════════════
+-->
 <script>
+/* ── Auth guard ── */
+if (!sessionStorage.getItem("loggedIn")) {
+  window.location.href = "/login";
+}
 
-
-
-var audio = document.getElementById("audioPlayer");
-var songs = [
-    {src:"/songs/song1.mp3", img:"/images/movie1.jpg", title:"Song 1"},
-    {src:"/songs/song2.mp3", img:"/images/movie2.jpg", title:"Song 2"},
-    {src:"/songs/song3.mp3", img:"/images/movie3.jpg", title:"Song 3"},
-    {src:"/songs/song4.mp3", img:"/images/movie4.jpg", title:"Song 4"},
-    {src:"/songs/song5.mp3", img:"/images/movie5.jpg", title:"Song 5"},
-    {src:"/songs/majili.mp3", img:"/images/movie30.jpg", title:"Majili Song"},
+/* ══════════════════════════════════════════
+   MASTER SONG LIST
+   Every card's loadSong call maps to an
+   entry here by src so currentIndex stays
+   in sync when the user clicks any card.
+══════════════════════════════════════════ */
+var SONGS = [
+  { src:"/songs/song1.mp3",  img:"/images/movie1.jpg",  title:"Song 1"    },
+  { src:"/songs/song2.mp3",  img:"/images/movie2.jpg",  title:"Song 2"    },
+  { src:"/songs/song3.mp3",  img:"/images/movie3.jpg",  title:"Song 3"    },
+  { src:"/songs/song4.mp3",  img:"/images/movie4.jpg",  title:"Song 4"    },
+  { src:"/songs/song5.mp3",  img:"/images/movie5.jpg",  title:"Song 5"    },
+  { src:"/songs/majili.mp3", img:"/images/movie30.jpg", title:"Majili Song"},
+  { src:"/songs/song12.mp3", img:"/images/movie2.jpg",  title:"Song 12"   }
 ];
 
-let currentIndex = 0;
+var currentIndex = 0;   /* tracks which song is playing RIGHT NOW */
 
-function loadSong(src, img, title){
-    audio.src = src;
-    audio.play();
-    document.getElementById("playerImage").src = img;
-    document.getElementById("playerTitle").innerText = title;
-}
+/* ── Core: update the player UI + play ── */
+function _playIndex(index) {
+  /* clamp / wrap */
+  if (index < 0)             index = SONGS.length - 1;
+  if (index >= SONGS.length) index = 0;
+  currentIndex = index;
 
-function togglePlay(){
-    let btn = document.getElementById("playBtn");
+  var s     = SONGS[index];
+  var audio = document.getElementById("audioPlayer");
+  var img   = document.getElementById("playerImage");
+  var title = document.getElementById("playerTitle");
+  var btn   = document.getElementById("playBtn");
+  var prog  = document.getElementById("progressBar");
 
-    if(audio.paused){
-        audio.play();
-        btn.innerText = "⏸";
-    } else {
-        audio.pause();
-        btn.innerText = "▶";
+  /* ── IMAGE UPDATE (your main request) ── */
+  img.src           = s.img;
+  img.onerror       = function(){ this.src="/images/music-banner.png"; this.onerror=null; };
+  title.innerText   = s.title;
+
+  /* reset progress bar */
+  if (prog) prog.value = 0;
+
+  /* stop current, set new src, wait for canplay → no AbortError */
+  audio.pause();
+  audio.src = "";
+  audio.load();
+  audio.src = s.src;
+  audio.load();
+
+  audio.addEventListener("canplay", function onReady(){
+    audio.removeEventListener("canplay", onReady);
+    audio.play().catch(function(e){
+      if (e.name !== "AbortError") console.warn("play():", e.message);
+    });
+    if (btn) btn.innerText = "⏸";
+  });
+
+  /* highlight active card */
+  document.querySelectorAll(".card").forEach(function(c){ c.classList.remove("now-playing"); });
+  var activeCards = document.querySelectorAll(".card");
+  activeCards.forEach(function(c){
+    var cImg = c.querySelector("img");
+    if (cImg && cImg.src && cImg.src.includes(s.img.split("/").pop())) {
+      c.classList.add("now-playing");
     }
+  });
 }
 
-function nextSong(){
-    currentIndex = (currentIndex + 1) % songs.length;
-    let s = songs[currentIndex];
-    loadSong(s.src, s.img, s.title);
-}
-
-function prevSong(){
-    currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-    let s = songs[currentIndex];
-    loadSong(s.src, s.img, s.title);
-}
-
-function forward(){
-    audio.currentTime += 10;
-}
-
-function backward(){
-    audio.currentTime -= 10;
-}
-
-function muteToggle(){
-    audio.muted = !audio.muted;
-}
-
-// auto next
-audio.addEventListener("ended", function () {
-    nextSong();
-});
-
-// progress update
-audio.addEventListener("timeupdate", function () {
-    if (!audio.duration) return;
-
-    let progress = (audio.currentTime / audio.duration) * 100;
-    document.getElementById("progressBar").value = progress;
-});
-
-// seek
-let progressBar = document.getElementById("progressBar");
-
-progressBar.addEventListener("input", function () {
-    if (!audio.duration) return;
-
-    let seekTime = (this.value / 100) * audio.duration;
-    audio.currentTime = seekTime;
-});
-
-// smooth drag
-progressBar.addEventListener("mousedown", () => audio.pause());
-progressBar.addEventListener("mouseup", () => audio.play());
-  if (!sessionStorage.getItem("loggedIn")) {
-    window.location.href = "/login";
+/* ══════════════════════════════════════════
+   loadSong(src, img, title)
+   Called by every card ▶ button.
+   Finds the song in SONGS by src → sets
+   currentIndex → so next/prev work correctly.
+══════════════════════════════════════════ */
+function loadSong(src, img, title) {
+  /* find existing entry */
+  var idx = -1;
+  for (var i = 0; i < SONGS.length; i++) {
+    if (SONGS[i].src === src) {
+      /* update img/title in case same src has different poster */
+      SONGS[i].img   = img;
+      SONGS[i].title = title;
+      idx = i;
+      break;
+    }
   }
+  /* if not in master list, add it dynamically */
+  if (idx === -1) {
+    SONGS.push({ src: src, img: img, title: title });
+    idx = SONGS.length - 1;
+  }
+  _playIndex(idx);
+}
+
+/* expose so it survives script.js overwrite */
+window._playerLoadSong = loadSong;
+
+/* ══════════════════════════════════════════
+   CONTROLS
+══════════════════════════════════════════ */
+function nextSong() {
+  _playIndex(currentIndex + 1);
+}
+
+function prevSong() {
+  var audio = document.getElementById("audioPlayer");
+  /* if > 3s into song, restart; else truly go back */
+  if (audio && audio.currentTime > 3) {
+    audio.currentTime = 0;
+    return;
+  }
+  _playIndex(currentIndex - 1);
+}
+
+function togglePlay() {
+  var audio = document.getElementById("audioPlayer");
+  var btn   = document.getElementById("playBtn");
+  if (!audio) return;
+
+  /* nothing loaded yet → play first song */
+  if (!audio.src || audio.src === window.location.href) {
+    _playIndex(0); return;
+  }
+
+  if (audio.paused) {
+    audio.play().catch(function(){});
+    if (btn) btn.innerText = "⏸";
+  } else {
+    audio.pause();
+    if (btn) btn.innerText = "▶";
+  }
+}
+
+function forward()  {
+  var a = document.getElementById("audioPlayer");
+  if (a) a.currentTime = Math.min(a.currentTime + 10, a.duration || 0);
+}
+function backward() {
+  var a = document.getElementById("audioPlayer");
+  if (a) a.currentTime = Math.max(a.currentTime - 10, 0);
+}
+function muteToggle() {
+  var a = document.getElementById("audioPlayer");
+  if (!a) return;
+  a.muted = !a.muted;
+  var btns = document.querySelectorAll(".controls button");
+  btns.forEach(function(b){ if (b.innerText==="🔊"||b.innerText==="🔇") b.innerText = a.muted?"🔇":"🔊"; });
+}
+
+/* ══════════════════════════════════════════
+   AUDIO EVENTS
+══════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", function(){
+  var audio    = document.getElementById("audioPlayer");
+  var progress = document.getElementById("progressBar");
+  var playBtn  = document.getElementById("playBtn");
+  if (!audio || !progress) return;
+
+  /* auto-advance */
+  audio.addEventListener("ended", function(){ nextSong(); });
+
+  /* sync play/pause button with audio state */
+  audio.addEventListener("play",  function(){ if (playBtn) playBtn.innerText = "⏸"; });
+  audio.addEventListener("pause", function(){ if (playBtn) playBtn.innerText = "▶"; });
+
+  /* progress bar fill */
+  audio.addEventListener("timeupdate", function(){
+    if (!audio.duration || progress._dragging) return;
+    var pct = (audio.currentTime / audio.duration) * 100;
+    progress.value = pct;
+    /* CSS fill trick */
+    progress.style.setProperty("--prog", pct + "%");
+    var cur = document.getElementById("currentTime");
+    var tot = document.getElementById("totalTime");
+    if (cur) cur.innerText = _fmt(audio.currentTime);
+    if (tot) tot.innerText = _fmt(audio.duration);
+  });
+
+  audio.addEventListener("loadedmetadata", function(){
+    var tot = document.getElementById("totalTime");
+    if (tot) tot.innerText = _fmt(audio.duration);
+  });
+
+  /* seek on drag */
+  progress.addEventListener("mousedown",  function(){ progress._dragging = true; });
+  progress.addEventListener("touchstart", function(){ progress._dragging = true; }, {passive:true});
+  progress.addEventListener("input", function(){
+    if (!audio.duration) return;
+    var pct = parseFloat(this.value);
+    this.style.setProperty("--prog", pct + "%");
+    var cur = document.getElementById("currentTime");
+    if (cur) cur.innerText = _fmt((pct/100)*audio.duration);
+  });
+  function onSeekEnd(){
+    progress._dragging = false;
+    if (audio.duration) audio.currentTime = (parseFloat(progress.value)/100) * audio.duration;
+    if (!audio.paused) audio.play().catch(function(){});
+  }
+  progress.addEventListener("mouseup",  onSeekEnd);
+  progress.addEventListener("touchend", onSeekEnd);
+});
+
+function _fmt(s){
+  if (!s||isNaN(s)) return "0:00";
+  var m=Math.floor(s/60), sec=Math.floor(s%60);
+  return m+":"+(sec<10?"0":"")+sec;
+}
+</script>
+
+<!-- script.js loads AFTER our engine so navbar/sidebar/wishlist work -->
+<script src="/js/script.js"></script>
+
+<!-- Re-take loadSong AFTER script.js overwrites it -->
+<script>
+/*
+  script.js overwrites window.loadSong with a version that
+  does NOT update currentIndex or playerImage.
+  We restore our correct version here so card buttons
+  always update the image and keep next/prev in sync.
+*/
+window.loadSong   = window._playerLoadSong;
+window.nextSong   = nextSong;
+window.prevSong   = prevSong;
+window.togglePlay = togglePlay;
+window.forward    = forward;
+window.backward   = backward;
+window.muteToggle = muteToggle;
 </script>
 
 </body>
