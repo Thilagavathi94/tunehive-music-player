@@ -47,19 +47,36 @@ public class AuthController {
             return "signup";
         }
 
-        int otp = 100000 + new Random().nextInt(900000);
+        try {
+            int otp = 100000 + new Random().nextInt(900000);
 
-        session.setAttribute("otp",     otp);
-        session.setAttribute("mobile",  mobile);
-        session.setAttribute("name",    name);
-        session.setAttribute("email",   email);
-        session.setAttribute("otpTime", System.currentTimeMillis());
+            session.setAttribute("otp",     otp);
+            session.setAttribute("mobile",  mobile);
+            session.setAttribute("name",    name);
+            session.setAttribute("email",   email);
+            session.setAttribute("otpTime", System.currentTimeMillis());
 
-        // FOR TESTING — remove in production
-        System.out.println("OTP for " + mobile + ": " + otp);
+            // FOR TESTING — remove in production
+            System.out.println("OTP for " + mobile + ": " + otp);
 
-        model.addAttribute("otp",    otp);   // show OTP on page during dev
+            // Redirect to GET /otp — avoids "response already committed" crash
+            return "redirect:/otp";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Something went wrong. Please try again.");
+            return "signup";
+        }
+    }
+
+    // ── GET handler for OTP page (after redirect from /send-otp) ──
+    @GetMapping("/otp")
+    public String otpPage(HttpSession session, Model model) {
+        String mobile = (String) session.getAttribute("mobile");
+        if (mobile == null) return "redirect:/signup";
+
         model.addAttribute("mobile", mobile);
+        // FOR TESTING — remove in production (shows OTP on page)
+        model.addAttribute("otp", session.getAttribute("otp"));
 
         return "otp";
     }
@@ -81,11 +98,13 @@ public class AuthController {
         }
 
         if (System.currentTimeMillis() - otpTime > 300000) { // 5 min
+            model.addAttribute("mobile", mobile);
             model.addAttribute("error", "OTP expired. Request again.");
             return "otp";
         }
 
         if (userOtp != sessionOtp) {
+            model.addAttribute("mobile", mobile);
             model.addAttribute("error", "Invalid OTP. Try again.");
             return "otp";
         }
@@ -113,38 +132,39 @@ public class AuthController {
     }
 
     // ─────────────────────────────────────────
-    // LOGIN  ← KEY FIX: accepts any registered mobile
+    // LOGIN
     // ─────────────────────────────────────────
     @GetMapping("/login")
     public String loginPage() {
         return "login";
     }
 
-   @PostMapping("/do-login")
-public String doLogin(@RequestParam String mobile,
-                      HttpSession session,
-                      Model model) {
+    @PostMapping("/do-login")
+    public String doLogin(@RequestParam String mobile,
+                          HttpSession session,
+                          Model model) {
 
-    if (mobile == null || mobile.isEmpty()) {
-        model.addAttribute("error", "Enter mobile number");
-        return "login";
+        if (mobile == null || mobile.isEmpty()) {
+            model.addAttribute("error", "Enter mobile number");
+            return "login";
+        }
+
+        session.setAttribute("mobile", mobile);
+
+        // ── Restore premium/plan from TempStorage if user already upgraded ──
+        User user = TempStorage.users.get(mobile);
+        if (user != null) {
+            session.setAttribute("premium", user.isPremium());
+            session.setAttribute("plan",    user.getPlan() != null ? user.getPlan() : "FREE");
+            session.setAttribute("email",   user.getEmail());
+        } else {
+            session.setAttribute("premium", false);
+            session.setAttribute("plan",    "FREE");
+        }
+
+        return "redirect:/dashboard";
     }
 
-    session.setAttribute("mobile", mobile);
-
-    // ── Restore premium/plan from TempStorage if user already upgraded ──
-    User user = TempStorage.users.get(mobile);
-    if (user != null) {
-        session.setAttribute("premium", user.isPremium());
-        session.setAttribute("plan",    user.getPlan() != null ? user.getPlan() : "FREE");
-        session.setAttribute("email",   user.getEmail());
-    } else {
-        session.setAttribute("premium", false);
-        session.setAttribute("plan",    "FREE");
-    }
-
-    return "redirect:/dashboard";
-}
     // ─────────────────────────────────────────
     // DASHBOARD
     // ─────────────────────────────────────────

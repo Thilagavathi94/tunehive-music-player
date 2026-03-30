@@ -89,18 +89,6 @@
   .right img { width:85%; max-height:70%; object-fit:contain; border-radius:12px; }
   .right-tagline { margin-top:20px; font-size:18px; font-weight:700; color:#c2185b; text-align:center; }
   .right-sub { font-size:13px; color:#e57399; text-align:center; margin-top:6px; }
-
-  /* OTP STEP (hidden by default) */
-  #otpStep { display:none; }
-  .otp-info { font-size:13px; color:#555; margin-bottom:16px; }
-  .otp-info span { color:#e91e63; font-weight:600; }
-
-  /* RESEND */
-  .resend-row { display:flex; justify-content:space-between; align-items:center;
-                font-size:12.5px; color:#999; margin-bottom:14px; }
-  .resend-btn { color:#e91e63; font-weight:600; cursor:pointer; text-decoration:underline;
-                background:none; border:none; font-family:inherit; font-size:12.5px; }
-  .resend-btn:disabled { color:#bbb; cursor:default; text-decoration:none; }
 </style>
 </head>
 <body>
@@ -108,14 +96,14 @@
 <div class="signup-container">
   <div class="left">
 
-    <!-- ── STEP 1: REGISTRATION FORM ── -->
+    <!-- ── SIGNUP FORM ── -->
     <div id="signupStep">
       <h1>Create Account 🎵</h1>
       <p>Join Tune Hive and enjoy millions of songs</p>
 
-      <!-- Backend error -->
+      <!-- Backend error (e.g. invalid mobile from server) -->
       <div class="err" th:if="${error}" th:text="${error}"></div>
-      <!-- JS error -->
+      <!-- JS validation error -->
       <div class="err" id="jsErr" style="display:none;"></div>
 
       <div class="input-group">
@@ -171,41 +159,6 @@
       <p class="login-text">Already have an account? <a href="/login">Log in</a></p>
     </div>
 
-    <!-- ── STEP 2: OTP VERIFICATION ── -->
-    <div id="otpStep">
-      <h1>Verify OTP 🔐</h1>
-      <p class="otp-info">OTP sent to <span id="otpMobileDisplay"></span></p>
-
-      <div class="err" id="otpErr" style="display:none;"></div>
-
-      <form id="otpForm" action="/verify-otp" method="post">
-        <input type="hidden" name="mobile"   id="hiddenMobile">
-        <input type="hidden" name="name"     id="hiddenName">
-        <input type="hidden" name="email"    id="hiddenEmail">
-
-        <div class="input-group">
-          <i class='bx bx-key lead-icon'></i>
-          <input type="text" name="userOtp" id="otpInput"
-                 placeholder="Enter 6-digit OTP" maxlength="6"
-                 oninput="this.value=this.value.replace(/\D/g,'')"
-                 style="letter-spacing:6px;font-size:18px;font-weight:600;text-align:center;">
-        </div>
-
-        <div class="resend-row">
-          <span id="timerDisplay" style="color:#e91e63;font-weight:600;"></span>
-          <button type="button" class="resend-btn" id="resendBtn" onclick="resendOtp()" disabled>
-            Resend OTP
-          </button>
-        </div>
-
-        <button type="button" class="continue-btn" onclick="verifyOtp()">Verify & Create Account</button>
-      </form>
-
-      <p class="login-text" style="margin-top:8px;">
-        <a href="#" onclick="goBack(); return false;" style="color:#e91e63;font-weight:600;">← Change details</a>
-      </p>
-    </div>
-
   </div>
 
   <div class="right">
@@ -253,9 +206,14 @@ function showErr(msg) {
 }
 
 /* ══════════════════════════════════════
-   STEP 1 — SEND OTP
+   SEND OTP — validated then POST to /send-otp
+   Server redirects to GET /otp (separate page).
+   No UI toggling here — the full page navigates.
 ══════════════════════════════════════ */
 function sendOtp() {
+  // Clear previous JS error
+  document.getElementById("jsErr").style.display = "none";
+
   var nameOk   = liveVal("nameInput",   "nameErr",   /^.{2,}$/);
   var emailOk  = liveVal("emailInput",  "emailErr",  /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   var mobileOk = liveVal("mobileInput", "mobileErr", /^[6-9]\d{9}$/);
@@ -271,7 +229,7 @@ function sendOtp() {
   var mobile   = document.getElementById("mobileInput").value.trim();
   var password = document.getElementById("passwordInput").value;
 
-  // Save to localStorage so login page can verify password later
+  // Save credentials to localStorage for later login verification
   var existing = localStorage.getItem("user_" + mobile);
   var userData = existing ? JSON.parse(existing) : {};
   userData.name     = name;
@@ -282,18 +240,12 @@ function sendOtp() {
   userData.plan     = userData.plan    || "FREE";
   localStorage.setItem("user_" + mobile, JSON.stringify(userData));
 
-  // Show OTP step
-  document.getElementById("otpMobileDisplay").textContent = mobile;
-  document.getElementById("hiddenMobile").value = mobile;
-  document.getElementById("hiddenName").value   = name;
-  document.getElementById("hiddenEmail").value  = email;
-
-  // Submit to backend to send OTP
+  // Disable button to prevent double-submit
   var btn = document.getElementById("sendOtpBtn");
   btn.textContent = "Sending OTP...";
   btn.disabled = true;
 
-  // Submit via form POST to /send-otp
+  // POST to /send-otp — server will redirect to GET /otp
   var form = document.createElement("form");
   form.method = "post";
   form.action = "/send-otp";
@@ -307,77 +259,7 @@ function sendOtp() {
   });
 
   document.body.appendChild(form);
-
-  // Switch UI to OTP step before submit redirects
-  document.getElementById("signupStep").style.display = "none";
-  document.getElementById("otpStep").style.display    = "block";
-  startTimer();
-
-  form.submit();
-}
-
-/* ══════════════════════════════════════
-   STEP 2 — VERIFY OTP
-══════════════════════════════════════ */
-function verifyOtp() {
-  var otp = document.getElementById("otpInput").value.trim();
-  if (!/^\d{6}$/.test(otp)) {
-    var el = document.getElementById("otpErr");
-    el.textContent = "Enter the 6-digit OTP sent to your mobile.";
-    el.style.display = "block";
-    return;
-  }
-  document.getElementById("otpForm").submit();
-}
-
-/* ══════════════════════════════════════
-   OTP COUNTDOWN TIMER
-══════════════════════════════════════ */
-var _timer = null;
-
-function startTimer() {
-  var secs = 60;
-  var display = document.getElementById("timerDisplay");
-  var resend  = document.getElementById("resendBtn");
-  resend.disabled = true;
-
-  clearInterval(_timer);
-  _timer = setInterval(function() {
-    display.textContent = "Resend in " + secs + "s";
-    secs--;
-    if (secs < 0) {
-      clearInterval(_timer);
-      display.textContent = "";
-      resend.disabled = false;
-    }
-  }, 1000);
-}
-
-function resendOtp() {
-  var mobile = document.getElementById("hiddenMobile").value;
-  var name   = document.getElementById("hiddenName").value;
-  var email  = document.getElementById("hiddenEmail").value;
-
-  var form = document.createElement("form");
-  form.method = "post";
-  form.action = "/send-otp";
-  form.style.display = "none";
-
-  [["mobile", mobile], ["name", name], ["email", email]].forEach(function(pair) {
-    var inp = document.createElement("input");
-    inp.name  = pair[0];
-    inp.value = pair[1];
-    form.appendChild(inp);
-  });
-
-  document.body.appendChild(form);
-  startTimer();
-  form.submit();
-}
-
-function goBack() {
-  document.getElementById("otpStep").style.display    = "none";
-  document.getElementById("signupStep").style.display = "block";
+  form.submit(); // Full page navigates to /otp — no JS UI toggling needed
 }
 
 /* Redirect if already logged in */

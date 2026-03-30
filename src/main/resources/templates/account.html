@@ -320,8 +320,8 @@
             </div>
 
             <div class="profile-buttons">
-                <button onclick="location.href='/settings'">✏️ Edit Profile</button>
-                <button>🔒 Change Password</button>
+                <button onclick="openEditModal()">✏️ Edit Profile</button>
+                <button onclick="openPwdModal()">🔒 Change Password</button>
             </div>
         </div>
 
@@ -384,5 +384,236 @@
   </div>
 </div>
 <script src="/js/script.js"></script>
-</body> 
+
+<!-- ══════════════════════════════════════
+     EDIT PROFILE MODAL
+══════════════════════════════════════ -->
+<div id="editModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;
+     background:rgba(0,0,0,0.7);z-index:9999;display:none;justify-content:center;align-items:center;">
+  <div style="background:#1a1a2e;border-radius:20px;padding:36px;width:90%;max-width:420px;
+              box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;">
+    <h2 style="color:#fff;margin-bottom:6px;font-size:20px;">✏️ Edit Profile</h2>
+    <p style="color:#aaa;font-size:13px;margin-bottom:24px;">Update your name and email address</p>
+
+    <div id="editSuccess" style="display:none;background:#1a472a;color:#5cb85c;border-radius:10px;
+         padding:10px 14px;font-size:13px;margin-bottom:14px;">✅ Profile updated successfully!</div>
+    <div id="editErr" style="display:none;background:#4a1a1a;color:#e74c3c;border-radius:10px;
+         padding:10px 14px;font-size:13px;margin-bottom:14px;"></div>
+
+    <!-- Name -->
+    <div style="position:relative;margin-bottom:14px;">
+      <input type="text" id="editName" placeholder="Full name"
+             style="width:100%;padding:12px 14px 12px 42px;border-radius:25px;border:1.5px solid #444;
+                    background:#0d0d1a;color:#fff;font-size:14px;outline:none;font-family:inherit;">
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#ff2e63;font-size:16px;">👤</span>
+    </div>
+
+    <!-- Email -->
+    <div style="position:relative;margin-bottom:14px;">
+      <input type="email" id="editEmail" placeholder="Email address"
+             style="width:100%;padding:12px 14px 12px 42px;border-radius:25px;border:1.5px solid #444;
+                    background:#0d0d1a;color:#fff;font-size:14px;outline:none;font-family:inherit;">
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#ff2e63;font-size:16px;">📧</span>
+    </div>
+
+    <!-- Mobile (read-only) -->
+    <div style="position:relative;margin-bottom:24px;">
+      <input type="text" id="editMobile" readonly
+             style="width:100%;padding:12px 14px 12px 42px;border-radius:25px;border:1.5px solid #333;
+                    background:#111;color:#888;font-size:14px;outline:none;font-family:inherit;cursor:not-allowed;">
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#888;font-size:16px;">📱</span>
+    </div>
+
+    <div style="display:flex;gap:12px;">
+      <button onclick="saveProfile()"
+              style="flex:1;padding:12px;border:none;border-radius:25px;
+                     background:linear-gradient(90deg,#ff2e63,#c2185b);color:#fff;
+                     font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">
+        Save Changes
+      </button>
+      <button onclick="closeEditModal()"
+              style="flex:1;padding:12px;border:1.5px solid #444;border-radius:25px;
+                     background:transparent;color:#ccc;font-size:14px;cursor:pointer;font-family:inherit;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHANGE PASSWORD MODAL
+══════════════════════════════════════ -->
+<div id="pwdModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;
+     background:rgba(0,0,0,0.7);z-index:9999;justify-content:center;align-items:center;">
+  <div style="background:#1a1a2e;border-radius:20px;padding:36px;width:90%;max-width:420px;
+              box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;">
+    <h2 style="color:#fff;margin-bottom:6px;font-size:20px;">🔒 Change Password</h2>
+    <p style="color:#aaa;font-size:13px;margin-bottom:24px;">Enter your current and new password</p>
+
+    <div id="pwdSuccess" style="display:none;background:#1a472a;color:#5cb85c;border-radius:10px;
+         padding:10px 14px;font-size:13px;margin-bottom:14px;">✅ Password changed successfully!</div>
+    <div id="pwdErr" style="display:none;background:#4a1a1a;color:#e74c3c;border-radius:10px;
+         padding:10px 14px;font-size:13px;margin-bottom:14px;"></div>
+
+    <!-- Current Password -->
+    <div style="position:relative;margin-bottom:14px;">
+      <input type="password" id="currentPwd" placeholder="Current password"
+             style="width:100%;padding:12px 14px 12px 42px;border-radius:25px;border:1.5px solid #444;
+                    background:#0d0d1a;color:#fff;font-size:14px;outline:none;font-family:inherit;">
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#ff2e63;font-size:16px;">🔑</span>
+    </div>
+
+    <!-- New Password -->
+    <div style="position:relative;margin-bottom:14px;">
+      <input type="password" id="newPwd" placeholder="New password (min 6 chars)"
+             style="width:100%;padding:12px 14px 12px 42px;border-radius:25px;border:1.5px solid #444;
+                    background:#0d0d1a;color:#fff;font-size:14px;outline:none;font-family:inherit;">
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#ff2e63;font-size:16px;">🔒</span>
+    </div>
+
+    <!-- Confirm Password -->
+    <div style="position:relative;margin-bottom:24px;">
+      <input type="password" id="confirmPwd" placeholder="Confirm new password"
+             style="width:100%;padding:12px 14px 12px 42px;border-radius:25px;border:1.5px solid #444;
+                    background:#0d0d1a;color:#fff;font-size:14px;outline:none;font-family:inherit;">
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#ff2e63;font-size:16px;">✅</span>
+    </div>
+
+    <div style="display:flex;gap:12px;">
+      <button onclick="savePassword()"
+              style="flex:1;padding:12px;border:none;border-radius:25px;
+                     background:linear-gradient(90deg,#ff2e63,#c2185b);color:#fff;
+                     font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">
+        Update Password
+      </button>
+      <button onclick="closePwdModal()"
+              style="flex:1;padding:12px;border:1.5px solid #444;border-radius:25px;
+                     background:transparent;color:#ccc;font-size:14px;cursor:pointer;font-family:inherit;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+var _mobile = /*[[${mobile}]]*/ null;
+var _email  = /*[[${email}]]*/ null;
+var _plan   = /*[[${plan}]]*/ "FREE";
+
+/* ── EDIT PROFILE MODAL ── */
+function openEditModal() {
+  var stored = _mobile ? JSON.parse(localStorage.getItem("user_" + _mobile) || "{}") : {};
+  document.getElementById("editName").value   = stored.name  || sessionStorage.getItem("name")  || "";
+  document.getElementById("editEmail").value  = stored.email || _email || sessionStorage.getItem("email") || "";
+  document.getElementById("editMobile").value = _mobile || sessionStorage.getItem("mobile") || "";
+  document.getElementById("editSuccess").style.display = "none";
+  document.getElementById("editErr").style.display     = "none";
+  document.getElementById("editModal").style.display   = "flex";
+}
+
+function closeEditModal() {
+  document.getElementById("editModal").style.display = "none";
+}
+
+function saveProfile() {
+  var name  = document.getElementById("editName").value.trim();
+  var email = document.getElementById("editEmail").value.trim();
+  var mobile = _mobile || sessionStorage.getItem("mobile");
+
+  if (!name || name.length < 2) {
+    showModalErr("editErr", "Name must be at least 2 characters.");
+    return;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showModalErr("editErr", "Enter a valid email address.");
+    return;
+  }
+
+  // Save to localStorage
+  var stored = JSON.parse(localStorage.getItem("user_" + mobile) || "{}");
+  stored.name  = name;
+  stored.email = email;
+  localStorage.setItem("user_" + mobile, JSON.stringify(stored));
+
+  // Update sessionStorage
+  sessionStorage.setItem("name",  name);
+  sessionStorage.setItem("email", email);
+
+  // Update backend via form POST
+  var form = document.createElement("form");
+  form.method = "post";
+  form.action = "/update-profile";
+  form.style.display = "none";
+  [["mobile", mobile], ["email", email]].forEach(function(p) {
+    var inp = document.createElement("input");
+    inp.name = p[0]; inp.value = p[1];
+    form.appendChild(inp);
+  });
+  document.body.appendChild(form);
+
+  document.getElementById("editErr").style.display     = "none";
+  document.getElementById("editSuccess").style.display = "block";
+
+  setTimeout(function() {
+    form.submit();
+  }, 1200);
+}
+
+/* ── CHANGE PASSWORD MODAL ── */
+function openPwdModal() {
+  document.getElementById("currentPwd").value = "";
+  document.getElementById("newPwd").value     = "";
+  document.getElementById("confirmPwd").value = "";
+  document.getElementById("pwdSuccess").style.display = "none";
+  document.getElementById("pwdErr").style.display     = "none";
+  document.getElementById("pwdModal").style.display   = "flex";
+}
+
+function closePwdModal() {
+  document.getElementById("pwdModal").style.display = "none";
+}
+
+function savePassword() {
+  var mobile  = _mobile || sessionStorage.getItem("mobile");
+  var current = document.getElementById("currentPwd").value;
+  var newPwd  = document.getElementById("newPwd").value;
+  var confirm = document.getElementById("confirmPwd").value;
+
+  if (!current) { showModalErr("pwdErr", "Enter your current password."); return; }
+  if (newPwd.length < 6) { showModalErr("pwdErr", "New password must be at least 6 characters."); return; }
+  if (newPwd !== confirm) { showModalErr("pwdErr", "Passwords do not match."); return; }
+
+  // Verify current password from localStorage
+  var stored = JSON.parse(localStorage.getItem("user_" + mobile) || "{}");
+  if (stored.password && stored.password !== current) {
+    showModalErr("pwdErr", "❌ Current password is incorrect.");
+    return;
+  }
+
+  // Save new password
+  stored.password = newPwd;
+  localStorage.setItem("user_" + mobile, JSON.stringify(stored));
+
+  document.getElementById("pwdErr").style.display     = "none";
+  document.getElementById("pwdSuccess").style.display = "block";
+
+  setTimeout(function() { closePwdModal(); }, 1500);
+}
+
+/* ── HELPER ── */
+function showModalErr(id, msg) {
+  var el = document.getElementById(id);
+  el.textContent    = msg;
+  el.style.display  = "block";
+}
+
+// Close modals on backdrop click
+document.getElementById("editModal").addEventListener("click", function(e) {
+  if (e.target === this) closeEditModal();
+});
+document.getElementById("pwdModal").addEventListener("click", function(e) {
+  if (e.target === this) closePwdModal();
+});
+</script>
+</body>
 </html>
