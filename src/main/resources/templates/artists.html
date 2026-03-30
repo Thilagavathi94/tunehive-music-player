@@ -90,6 +90,100 @@
   background: none; border: none; color: #ff2e63;
   font-size: 14px; cursor: pointer; padding: 0;
 }
+/* 🎵 Floating Player (same as album page) */
+.now-playing-bar {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    background: rgba(20,20,30,0.95);
+    backdrop-filter: blur(16px);
+    
+    border: 1px solid rgba(255,46,99,0.3);
+    border-radius: 50px;
+    
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    min-width: 320px;
+    max-width: 520px;
+
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+
+    z-index: 999;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Show player */
+.now-playing-bar.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Song image */
+.np-art {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* Text info */
+.np-info {
+    flex: 1;
+}
+
+.np-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.np-artist {
+    font-size: 11px;
+    color: #aaa;
+}
+
+/* Controls */
+.np-controls {
+    display: flex;
+    gap: 8px;
+}
+
+/* Buttons */
+.np-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    transition: 0.2s;
+}
+
+.np-btn:hover {
+    color: #ff2e63;
+    transform: scale(1.1);
+}
+
+/* Close button */
+.np-close {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.np-close:hover {
+    color: #ff2e63;
+}
 
 /* Toast */
 .toast {
@@ -127,7 +221,7 @@
 
     <div class="artist-card" data-index="0" data-name="Arijit Singh" data-genre="Hindi">
       <div class="artist-avatar-wrap">
-        <img src="/images/movie31.jpg" alt="Arijit Singh">
+        <img src="/images/arjith.jpg" alt="Arijit Singh">
         <div class="online-dot"></div>
       </div>
       <p class="artist-name">Arijit Singh</p>
@@ -158,7 +252,7 @@
 
     <div class="artist-card" data-index="2" data-name="Anirudh" data-genre="Tamil">
       <div class="artist-avatar-wrap">
-        <img src="/images/movie33.jpg" alt="Anirudh">
+        <img src="/images/movie31.jpg" alt="Anirudh">
         <div class="online-dot"></div>
       </div>
       <p class="artist-name">Anirudh</p>
@@ -168,28 +262,28 @@
       <div class="songs-panel">
         <div class="song-row" onclick="playSong('Why This Kolaveri','Anirudh')"><span class="song-num">1</span><span class="song-title">Why This Kolaveri</span><button class="song-play-btn">▶</button></div>
         <div class="song-row" onclick="playSong('Aalaporaan Tamizhan','Anirudh')"><span class="song-num">2</span><span class="song-title">Aalaporaan Tamizhan</span><button class="song-play-btn">▶</button></div>
-        <div class="song-row" onclick="playSong('Kannaana Kanney','Anirudh')"><span class="song-num">3</span><span class="song-title">Kannaana Kanney</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('jailer','Anirudh')"><span class="song-num">3</span><span class="song-title">jailer</span><button class="song-play-btn">▶</button></div>
       </div>
     </div>
 
     <div class="artist-card" data-index="3" data-name="Sid Sriram" data-genre="Tamil">
       <div class="artist-avatar-wrap">
-        <img src="/images/movie34.jpg" alt="Sid Sriram">
+        <img src="/images/sid.jpg" alt="Sid Sriram">
       </div>
       <p class="artist-name">Sid Sriram</p>
       <p class="artist-genre">Tamil · Melody</p>
       <p class="artist-listeners">18.4M listeners</p>
       <button class="follow-btn" onclick="toggleFollow(event,3)">Follow</button>
       <div class="songs-panel">
-        <div class="song-row" onclick="playSong('Inaindha Neram','Sid Sriram')"><span class="song-num">1</span><span class="song-title">Inaindha Neram</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('eye','Sid Sriram')"><span class="song-num">1</span><span class="song-title">eye</span><button class="song-play-btn">▶</button></div>
         <div class="song-row" onclick="playSong('Yennai Maatrum Kadhale','Sid Sriram')"><span class="song-num">2</span><span class="song-title">Yennai Maatrum Kadhale</span><button class="song-play-btn">▶</button></div>
-        <div class="song-row" onclick="playSong('Kanave Kanave','Sid Sriram')"><span class="song-num">3</span><span class="song-title">Kanave Kanave</span><button class="song-play-btn">▶</button></div>
+        <div class="song-row" onclick="playSong('vadachennai','Sid Sriram')"><span class="song-num">3</span><span class="song-title">vadachennai</span><button class="song-play-btn">▶</button></div>
       </div>
     </div>
 
     <div class="artist-card" data-index="4" data-name="Neha Kakkar" data-genre="Hindi">
       <div class="artist-avatar-wrap">
-        <img src="/images/movie35.jpg" alt="Neha Kakkar">
+        <img src="/images/neha.jpg" alt="Neha Kakkar">
         <div class="online-dot"></div>
       </div>
       <p class="artist-name">Neha Kakkar</p>
@@ -205,7 +299,7 @@
 
     <div class="artist-card" data-index="5" data-name="Yuvan Shankar Raja" data-genre="Tamil">
       <div class="artist-avatar-wrap">
-        <img src="/images/movie36.jpg" alt="Yuvan Shankar Raja">
+        <img src="/images/yuvan.jpg" alt="Yuvan Shankar Raja">
       </div>
       <p class="artist-name">Yuvan Shankar Raja</p>
       <p class="artist-genre">Tamil · Legend</p>
@@ -243,7 +337,21 @@
 </div>
 <div th:replace="fragments/footer :: footer"></div>
 </div>
+<div class="now-playing-bar" id="nowPlayingBar">
+ 
+  <div class="np-info">
+    <div class="np-title" id="npTitle">Song Name</div>
+    <div class="np-artist" id="npArtist">Artist</div>
+  </div>
+  <div class="np-controls">
+    <button class="np-btn" onclick="prevSong()">⏮</button>
+    <button class="np-btn" id="npPlayBtn" onclick="togglePlay()">⏸</button>
+    <button class="np-btn" onclick="nextSong()">⏭</button>
+  </div>
+  <button class="np-close" onclick="closePlayer()">✕</button>
+</div>
 
+</div>
 <script th:inline="javascript">
 // Sync Spring server session → frontend sessionStorage so all pages work
 (function(){
@@ -316,16 +424,111 @@ function filterArtists(){
   });
 }
 
+let currentSongIndex = 0;
+let currentPlaylist = [];
+
 function playSong(title, artist){
-  showToast("▶ Playing: " + title + " – " + artist);
+  const audio = document.getElementById("audioPlayer");
+
+  const songUrl = songMap[title];
+  if(!songUrl){
+    showToast("❌ Song not found");
+    return;
+  }
+
+  // create playlist from clicked artist
+  currentPlaylist = Array.from(
+    document.querySelectorAll(".artist-card.expanded .song-row")
+  ).map(row => ({
+    title: row.querySelector(".song-title").textContent,
+    artist: artist
+  }));
+
+  currentSongIndex = currentPlaylist.findIndex(s => s.title === title);
+
+  audio.src = songUrl;
+  audio.play();
+
+  document.getElementById("npTitle").textContent = title;
+  document.getElementById("npArtist").textContent = artist;
+  document.getElementById("npPlayBtn").textContent = "⏸";
+
+  document.getElementById("nowPlayingBar").classList.add("visible");
+
+  showToast("▶ Playing: " + title);
+}
+function togglePlay(){
+  const audio = document.getElementById("audioPlayer");
+
+  if(audio.paused){
+    audio.play();
+    document.getElementById("npPlayBtn").textContent = "⏸";
+  } else {
+    audio.pause();
+    document.getElementById("npPlayBtn").textContent = "▶";
+  }
 }
 
+function nextSong(){
+  if(currentPlaylist.length === 0) return;
+
+  currentSongIndex = (currentSongIndex + 1) % currentPlaylist.length;
+  const song = currentPlaylist[currentSongIndex];
+
+  playSong(song.title, song.artist);
+}
+
+function prevSong(){
+  if(currentPlaylist.length === 0) return;
+
+  currentSongIndex =
+    (currentSongIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
+
+  const song = currentPlaylist[currentSongIndex];
+
+  playSong(song.title, song.artist);
+}
+
+function closePlayer(){
+  const audio = document.getElementById("audioPlayer");
+  audio.pause();
+  document.getElementById("nowPlayingBar").classList.remove("visible");
+}
 function showToast(msg){
   const t = document.getElementById("toast");
   t.textContent = msg;
   t.classList.add("show");
   setTimeout(()=>t.classList.remove("show"), 2200);
 }
+const songMap = {
+  "Tum Hi Ho": "/songs/tumhihho.mp3",
+  "Channa Mereya": "/songs/channa.mp3",
+  "Ae Dil Hai Mushkil": "/songs/aedil.mp3",
+
+  "Teri Meri": "/songs/terimeri.mp3",
+  "Sunn Raha Hai": "/songs/sunnraha.mp3",
+  "Tumse Hi": "/songs/tum.mp3",
+
+  "Why This Kolaveri": "/songs/kolaveri.mp3",
+  "Aalaporaan Tamizhan": "/songs/aalaporaan.mp3",
+  "jailer": "/songs/jailer.mp3",
+ 
+
+  "eye": "/songs/ennodu.mp3",
+  "Yennai Maatrum Kadhale": "/songs/yennai.mp3",
+  "vadachennai": "/songs/hey.mp3",
+
+  "O Humsafar": "/songs/humsafar.mp3",
+  "Dilbar": "/songs/dilbar.mp3",
+  "Ek Toh Kum Zindagani": "/songs/ektoh.mp3",
+
+  "Uyire": "/songs/uyire.mp3",
+  "Venmathi": "/songs/venmathi.mp3",
+  "Munbe Vaa": "/songs/munbevaa.mp3"
+
+};
+document.getElementById("nowPlaying").textContent =
+  "Playing: " + title + " - " + artist;
 </script>
 </body>
 </html>
