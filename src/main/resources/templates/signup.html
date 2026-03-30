@@ -2,52 +2,70 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Login – Tune Hive</title>
-<link rel="stylesheet" th:href="@{/css/signup.css}">
+<title>Sign Up – Tune Hive</title>
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    font-family:'Poppins',Arial,sans-serif; height:100vh;
+    font-family:'Poppins',Arial,sans-serif; min-height:100vh;
     display:flex; justify-content:center; align-items:center;
     background:linear-gradient(135deg,#fce4ec 0%,#f3e5f5 100%);
+    padding:20px;
   }
   .signup-container {
     width:90%; max-width:1050px; min-height:520px; display:flex;
     background:white; border-radius:20px; overflow:hidden;
     box-shadow:0 8px 40px rgba(233,30,99,0.15);
   }
-  .left { flex:1; padding:50px; display:flex; flex-direction:column; justify-content:center; }
+  .left {
+    flex:1; padding:45px 50px; display:flex;
+    flex-direction:column; justify-content:center;
+  }
   .left h1 { font-size:26px; font-weight:700; color:#222; margin-bottom:4px; }
-  .left > p { color:#777; font-size:13.5px; margin-bottom:28px; }
+  .left > p { color:#777; font-size:13.5px; margin-bottom:24px; }
+
+  /* ERROR */
   .err { background:#ffeaea; color:#c0392b; border:1px solid #f5c6cb;
          border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:14px; }
-  .input-group { position:relative; margin-bottom:8px; }
-  .input-group i.lead-icon { position:absolute; left:14px; top:50%;
-    transform:translateY(-50%); color:#e91e63; font-size:18px; }
+
+  /* INPUT */
+  .input-group { position:relative; margin-bottom:14px; }
+  .input-group i.lead-icon {
+    position:absolute; left:14px; top:50%;
+    transform:translateY(-50%); color:#e91e63; font-size:18px;
+  }
   .input-group input {
     width:100%; padding:12px 14px 12px 42px; border-radius:25px;
     border:1.5px solid #eee; font-size:14px; font-family:inherit;
     background:#fafafa; transition:border 0.2s; outline:none;
   }
-  .input-group input:focus  { border-color:#e91e63; background:#fff; }
-  .input-group input.invalid{ border-color:#e74c3c !important; background:#fff8f8; }
-  .input-group input.valid  { border-color:#27ae60 !important; }
-  .field-err { font-size:11.5px; color:#e74c3c; margin:3px 0 8px 14px; display:none; }
-  .eye-btn { position:absolute; right:14px; top:50%; transform:translateY(-50%);
-             background:none; border:none; cursor:pointer; color:#aaa; font-size:18px; padding:0; }
-  .forgot { display:block; text-align:right; font-size:12px; color:#e91e63;
-            cursor:pointer; margin-bottom:16px; margin-top:4px; text-decoration:underline; }
+  .input-group input:focus { border-color:#e91e63; background:#fff; }
+  .input-group input.invalid { border-color:#e74c3c !important; }
+  .input-group input.valid   { border-color:#27ae60 !important; }
+  .field-err { font-size:11.5px; color:#e74c3c; margin:-8px 0 8px 14px; display:none; }
+
+  .eye-btn {
+    position:absolute; right:14px; top:50%; transform:translateY(-50%);
+    background:none; border:none; cursor:pointer; color:#aaa; font-size:18px; padding:0;
+  }
+
+  /* BUTTON */
   .continue-btn {
     width:100%; padding:12px; border:none; border-radius:25px;
     background:linear-gradient(90deg,#e91e63,#c2185b); color:white;
     font-size:15px; font-weight:600; font-family:inherit; cursor:pointer;
     letter-spacing:0.3px; transition:opacity 0.2s,transform 0.1s; margin-bottom:20px;
+    margin-top:4px;
   }
   .continue-btn:hover { opacity:0.92; transform:translateY(-1px); }
+  .continue-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+  /* OR DIVIDER */
   .or { display:flex; align-items:center; gap:10px; color:#bbb; font-size:13px; margin-bottom:14px; }
   .or::before,.or::after { content:''; flex:1; height:1px; background:#eee; }
+
+  /* SOCIAL */
   .social { display:flex; gap:12px; margin-bottom:20px; }
   .social-btn {
     flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
@@ -59,8 +77,11 @@
   .social-btn i { font-size:18px; }
   .google-btn i   { color:#EA4335; }
   .facebook-btn i { color:#1877F2; }
+
   .login-text { font-size:13px; color:#666; text-align:center; }
-  .login-text span { color:#e91e63; font-weight:600; cursor:pointer; text-decoration:underline; }
+  .login-text a { color:#e91e63; font-weight:600; text-decoration:underline; }
+
+  /* RIGHT PANEL */
   .right {
     flex:1; display:flex; flex-direction:column; justify-content:center;
     align-items:center; background:linear-gradient(160deg,#fce4ec 0%,#f8bbd0 100%); padding:40px;
@@ -68,72 +89,123 @@
   .right img { width:85%; max-height:70%; object-fit:contain; border-radius:12px; }
   .right-tagline { margin-top:20px; font-size:18px; font-weight:700; color:#c2185b; text-align:center; }
   .right-sub { font-size:13px; color:#e57399; text-align:center; margin-top:6px; }
+
+  /* OTP STEP (hidden by default) */
+  #otpStep { display:none; }
+  .otp-info { font-size:13px; color:#555; margin-bottom:16px; }
+  .otp-info span { color:#e91e63; font-weight:600; }
+
+  /* RESEND */
+  .resend-row { display:flex; justify-content:space-between; align-items:center;
+                font-size:12.5px; color:#999; margin-bottom:14px; }
+  .resend-btn { color:#e91e63; font-weight:600; cursor:pointer; text-decoration:underline;
+                background:none; border:none; font-family:inherit; font-size:12.5px; }
+  .resend-btn:disabled { color:#bbb; cursor:default; text-decoration:none; }
 </style>
 </head>
 <body>
 
 <div class="signup-container">
   <div class="left">
-    <h1>Welcome Back 🎶</h1>
-    <p>Log in to your Tune Hive account</p>
 
-    <div class="err" th:if="${error}" th:text="${error}"></div>
-    <div class="err" id="jsErr" style="display:none;"></div>
+    <!-- ── STEP 1: REGISTRATION FORM ── -->
+    <div id="signupStep">
+      <h1>Create Account 🎵</h1>
+      <p>Join Tune Hive and enjoy millions of songs</p>
 
-    <!--
-      ╔══════════════════════════════════════════════╗
-      ║  BUG FIX: id="loginForm" added to this form  ║
-      ║  Previously the form had NO id, so            ║
-      ║  getElementById("loginForm") returned null,   ║
-      ║  null.submit() threw a silent TypeError, and  ║
-      ║  the page just hung with a spinning loader.   ║
-      ╚══════════════════════════════════════════════╝
-    -->
-    <form id="loginForm" action="/do-login" method="post">
+      <!-- Backend error -->
+      <div class="err" th:if="${error}" th:text="${error}"></div>
+      <!-- JS error -->
+      <div class="err" id="jsErr" style="display:none;"></div>
 
-      <!-- Hidden field — JS fills this before submit -->
-      <input type="hidden" name="mobile" id="mobileHidden">
+      <div class="input-group">
+        <i class='bx bx-user lead-icon'></i>
+        <input type="text" id="nameInput" placeholder="Full name" autocomplete="name"
+               oninput="liveVal('nameInput','nameErr',/^.{2,}$/)"
+               onblur="liveVal('nameInput','nameErr',/^.{2,}$/)">
+      </div>
+      <div class="field-err" id="nameErr">Enter your full name (at least 2 characters).</div>
+
+      <div class="input-group">
+        <i class='bx bx-envelope lead-icon'></i>
+        <input type="email" id="emailInput" placeholder="Email address" autocomplete="email"
+               oninput="liveVal('emailInput','emailErr',/^[^\s@]+@[^\s@]+\.[^\s@]+$/)"
+               onblur="liveVal('emailInput','emailErr',/^[^\s@]+@[^\s@]+\.[^\s@]+$/)">
+      </div>
+      <div class="field-err" id="emailErr">Enter a valid email address.</div>
 
       <div class="input-group">
         <i class='bx bx-phone lead-icon'></i>
-        <input type="text" id="mobileInput"
-               placeholder="10-digit mobile number" maxlength="10"
+        <input type="text" id="mobileInput" placeholder="10-digit mobile number" maxlength="10"
                oninput="this.value=this.value.replace(/\D/g,'');
                         liveVal('mobileInput','mobileErr',/^[6-9]\d{9}$/)"
                onblur="liveVal('mobileInput','mobileErr',/^[6-9]\d{9}$/)">
       </div>
-      <div class="field-err" id="mobileErr">Enter a valid 10-digit number starting with 6–9.</div>
+      <div class="field-err" id="mobileErr">Enter a valid 10-digit mobile number starting with 6–9.</div>
 
       <div class="input-group">
         <i class='bx bx-lock-alt lead-icon'></i>
-        <input type="password" id="passwordInput"
-               placeholder="Enter your password"
+        <input type="password" id="passwordInput" placeholder="Create password (min 6 chars)"
                oninput="liveValPwd()" onblur="liveValPwd()">
         <button type="button" class="eye-btn" onclick="togglePwd()">
           <i class='bx bx-show' id="eyeIcon"></i>
         </button>
       </div>
-      <div class="field-err" id="passwordErr">Password must be at least 6 characters.</div>
+      <div class="field-err" id="pwdErr">Password must be at least 6 characters.</div>
 
-      <a class="forgot" onclick="handleForgot()">Forgot password?</a>
-
-      <button type="button" class="continue-btn" onclick="doLogin()">Log In</button>
-    </form>
-
-    <div class="or">Or log in with</div>
-    <div class="social">
-      <button type="button" class="social-btn google-btn"
-              onclick="window.location.href='/oauth2/authorization/google'">
-        <i class='bx bxl-google'></i> Google
+      <button type="button" class="continue-btn" id="sendOtpBtn" onclick="sendOtp()">
+        Continue →
       </button>
-      <button type="button" class="social-btn facebook-btn"
-              onclick="window.open('https://www.facebook.com','_blank')">
-        <i class='bx bxl-facebook'></i> Facebook
-      </button>
+
+      <div class="or">Or sign up with</div>
+      <div class="social">
+        <button type="button" class="social-btn google-btn"
+                onclick="window.location.href='/oauth2/authorization/google'">
+          <i class='bx bxl-google'></i> Google
+        </button>
+        <button type="button" class="social-btn facebook-btn"
+                onclick="window.open('https://www.facebook.com','_blank')">
+          <i class='bx bxl-facebook'></i> Facebook
+        </button>
+      </div>
+      <p class="login-text">Already have an account? <a href="/login">Log in</a></p>
     </div>
-    <p class="login-text">Don't have an account?
-      <span onclick="window.location.href='/signup'">Sign up</span>
-    </p>
+
+    <!-- ── STEP 2: OTP VERIFICATION ── -->
+    <div id="otpStep">
+      <h1>Verify OTP 🔐</h1>
+      <p class="otp-info">OTP sent to <span id="otpMobileDisplay"></span></p>
+
+      <div class="err" id="otpErr" style="display:none;"></div>
+
+      <form id="otpForm" action="/verify-otp" method="post">
+        <input type="hidden" name="mobile"   id="hiddenMobile">
+        <input type="hidden" name="name"     id="hiddenName">
+        <input type="hidden" name="email"    id="hiddenEmail">
+
+        <div class="input-group">
+          <i class='bx bx-key lead-icon'></i>
+          <input type="text" name="userOtp" id="otpInput"
+                 placeholder="Enter 6-digit OTP" maxlength="6"
+                 oninput="this.value=this.value.replace(/\D/g,'')"
+                 style="letter-spacing:6px;font-size:18px;font-weight:600;text-align:center;">
+        </div>
+
+        <div class="resend-row">
+          <span id="timerDisplay" style="color:#e91e63;font-weight:600;"></span>
+          <button type="button" class="resend-btn" id="resendBtn" onclick="resendOtp()" disabled>
+            Resend OTP
+          </button>
+        </div>
+
+        <button type="button" class="continue-btn" onclick="verifyOtp()">Verify & Create Account</button>
+      </form>
+
+      <p class="login-text" style="margin-top:8px;">
+        <a href="#" onclick="goBack(); return false;" style="color:#e91e63;font-weight:600;">← Change details</a>
+      </p>
+    </div>
+
   </div>
 
   <div class="right">
@@ -144,21 +216,9 @@
 </div>
 
 <script>
-/* ── Auto-redirect if already logged in ── */
-if (sessionStorage.getItem("loggedIn") === "true") {
-  window.location.replace("/dashboard");
-}
-
-/* ── Show / hide error banner ── */
-function showErr(msg) {
-  var el = document.getElementById("jsErr");
-  el.textContent = msg;
-  el.style.display = "block";
-  el.scrollIntoView({ behavior:"smooth", block:"nearest" });
-}
-function hideErr() { document.getElementById("jsErr").style.display = "none"; }
-
-/* ── Live validation ── */
+/* ══════════════════════════════════════
+   LIVE VALIDATION
+══════════════════════════════════════ */
 function liveVal(inputId, errId, regex) {
   var input = document.getElementById(inputId);
   var val   = input.value.trim();
@@ -168,17 +228,17 @@ function liveVal(inputId, errId, regex) {
   document.getElementById(errId).style.display = (!ok && val.length > 0) ? "block" : "none";
   return ok;
 }
+
 function liveValPwd() {
   var input = document.getElementById("passwordInput");
   var ok    = input.value.length >= 6;
   input.classList.toggle("invalid", !ok && input.value.length > 0);
   input.classList.toggle("valid",    ok);
-  document.getElementById("passwordErr").style.display =
+  document.getElementById("pwdErr").style.display =
     (!ok && input.value.length > 0) ? "block" : "none";
   return ok;
 }
 
-/* ── Toggle password visibility ── */
 function togglePwd() {
   var input = document.getElementById("passwordInput");
   var icon  = document.getElementById("eyeIcon");
@@ -186,63 +246,143 @@ function togglePwd() {
   icon.className = input.type === "text" ? "bx bx-hide" : "bx bx-show";
 }
 
-/* ── Forgot password ── */
-function handleForgot() {
-  var mobile = document.getElementById("mobileInput").value.trim();
-  if (!mobile) {
-    showErr("Enter your mobile number first, then click 'Forgot password?'.");
-    return;
-  }
-  alert("A password reset OTP will be sent to " + mobile + ".\n(Feature coming soon!)");
+function showErr(msg) {
+  var el = document.getElementById("jsErr");
+  el.textContent = msg;
+  el.style.display = "block";
 }
 
-/* ══════════════════════════════════════════════════
-   doLogin() — THE MAIN FIX
-   Root cause of "login page hanging":
-     Form had no id attribute → getElementById("loginForm") → null
-     → null.submit() → TypeError (silent) → button spinner never clears
-     → page appears frozen / hanging forever.
-   Fix: <form id="loginForm"> in HTML above.
-══════════════════════════════════════════════════ */
-function doLogin() {
-  hideErr();
-
-  /* Step 1: validate fields */
+/* ══════════════════════════════════════
+   STEP 1 — SEND OTP
+══════════════════════════════════════ */
+function sendOtp() {
+  var nameOk   = liveVal("nameInput",   "nameErr",   /^.{2,}$/);
+  var emailOk  = liveVal("emailInput",  "emailErr",  /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   var mobileOk = liveVal("mobileInput", "mobileErr", /^[6-9]\d{9}$/);
   var pwdOk    = liveValPwd();
-  if (!mobileOk || !pwdOk) {
+
+  if (!nameOk || !emailOk || !mobileOk || !pwdOk) {
     showErr("Please fix the errors highlighted above.");
     return;
   }
 
+  var name     = document.getElementById("nameInput").value.trim();
+  var email    = document.getElementById("emailInput").value.trim();
   var mobile   = document.getElementById("mobileInput").value.trim();
   var password = document.getElementById("passwordInput").value;
 
-  /* Step 2: check localStorage password (set during signup) */
-  var stored = localStorage.getItem("user_" + mobile);
-  if (stored) {
-    var user = JSON.parse(stored);
-    if (user.password && user.password !== password) {
-      document.getElementById("passwordInput").classList.add("invalid");
-      document.getElementById("passwordInput").classList.remove("valid");
-      showErr("❌ Incorrect password. Please try again.");
-      return;
-    }
-    sessionStorage.setItem("loggedIn", "true");
-    sessionStorage.setItem("mobile",   mobile);
-    sessionStorage.setItem("premium",  String(user.premium || false));
-    sessionStorage.setItem("name",     user.name  || "");
-    sessionStorage.setItem("email",    user.email || "");
-  } else {
-    /* OTP-only signup — backend will handle verification */
-    sessionStorage.setItem("loggedIn", "true");
-    sessionStorage.setItem("mobile",   mobile);
-    sessionStorage.setItem("premium",  "false");
-  }
+  // Save to localStorage so login page can verify password later
+  var existing = localStorage.getItem("user_" + mobile);
+  var userData = existing ? JSON.parse(existing) : {};
+  userData.name     = name;
+  userData.email    = email;
+  userData.mobile   = mobile;
+  userData.password = password;
+  userData.premium  = userData.premium || false;
+  userData.plan     = userData.plan    || "FREE";
+  localStorage.setItem("user_" + mobile, JSON.stringify(userData));
 
-  /* Step 3: submit form to backend → Spring sets HttpSession → redirect /dashboard */
-  document.getElementById("mobileHidden").value = mobile;
-  document.getElementById("loginForm").submit();   /* ✅ Works now — form has id */
+  // Show OTP step
+  document.getElementById("otpMobileDisplay").textContent = mobile;
+  document.getElementById("hiddenMobile").value = mobile;
+  document.getElementById("hiddenName").value   = name;
+  document.getElementById("hiddenEmail").value  = email;
+
+  // Submit to backend to send OTP
+  var btn = document.getElementById("sendOtpBtn");
+  btn.textContent = "Sending OTP...";
+  btn.disabled = true;
+
+  // Submit via form POST to /send-otp
+  var form = document.createElement("form");
+  form.method = "post";
+  form.action = "/send-otp";
+  form.style.display = "none";
+
+  [["mobile", mobile], ["name", name], ["email", email]].forEach(function(pair) {
+    var inp = document.createElement("input");
+    inp.name  = pair[0];
+    inp.value = pair[1];
+    form.appendChild(inp);
+  });
+
+  document.body.appendChild(form);
+
+  // Switch UI to OTP step before submit redirects
+  document.getElementById("signupStep").style.display = "none";
+  document.getElementById("otpStep").style.display    = "block";
+  startTimer();
+
+  form.submit();
+}
+
+/* ══════════════════════════════════════
+   STEP 2 — VERIFY OTP
+══════════════════════════════════════ */
+function verifyOtp() {
+  var otp = document.getElementById("otpInput").value.trim();
+  if (!/^\d{6}$/.test(otp)) {
+    var el = document.getElementById("otpErr");
+    el.textContent = "Enter the 6-digit OTP sent to your mobile.";
+    el.style.display = "block";
+    return;
+  }
+  document.getElementById("otpForm").submit();
+}
+
+/* ══════════════════════════════════════
+   OTP COUNTDOWN TIMER
+══════════════════════════════════════ */
+var _timer = null;
+
+function startTimer() {
+  var secs = 60;
+  var display = document.getElementById("timerDisplay");
+  var resend  = document.getElementById("resendBtn");
+  resend.disabled = true;
+
+  clearInterval(_timer);
+  _timer = setInterval(function() {
+    display.textContent = "Resend in " + secs + "s";
+    secs--;
+    if (secs < 0) {
+      clearInterval(_timer);
+      display.textContent = "";
+      resend.disabled = false;
+    }
+  }, 1000);
+}
+
+function resendOtp() {
+  var mobile = document.getElementById("hiddenMobile").value;
+  var name   = document.getElementById("hiddenName").value;
+  var email  = document.getElementById("hiddenEmail").value;
+
+  var form = document.createElement("form");
+  form.method = "post";
+  form.action = "/send-otp";
+  form.style.display = "none";
+
+  [["mobile", mobile], ["name", name], ["email", email]].forEach(function(pair) {
+    var inp = document.createElement("input");
+    inp.name  = pair[0];
+    inp.value = pair[1];
+    form.appendChild(inp);
+  });
+
+  document.body.appendChild(form);
+  startTimer();
+  form.submit();
+}
+
+function goBack() {
+  document.getElementById("otpStep").style.display    = "none";
+  document.getElementById("signupStep").style.display = "block";
+}
+
+/* Redirect if already logged in */
+if (sessionStorage.getItem("loggedIn") === "true") {
+  window.location.replace("/dashboard");
 }
 </script>
 </body>
