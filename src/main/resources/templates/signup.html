@@ -168,7 +168,8 @@
   </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+/*<![CDATA[*/
 /* ══════════════════════════════════════
    LIVE VALIDATION
 ══════════════════════════════════════ */
@@ -251,12 +252,18 @@ function sendOtp() {
   form.action = "/send-otp";
   form.style.display = "none";
 
-  [["mobile", mobile], ["name", name], ["email", email]].forEach(function(pair) {
-    var inp = document.createElement("input");
-    inp.name  = pair[0];
-    inp.value = pair[1];
-    form.appendChild(inp);
-  });
+ var data = [
+  {key: "mobile", value: mobile},
+  {key: "name", value: name},
+  {key: "email", value: email}
+];
+
+data.forEach(function(item) {
+  var inp = document.createElement("input");
+  inp.name  = item.key;
+  inp.value = item.value;
+  form.appendChild(inp);
+});
 
   document.body.appendChild(form);
   form.submit(); // Full page navigates to /otp — no JS UI toggling needed
@@ -266,6 +273,7 @@ function sendOtp() {
 if (sessionStorage.getItem("loggedIn") === "true") {
   window.location.replace("/dashboard");
 }
+/*]]>*/
 </script>
 </body>
 </html>
