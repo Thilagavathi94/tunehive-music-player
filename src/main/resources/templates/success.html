@@ -393,6 +393,12 @@
 </div>
 
 <script>
+  // Mark premium in frontend session
   sessionStorage.setItem("premium", "true");
-</script>
+  sessionStorage.setItem("loggedIn", "true");
 
+  // Auto-redirect to player after 3 seconds
+  setTimeout(function() {
+    window.location.href = "/player";
+  }, 3000);
+</script>

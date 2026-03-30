@@ -380,22 +380,9 @@
       <label><input type="checkbox" value="telugu"> Telugu</label>
       <label><input type="checkbox" value="malayalam"> Malayalam</label>
     </div>
-    <button onclick="applyFilters()" class="update-btn">Appl
-    </button>
+    <button onclick="applyFilters()" class="update-btn">Apply</button>
   </div>
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("name").innerText =
-    sessionStorage.getItem("name") || "User";
-
-  document.getElementById("mobile").innerText =
-    sessionStorage.getItem("mobile") || "";
-
-  document.getElementById("plan").innerText =
-    sessionStorage.getItem("premium") === "true" ? "Premium" : "Free";
-});
-</script>
 <script src="/js/script.js"></script>
 </body> 
 </html>
